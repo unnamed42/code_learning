@@ -5,8 +5,6 @@
 #include <stdexcept>
 #include <bits/stl_iterator_base_types.h> // std::random_access_iterator_tag
 
-#define DEFAULT_INCREMENT 10UL
-
 template <class T,std::size_t N> class array{
     public:
         
@@ -56,17 +54,15 @@ template <class T,std::size_t N> class array{
         
     protected:
         T *base;
-        std::size_t length;
-        std::size_t occupied;
+        std::size_t occupied;   // space in use
     public:
-        explicit array(std::size_t increment=10);
-        explicit array(T (&)[N]);
+        explicit array(std::size_t count,const T &value);
         explicit array(std::initializer_list<T>&&);
+        explicit array(const T (&)[N]);
         ~array();
         std::size_t capacity() const noexcept;
         std::size_t size() const noexcept;
-        bool empty() const;
-        void resize(std::size_t size);
+        bool empty() const noexcept;
         void append(const T &element);
         void insert(std::size_t index,const T &element);
         void remove_elem(const T &element);
@@ -76,16 +72,16 @@ template <class T,std::size_t N> class array{
         T& operator[](std::size_t index) const;
 };
 
-template <class T,std::size_t N> array<T,N>::array(std::size_t increment):base(nullptr),length(0),occupied(0){}
-
-template <class T,std::size_t N> array<T,N>::array(T (&arr)[N]):base(nullptr),length(N),occupied(N){
-    base=new T[N];
-    std::memcpy(base,arr,N*sizeof(T));
+template <class T,std::size_t N> array<T,N>::array(std::size_t count,const T &value):base(new T[N]),occupied(0){
+    if(count>N)
+        count=N;
+    for(;occupied<=count;++occupied)
+        base[occupied]=value;
 }
 
-template <class T,std::size_t N> array<T,N>::array(std::size_t length){
-    base=new T[this->length=length]();
-    occupied=0;
+template <class T,std::size_t N> array<T,N>::array(const T (&arr)[N]):base(nullptr),occupied(N){
+    base=new T[N];
+    std::memcpy(base,arr,N*sizeof(T));
 }
 
 template <class T,std::size_t N> array<T,N>::array(std::initializer_list<T> &&l){
@@ -97,11 +93,11 @@ template <class T,std::size_t N> array<T,N>::array(std::initializer_list<T> &&l)
 
 template <class T,std::size_t N> array<T,N>::~array(){delete[] base;}
 
-template <class T,std::size_t N> std::size_t array<T,N>::capacity() const {return length;}
+template <class T,std::size_t N> std::size_t array<T,N>::capacity() const noexcept {return N;}
 
-template <class T,std::size_t N> std::size_t array<T,N>::size() const {return occupied;}
+template <class T,std::size_t N> std::size_t array<T,N>::size() const noexcept {return occupied;}
 
-template <class T,std::size_t N> bool array<T,N>::empty() const {return occupied==0;}
+template <class T,std::size_t N> bool array<T,N>::empty() const noexcept {return occupied==0;}
 
 template <class T,std::size_t N> typename array<T,N>::iterator array<T,N>::begin() {return iterator(base);}
 
@@ -130,9 +126,9 @@ template <class T,std::size_t N> void array<T,N>::insert(std::size_t index,const
 }
 
 template <class T,std::size_t N> void array<T,N>::remove_elem(const T &element){
-    for(int i=0;i<occupied;i++){
+    for(auto i=0UL;i<occupied;i++){
         if(base[i]==element){
-            for(int j=i;j<occupied-1;j++)
+            for(auto j=i;j<occupied-1;j++)
                 base[j]^=base[j+1]^=base[j]^=base[j+1];
             occupied--;
             i--;
@@ -193,25 +189,3 @@ template <class T,std::size_t N> typename array<T,N>::iterator::self_type& array
 template <class T,std::size_t N> typename array<T,N>::iterator::self_type operator+(int n,const typename array<T,N>::iterator::self_type &it) {return it+n;}
 
 #endif
-//test code
-/*
-#include <iostream>
-
-struct test{
-    int a;
-    test(int n=0):a(n){}
-    void operator++(){a++;}
-};
-
-int main(){
-    array<test> t;
-    for(auto i = 0U; i < 100; i++)
-        t.append(test(i));
-    for(auto it=t.begin();it!=t.end();++it)
-        it->operator++();
-    for(auto &i : t)
-        std::cout << i.a << " ";
-    return 0;
-}
-
-*/
