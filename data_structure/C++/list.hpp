@@ -2,6 +2,7 @@
 #define __LIST__
 
 #include <stdexcept>
+#include <initializer_list> // std::initializer_list
 #include <bits/stl_iterator_base_types.h> // std::forward_iterator_tag
 
 template <class T> class list{
@@ -48,38 +49,61 @@ template <class T> class list{
     protected:
         node *_head;
         node *_end;// the actual final node of list, for acceleration of append()
-        unsigned int _length;
+        std::size_t _length;
     public:
-        explicit list(unsigned int=0);
+        // Initialize a list of given length, filled by the given value. By default, it is an empty list
+        list(std::size_t=0,const T& =T());
+        
+        // Move-constructor
+        list(list<T>&&);
+        
+        // Copy-constructor
+        list(const list<T>&);
+        
+        // Construct from the given list
         list(std::initializer_list<T>&&);
-        list(list&&);
+        
+        // Destructor
         ~list();
-        void remove_elem(const T &elem);
-        void remove_after(iterator);
-        void insert_after(iterator,const T&);
-        iterator search(const T&) const;
-        void append(const T&);
-        unsigned int length() const;
+        
+        // Return the size of this list
+        std::size_t length() const noexcept;
+        
+        // Reverse the whole list
         void reverse();
+        
+        // Append an element to the end of this list, O(1) time
+        void append(const T&);
+        
+        // Remove the node after `it`
+        void remove_after(iterator);
+        
+        // Remove elements that equals `elem`
+        void remove_elem(const T &elem);
+        
+        // Insert element after node `it`
+        void insert_after(iterator,const T&);
+        
+        // Search the first element that equals `data`
+        iterator search(const T&) const;
+        
+        // Iterator functions
         iterator begin();
         iterator end();
 };
 
 // member functions
-template <class T> list<T>::list(unsigned int length){
-    _length=length;
-    if(length==0){
-        _end=_head=nullptr;
+template <class T> list<T>::list(std::size_t len,const T &value):_head(nullptr),_end(nullptr),_length(len){
+    if(length==0)
         return;
-    }
-    _end=_head=new node;
+    _end=_head=new node(value);
     for(;length>1;length--){
-        _end->next=new node;
+        _end->next=new node(value);
         _end=_end->next;
     }
 }
 
-template <class T> list<T>::list(list &&other){
+template <class T> list<T>::list(list<T> &&other){
     _head=other._head;
     _end=other._end;
     _length=other._length;
@@ -88,15 +112,13 @@ template <class T> list<T>::list(list &&other){
 
 template <class T> list<T>::list(std::initializer_list<T> &&l){
     _head=_end=nullptr;
-    if(l.size()==0)
+    if((_length=l.size())==0)
         return;
-    for(auto &&i:l){
-        if(_head==nullptr)
-            _head=_end=new node(i);
-        else{
-            _end->next=new node(i);
-            _end=_end->next;
-        }
+    auto it=l.begin();
+    _head=new node(*(it++));
+    for(;it!=l.end();++it){
+        _end->next=new node(*it);
+        _end=_end->next;
     }
 }
 
@@ -138,7 +160,7 @@ template <class T> void list<T>::remove_elem(const T &elem){
         _end=prev;
 }
 
-template <class T> unsigned int list<T>::length() const {return _length;}
+template <class T> std::size_t list<T>::length() const {return _length;}
 
 template <class T> typename list<T>::iterator list<T>::search(const T &elem) const{
     node *p=_head;

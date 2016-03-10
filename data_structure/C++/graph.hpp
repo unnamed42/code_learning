@@ -6,12 +6,14 @@
 #include <memory> // std::shared_ptr
 #include <utility> // std::pair
 #include <stdexcept>
+#include <initializer_list> // std::initializer_list
 #include <bits/stl_iterator_base_types.h> // std::forward_iterator_tag
 
 template <class T> class graph{
     public:
-        typedef int iterator_index_t;
-        typedef unsigned int index_t;
+        typedef std::size_t index_t;
+        
+        typedef long _index_t; // A type used to represent index of nodes, -1 stands for "no such node". Used only by iterators.
         
         template <class U> struct node{
             U data;
@@ -33,14 +35,14 @@ template <class T> class graph{
                 typedef std::forward_iterator_tag iterator_category;
                 typedef int difference_type;
                 typedef vex_node* real_pointer;
-                explicit iterator_base(iterator_index_t _index,std::vector<real_pointer>* =nullptr);
+                explicit iterator_base(_index_t _index,std::vector<real_pointer>* =nullptr);
                 reference operator*() const;
                 pointer operator->() const;
-                iterator_index_t get() const;
+                _index_t get() const;
                 bool operator==(const self_type &other) const;
                 bool operator!=(const self_type &other) const;
             protected:
-                iterator_index_t index;
+                _index_t index;
                 std::vector<real_pointer> *nodes;
         };
         
@@ -48,48 +50,48 @@ template <class T> class graph{
             public:
                 typedef dfs_iterator self_type;
                 typedef typename iterator_base::real_pointer real_pointer;
-                explicit dfs_iterator(iterator_index_t _index,std::vector<real_pointer>* =nullptr,std::deque<iterator_index_t>* =nullptr);
+                explicit dfs_iterator(_index_t _index,std::vector<real_pointer>* =nullptr,std::deque<_index_t>* =nullptr);
                 self_type& operator++();
                 self_type operator++(int);
                 self_type& operator=(const self_type &other);
             protected:
                 using iterator_base::index;
                 using iterator_base::nodes;
-                iterator_index_t component; // Set `component` to iterate over isolated nodes.
+                _index_t component; // Set `component` to iterate over isolated nodes.
                 std::shared_ptr<bool> visited;
-                std::shared_ptr<std::deque<iterator_index_t>> s;//stack
+                std::shared_ptr<std::deque<_index_t>> s;//stack
         };
         
         class bfs_iterator: public iterator_base{
             public:
                 typedef bfs_iterator self_type;
                 typedef typename iterator_base::real_pointer real_pointer;
-                explicit bfs_iterator(iterator_index_t _index,std::vector<real_pointer>* =nullptr,std::deque<iterator_index_t>* =nullptr);
+                explicit bfs_iterator(_index_t _index,std::vector<real_pointer>* =nullptr,std::deque<_index_t>* =nullptr);
                 self_type& operator++();
                 self_type operator++(int);
                 self_type& operator=(const self_type &other);
             protected:
                 using iterator_base::index;
                 using iterator_base::nodes;
-                iterator_index_t component;
+                _index_t component;
                 std::shared_ptr<bool> visited;
-                std::shared_ptr<std::deque<iterator_index_t>> q;//queue
+                std::shared_ptr<std::deque<_index_t>> q;//queue
         };
         
         class topo_iterator: public iterator_base{
             public:
                 typedef topo_iterator self_type;
                 typedef typename iterator_base::real_pointer real_pointer;
-                explicit topo_iterator(iterator_index_t _index,std::vector<real_pointer>* =nullptr,unsigned int count=0,int stack=-1,int *indegree=nullptr);
+                explicit topo_iterator(_index_t _index,std::vector<real_pointer>* =nullptr,std::size_t count=0,long stack=-1,long *indegree=nullptr);
                 self_type& operator++();
                 self_type operator++(int);
                 self_type& operator=(const self_type &other);
             protected:
                 using iterator_base::index;
                 using iterator_base::nodes;
-                int stack;
-                unsigned int count;
-                std::shared_ptr<int> indegree;
+                long stack;
+                std::size_t count;
+                std::shared_ptr<long> indegree;
         };
         
         typedef dfs_iterator iterator;
@@ -98,17 +100,34 @@ template <class T> class graph{
         std::vector<vex_node*> nodes;
         bool directed;
     public:
+        // Construct an empty graph, by default it's undirected graph
         explicit graph(bool=false);
+        
+        // Copy-constructor
         graph(const graph<T> &g);
-        graph(std::vector<T>&&,std::vector<std::pair<index_t,index_t>>&&,bool=false);
+        
+        // Construct from two given lists, one is value of nodes, one is relation between nodes. Do not check duplicates
+        graph(std::initializer_list<T>&&,std::initializer_list<std::pair<index_t,index_t>>&&,bool=false);
+        
+        // Destructor
         ~graph();
+        
+        // Append a node
         void append(const T &data);
-        void set_directed(bool is=true);
+        
+        // Check if this graph holds no element
         bool empty() const;
+        
+        // Return if this is a directed graph
         bool is_directed() const;
+        
+        // Build connection between node `vex1` and `vex2`, there's difference if this graph is directed
         void bind(index_t vex1,index_t vex2);
+        
+        // Return referencet to the `i`-th node
         T& operator[](index_t i);
         
+        // Iterator functions
         dfs_iterator begin();
         dfs_iterator end();
         bfs_iterator bfs_begin();
@@ -121,8 +140,8 @@ template <class T> class graph{
 template <class T> graph<T>::graph(bool dir):nodes(),directed(dir){}
 
 template <class T> graph<T>::graph(const graph<T> &g){
-    iterator_index_t size=g.nodes.size();
-    for(iterator_index_t i=0;i<size;i++){
+    _index_t size=g.nodes.size();
+    for(_index_t i=0;i<size;i++){
         nodes.push_back(new vex_node(g.nodes[i]));
         arc_node **ptr=&nodes[i].next,*ptr_g=g.nodes[i].next;
         while(ptr_g!=nullptr){
@@ -133,16 +152,11 @@ template <class T> graph<T>::graph(const graph<T> &g){
     directed=g.directed;
 }
 
-// construct the adjacent list from value list and adjacency list, do not check duplicate in adjacency.
-template <class T> graph<T>::graph(std::vector<T> &&value,std::vector<std::pair<index_t,index_t>> &&adjacency,bool _directed):directed(_directed){
+template <class T> graph<T>::graph(std::initializer_list<T> &&value,std::initializer_list<std::pair<index_t,index_t>> &&adjacency,bool _directed):directed(_directed),nodes(value){
     auto size=value.size();
-    if(size==0)
-        return;
-    for(auto &&i:value)
-        nodes.push_back(new vex_node(i));
     for(auto &&i:adjacency){
         if(i.first>=size||i.second>=size)
-            throw std::runtime_error("Constructor: adjacency list out of range");
+            throw std::runtime_error("graph::constructor: adjacency list out of range");
         bind(i.first,i.second);
     }
 }
@@ -162,7 +176,7 @@ template <class T> graph<T>::~graph(){
 template <class T> void graph<T>::append(const T &data){ nodes.push_back(new vex_node(data)); }
 
 template <class T> void graph<T>::bind(index_t vex1,index_t vex2){
-    auto make_bind=[this](iterator_index_t vex1,iterator_index_t vex2){
+    auto make_bind=[this](_index_t vex1,_index_t vex2){
         vex_node *p=nodes[vex1];arc_node *node=new arc_node(vex2);
         node->next=p->next;
         p->next=node;
@@ -176,14 +190,12 @@ template <class T> bool graph<T>::empty() const {return nodes.empty();}
 
 template <class T> bool graph<T>::is_directed() const {return directed;}
 
-template <class T> void graph<T>::set_directed(bool is){directed=is;}
-
 template <class T> T& graph<T>::operator[](index_t i){return nodes[i]->data;}
 
 template <class T> typename graph<T>::dfs_iterator graph<T>::begin(){ 
     if(nodes.empty())
         return dfs_iterator(-1);
-    auto s=new std::deque<iterator_index_t>;
+    auto s=new std::deque<_index_t>;
     for(arc_node *ptr = nodes[0]->next; ptr != nullptr; ptr = ptr->next)
         s->push_back(ptr->data);
     return dfs_iterator(0,&nodes,s);
@@ -194,7 +206,7 @@ template <class T> typename graph<T>::dfs_iterator graph<T>::end(){ return dfs_i
 template <class T> typename graph<T>::bfs_iterator graph<T>::bfs_begin(){
     if(nodes.empty())
         return bfs_iterator(-1);
-    auto q=new std::deque<iterator_index_t>;
+    auto q=new std::deque<_index_t>;
     for(arc_node *ptr = nodes[0]->next; ptr != nullptr; ptr = ptr->next)
         q->push_back(ptr->data);
     return bfs_iterator(0,&nodes,q);
@@ -206,7 +218,7 @@ template <class T> typename graph<T>::topo_iterator graph<T>::topo_begin(){
     if(!directed||nodes.empty())
         return topo_iterator(-1);
     auto size=nodes.size();
-    int *indegree=new int[size](),stack=-1;
+    long *indegree=new long[size](),stack=-1;
     // calculate in-degree
     for(auto ptr:nodes){
         for(arc_node *node=ptr->next;node!=nullptr;node=node->next)
@@ -222,7 +234,7 @@ template <class T> typename graph<T>::topo_iterator graph<T>::topo_begin(){
     if(stack==-1)
         return topo_iterator(-1);
     else{
-        int save=stack; // stack top
+        long save=stack; // stack top
         stack=indegree[stack]; // stack pop
         return topo_iterator(save,&nodes,0,stack,indegree);
     }
@@ -235,30 +247,33 @@ template <class T> template <class U> graph<T>::node<U>::node():data(U()),next(n
 
 template <class T> template <class U> graph<T>::node<U>::node(const U &e):data(e),next(nullptr){}
 
-template <class T> template <class U> graph<T>::node<U>::node(node<U> *p):data(p->data),next(nullptr){}
+template <class T> template <class U> graph<T>::node<U>::node(const node<U> *p):data(p->data),next(nullptr){}
 
 
 // class graph<T>::iterator_base
-template <class T> graph<T>::iterator_base::iterator_base(iterator_index_t _index,std::vector<real_pointer> *_nodes):index(_index),nodes(_nodes){}
+template <class T> graph<T>::iterator_base::iterator_base(_index_t _index,std::vector<real_pointer> *_nodes):index(_index),nodes(_nodes){}
 
 template <class T> typename graph<T>::iterator_base::reference graph<T>::iterator_base::operator*() const {return nodes->at(index)->data;}
 
 template <class T> typename graph<T>::iterator_base::pointer graph<T>::iterator_base::operator->() const {return &(nodes->at(index)->data);}
 
-template <class T> typename graph<T>::iterator_index_t graph<T>::iterator_base::get() const {return index;}
+template <class T> typename graph<T>::_index_t graph<T>::iterator_base::get() const {return index;}
 
-template <class T> bool graph<T>::iterator_base::operator==(const self_type &other) const {return index==other.index;}
+template <class T> bool graph<T>::iterator_base::operator==(const self_type &other) const {return index==other.index && nodes==other.nodes;}
 
-template <class T> bool graph<T>::iterator_base::operator!=(const self_type &other) const {return index!=other.index;}
+template <class T> bool graph<T>::iterator_base::operator!=(const self_type &other) const {return index!=other.index && nodes!=other.nodes;}
 
+// TODO:
+// All iterators here are using shared_ptr, this is very dangerous.
+// They must be replaced by unique_ptr.
 
 //class graph<T>::dfs_iterator
-template <class T> graph<T>::dfs_iterator::dfs_iterator(iterator_index_t _index,std::vector<real_pointer> *_nodes,std::deque<iterator_index_t> *_s):iterator_base(_index,_nodes),component(_index),visited(nullptr),s(_s){
+template <class T> graph<T>::dfs_iterator::dfs_iterator(_index_t _index,std::vector<real_pointer> *_nodes,std::deque<_index_t> *_s):iterator_base(_index,_nodes),component(_index),visited(nullptr),s(_s){
     if(_index!=-1){
         visited=std::shared_ptr<bool>(new bool[nodes->size()](),std::default_delete<bool[]>()); // set all to false, not sure if this works in all conditions
         visited.get()[_index]=true;
         if(_s==nullptr)
-            s=std::shared_ptr<std::deque<iterator_index_t>>(new std::deque<iterator_index_t>);
+            s=std::shared_ptr<std::deque<_index_t>>(new std::deque<_index_t>);
     }
 }
 
@@ -275,7 +290,7 @@ template <class T> typename graph<T>::dfs_iterator::self_type& graph<T>::dfs_ite
     }
     bool changed=false; // so ugly implemented
     while(!s->empty()) {
-        iterator_index_t v = s->back();
+        _index_t v = s->back();
         s->pop_back();
         if(!(visited.get()[v])) {
             visited.get()[v] = true;
@@ -309,12 +324,12 @@ template <class T> typename graph<T>::dfs_iterator::self_type& graph<T>::dfs_ite
 }
 
 // class graph<T>::bfs_iterator
-template <class T> graph<T>::bfs_iterator::bfs_iterator(iterator_index_t _index,std::vector<real_pointer>* _nodes,std::deque<iterator_index_t> *_q):iterator_base(_index,_nodes),component(_index),visited(nullptr),q(_q){
+template <class T> graph<T>::bfs_iterator::bfs_iterator(_index_t _index,std::vector<real_pointer>* _nodes,std::deque<_index_t> *_q):iterator_base(_index,_nodes),component(_index),visited(nullptr),q(_q){
     if(_index!=-1){
         visited=std::shared_ptr<bool>(new bool[nodes->size()](),std::default_delete<bool[]>()); // set all to false, not sure if this works in all conditions
         visited.get()[_index]=true;
         if(_q==nullptr)
-            q=std::shared_ptr<std::deque<iterator_index_t>>(new std::deque<iterator_index_t>);
+            q=std::shared_ptr<std::deque<_index_t>>(new std::deque<_index_t>);
     }
 }
 
@@ -331,7 +346,7 @@ template <class T> typename graph<T>::bfs_iterator::self_type& graph<T>::bfs_ite
     }
     bool changed=false;
     while(!q->empty()) {
-        iterator_index_t v = q->front();
+        _index_t v = q->front();
         q->pop_front();
         if(!visited.get()[v]) {
             visited.get()[v] = true;
@@ -356,18 +371,19 @@ template <class T> typename graph<T>::bfs_iterator::self_type graph<T>::bfs_iter
 }
 
 template <class T> typename graph<T>::bfs_iterator::self_type& graph<T>::bfs_iterator::operator=(const self_type &other){
+    
+    q=other.q;
+    visited=other.visited;
     index=other.index;
     nodes=other.nodes;
     component=other.component;
-    q=other.q;
-    visited=other.visited;
     return *this;
 }
 
 
 // class graph<T>::topo_iterator
-template <class T> graph<T>::topo_iterator::topo_iterator(iterator_index_t _index,std::vector<real_pointer> *_nodes,unsigned int _count,int _stack,int *_indegree):iterator_base(_index,_nodes),stack(_stack),count(_count){
-    indegree=std::shared_ptr<int>(_indegree,std::default_delete<int[]>());
+template <class T> graph<T>::topo_iterator::topo_iterator(_index_t _index,std::vector<real_pointer> *_nodes,std::size_t _count,long _stack,long *_indegree):iterator_base(_index,_nodes),stack(_stack),count(_count){
+    indegree=std::shared_ptr<long>(_indegree,std::default_delete<long[]>());
 }
 
 template <class T> typename graph<T>::topo_iterator::self_type& graph<T>::topo_iterator::operator++(){
@@ -376,7 +392,7 @@ template <class T> typename graph<T>::topo_iterator::self_type& graph<T>::topo_i
         return *this;
     stack=indegree.get()[stack];
     if((++count)>nodes->size())
-        throw std::runtime_error("Topological sort: circle exists");
+        index=-1;       // Circle exists,cannot continue
     for(arc_node *ptr=nodes[index]->next;ptr!=nullptr;ptr=ptr->next){
         if(--(indegree.get()[ptr->data])==0){
             indegree.get()[ptr->data]=stack;
@@ -393,10 +409,10 @@ template <class T> typename graph<T>::topo_iterator::self_type graph<T>::topo_it
 }
 
 template <class T> typename graph<T>::topo_iterator::self_type& graph<T>::topo_iterator::operator=(const self_type &other){
+    indegree=other.indegree;
     index=other.index;
     nodes=other.nodes;
     stack=other.stack;
-    indegree=other.indegree;
     return *this;
 }
 

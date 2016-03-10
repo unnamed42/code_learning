@@ -1,6 +1,7 @@
 #ifndef __DOUBLE_LIST__
 #define __DOUBLE_LIST__
 
+#include <initializer_list> // std::initializer_list
 #include <bits/stl_iterator_base_types.h> // std::bidirectional_iterator_tag
 
 template <class T> class list{
@@ -65,42 +66,74 @@ template <class T> class list{
     protected:
         node *_head;
         node *_end; // actual end of list
+        std::size_t _length;
     public:
-        explicit list();
+        
+        // Initialize a list of given length, filled by the given value. By default, it is an empty list
+        list(std::size_t=0,const T& =T());
+        
+        // Move-constructor
         list(list&&);
+        
+        // Copy-constructor
         list(const list<T>&);
+        
+        // Construct from the given list
         list(std::initializer_list<T>&&);
+        
+        // Destructor
         ~list();
+        
+        // Return the size of this list
+        std::size_t length() const noexcept;
+        
+        // Reverse the whole list
         void reverse();
+        
+        // Append an element to the end of this list, O(1) time
         void append(const T&);
+        
+        // Remove the node `it`
         void remove(iterator it);
         
+        // Iterator functions
         iterator begin();
         iterator end();
         reverse_iterator rbegin();
         reverse_iterator rend();
 };
 // member functions
-template <class T> list<T>::list():_head(nullptr),_end(nullptr){}
+template <class T> list<T>::list(std::size_t len,const T &value):_head(nullptr),_end(nullptr),_length(len){
+    if(len==0)
+        return;
+    node *dummy=new node(),*ptr=dummy;
+    for(;len>0;--len){
+        ptr->next=new node(value);
+        ptr->next->prev=ptr;
+        ptr=ptr->next;
+    }
+    _end=ptr;_head=dummy->next;
+    _head->prev=nullptr;
+    delete dummy;
+}
 
-template <class T> list<T>::list(list &&other){
+template <class T> list<T>::list(list<T> &&other){
     _head=other._head;
     _end=other._end;
+    _length=other._length;
     other._head=other._end=nullptr;
 }
 
 template <class T> list<T>::list(std::initializer_list<T> &&l){
     _head=_end=nullptr;
-    if(l.size()==0)
+    if((_length=l.size())==0)
         return;
-    for(const auto &i:l){
-        if(_head==nullptr)
-            _head=_end=new node(i);
-        else{
-            _end->next=new node(i);
-            _end->next->prev=_end;
-            _end=_end->next;
-        }
+    auto it=l.begin();
+    _head=new node(*(it++));
+    for(;it!=l.end();++it){
+        _end->next=new node(*it);
+        _end->next->prev=_end;
+        _end=_end->next;
     }
 }
 
@@ -125,6 +158,8 @@ template <class T> list<T>::~list(){
     }
 }
 
+template <class T> std::size_t list<T>::length() const noexcept {return _length;}
+
 template <class T> void list<T>::reverse(){
     if(_head==nullptr||_head->next==nullptr)
         return;
@@ -147,12 +182,14 @@ template <class T> void list<T>::append(const T &data){
     _end->next=new node(data);
     _end->next->prev=_end;
     _end=_end->next;
+    ++_length;
 }
 
 template <class T> void list<T>::remove(iterator it){
     node *ptr=it.get();
     if(ptr==nullptr)
         return;
+    --_length;
     if(ptr==_head && ptr==_end){
         delete ptr;
         _head=_end=nullptr;
@@ -258,3 +295,7 @@ template <class T> typename list<T>::reverse_iterator::self_type list<T>::revers
 
 template <class T> typename list<T>::reverse_iterator::self_type& list<T>::reverse_iterator::operator=(const self_type &other) {ptr=other.ptr;}
 #endif
+
+int main(){
+    
+}

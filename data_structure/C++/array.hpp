@@ -3,6 +3,7 @@
 
 #include <cstring> // std::memcpy
 #include <stdexcept>
+#include <initializer_list> // std::initializer_list
 #include <bits/stl_iterator_base_types.h> // std::random_access_iterator_tag
 
 template <class T,std::size_t N> class array{
@@ -56,20 +57,50 @@ template <class T,std::size_t N> class array{
         T *base;
         std::size_t occupied;   // space in use
     public:
-        explicit array(std::size_t count,const T &value);
+        
+        // Construct from a given list
         explicit array(std::initializer_list<T>&&);
+        
+        // Construct from a given array
         explicit array(const T (&)[N]);
+        
+        // Construct an class array, the first `count`
+        array(std::size_t count,const T &value);
+        
+        // Move-constructor
+        array(array<T,N>&&);
+        
+        // Copy-constructor
+        array(const array<T,N>&);
+        
+        // Destructor
         ~array();
+        
+        // Return the maximum possible number of elements
         std::size_t capacity() const noexcept;
+        
+        // Return the current number of elements
         std::size_t size() const noexcept;
+        
+        // Check if the array holds no element
         bool empty() const noexcept;
+        
+        // Append an element in the back, if full, throw std::out_of_range
         void append(const T &element);
+        
+        // Insert an element in position `index`, if full, throw std::out_of_range
         void insert(std::size_t index,const T &element);
+        
+        // Remove the elements whose value equals `element`
         void remove_elem(const T &element);
         
+        // Return reference of the `index`-th element, do no boundary check
+        T& operator[](std::size_t index) const;
+        
+        
+        // Iterator functions
         iterator begin();
         iterator end();
-        T& operator[](std::size_t index) const;
 };
 
 template <class T,std::size_t N> array<T,N>::array(std::size_t count,const T &value):base(new T[N]),occupied(0){
@@ -84,8 +115,20 @@ template <class T,std::size_t N> array<T,N>::array(const T (&arr)[N]):base(nullp
     std::memcpy(base,arr,N*sizeof(T));
 }
 
+template <class T,std::size_t N> array<T,N>::array(array<T,N> &&arr) {
+    base = arr.base;
+    occupied = arr.occupied;
+    arr.base = nullptr;
+}
+
+template <class T,std::size_t N> array<T,N>::array(const array<T,N> &arr) {
+    base = new T[N];
+    occupied = arr.occupied;
+    std::memcpy(base,arr.base,occupied*sizeof(T));
+}
+
 template <class T,std::size_t N> array<T,N>::array(std::initializer_list<T> &&l){
-    base=new T[length=l.size()]();
+    base=new T[l.size()]();
     occupied=0;
     for(auto &&i:l)
         base[occupied++]=i;
@@ -105,20 +148,13 @@ template <class T,std::size_t N> typename array<T,N>::iterator array<T,N>::end()
 
 template <class T,std::size_t N> void array<T,N>::append(const T &element){
     if(occupied+1>length)
-        throw std::out_of_range("Cannot append here");
+        throw std::out_of_range("array::append: array is full");
     base[occupied++]=element;
 }
 
 template <class T,std::size_t N> void array<T,N>::insert(std::size_t index,const T &element){
-    if(index>occupied)
-        return;
-    if(occupied+1>length)
-        resize(2*length);
-    if(index==occupied){
-        base[index]=element;
-        occupied++;
-        return;
-    }
+    if(occupied+1>length||index>occupied)
+        throw std::out_of_range("array::insert: array is full");
     for(auto i=occupied;i>index;i--)
         base[i]^=base[i-1]^=base[i]^=base[i-1];
     base[index]=element;

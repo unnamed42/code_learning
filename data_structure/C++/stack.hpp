@@ -1,47 +1,66 @@
 #ifndef __STACK__
 #define __STACK__
 
+#include <cstring>
 #include <stdexcept>
-#include <cstdlib>
 
 template <class T> class stack{
     protected:
         T *base;
         T *_top;
-        unsigned int size;
+        std::size_t size;
     public:
-        explicit stack();
-        explicit stack(unsigned int _size);
-        stack(stack &&);
+        // Construct a stack of length `length`
+        explicit stack(std::size_t _size=0);
+        
+        // Move-constructor
+        stack(stack<T> &&);
+        
+        // Copy-constructor
+        stack(const stack<T>&);
+        
+        // Destructor
         ~stack();
-        unsigned int length() const;
+        
+        // Return length of this stack
+        std::size_t length() const;
+        
+        // Clear this stack
         void clear();
-        void resize(unsigned int _size);
+        
+        // Resize this stack
+        void resize(std::size_t _size);
+        
+        // Push element `data` into stack top
         void push(const T &data);
+        
+        // Check if the stack is empty 
         bool empty() const;
-        T& pop();
-        const T& top() const;
+        
+        // Delete the element at stack top
+        void pop();
+        
+        // Get the element at stack top
+        T top() const;
 };
-template <class T> stack<T>::stack():base(NULL),_top(NULL),size(0){}
-
-template <class T> stack<T>::stack(unsigned int _size){base=_top=new T[size=_size]();}
+template <class T> stack<T>::stack(std::size_t _size=0){base=_top=new T[size=_size]();}
 
 template <class T> stack<T>::stack(stack &&other){
     base=other.base;
     _top=other._top;
     size=other.size;
-    other.base=other._top=nullptr;
+    other.base=other._top=NULL;
 }
 
 template <class T> stack<T>::~stack(){delete[] base;}
 
-template <class T> unsigned int stack<T>::length() const{return _top-base;}
+template <class T> std::size_t stack<T>::length() const{return _top-base;}
 
 template <class T> bool stack<T>::empty() const{return _top==base;}
 
 template <class T> void stack<T>::clear(){_top=base;}
 
-template <class T> void stack<T>::resize(unsigned int _size){
+template <class T> void stack<T>::resize(std::size_t _size){
     if(base==NULL)
         base=_top=new T[size=_size]();
     else{

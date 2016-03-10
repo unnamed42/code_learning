@@ -16,21 +16,38 @@ template <class T> class queue{
     protected:
         node *_front;
         node *_rear;
-        unsigned int _length;
+        std::size_t _length;
     public:
-        explicit queue();
-        explicit queue(unsigned int length);
+        
+        // Initialize a queue, whose length is `length`. By default, the given `length` is 0
+        explicit queue(std::size_t length=0);
+        
+        // Copy-constructor
+        queue(const queue<T>&);
+        
+        // Move-constructor
+        queue(queue<T>&&);
+        
+        // Destructor
         ~queue();
-        unsigned int length() const;
+        
+        // Return the length of this queue, O(1) time
+        std::size_t length() const;
+        
+        // Check if the queue holds no element
         bool empty() const;
-        void en_queue(const T &elem);
-        T de_queue();
+        
+        // Push an element to queue rear
+        void push(const T &elem);
+        
+        // Delete the element at queue front. If empty, throw std::out_of_range
+        void pop();
+        
+        // Get the element at queue front. If empty, throw std::out_of_range
         T front() const;
 };
 // member functions
-template <class T> queue<T>::queue():_front(nullptr),_rear(nullptr),_length(0){}
-
-template <class T> queue<T>::queue(unsigned int length):_length(length){
+template <class T> queue<T>::queue(std::size_t length):_length(length){
     if(length==0){
         _front=_rear=nullptr;
         return;
@@ -42,6 +59,22 @@ template <class T> queue<T>::queue(unsigned int length):_length(length){
     }
 }
 
+template <class T> queue<T>::queue(const queue<T> &other):_front(nullptr),_rear(nullptr),_length(other._length){
+    node **ptr=&_front,*qtr=other._front;
+    while(qtr!=nullptr){
+        *ptr=_rear=new node(qtr);
+        qtr=qtr->next;
+        ptr=&((*ptr)->next);
+    }
+}
+
+template <class T> queue<T>::queue(queue<T> &&other){
+    _front=other._front;
+    _rear=other._rear;
+    _length=other._length;
+    other._front=nullptr;
+}
+
 template <class T> queue<T>::~queue(){
     while(_front!=nullptr){
         _rear=_front->next;
@@ -50,7 +83,7 @@ template <class T> queue<T>::~queue(){
     }
 }
 
-template <class T> void queue<T>::en_queue(const T &elem){
+template <class T> void queue<T>::push(const T &elem){
     _length++;
     if(_front==nullptr){
         _front=_rear=new node(elem);
@@ -60,10 +93,9 @@ template <class T> void queue<T>::en_queue(const T &elem){
     _rear=_rear->next;
 }
 
-template <class T> T queue<T>::de_queue(){
+template <class T> void queue<T>::pop(){
     if(_rear==nullptr)
-        throw std::out_of_range("Queue empty");
-    T elem=_front->data;
+        throw std::out_of_range("queue::pop: queue empty");
     _length--;
     if(_rear==_front){
         delete _rear;
@@ -72,16 +104,15 @@ template <class T> T queue<T>::de_queue(){
     }
     node *save=_front->next;
     delete _front;_front=save;
-    return elem;
 }
 
 template <class T> T queue<T>::front() const{
     if(_front==nullptr)
-        throw std::out_of_range("Queue empty");
+        throw std::out_of_range("queue::front: queue empty");
     return _front->data;
 }
 
-template <class T> unsigned int queue<T>::length() const{return _length;}
+template <class T> std::size_t queue<T>::length() const{return _length;}
 
 template <class T> bool queue<T>::empty() const{return _length==0;}
 
