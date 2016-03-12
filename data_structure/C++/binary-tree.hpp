@@ -377,17 +377,16 @@ template <class T> typename bi_tree<T>::preorder_iterator::self_type &bi_tree<T>
 template <class T> bi_tree<T>::inorder_iterator::inorder_iterator(real_pointer _ptr, std::deque<real_pointer> *_s): iterator_base(_ptr, _s) {}
 
 template <class T> typename bi_tree<T>::inorder_iterator::self_type &bi_tree<T>::inorder_iterator::operator++() {
-    if(deque == nullptr || deque->empty()) {
-        ptr = nullptr;
-        return *this;
-    }
-    ptr = deque->back();
-    deque->pop_back();
-    real_pointer tmp = ptr->right;
-    while(tmp != nullptr) {
-        deque->push_back(tmp);
-        tmp = tmp->left;
-    }
+    if(!deque->empty()){
+        ptr = deque->back();
+        deque->pop_back();
+        auto tmp = ptr->right;
+        while(tmp != nullptr) {
+            deque->push_back(tmp);
+            tmp = tmp->left;
+        }
+    } else 
+        ptr=(ptr==nullptr?nullptr:ptr->right);
     return *this;
 }
 
@@ -490,7 +489,7 @@ template <class T> typename bi_tree<T>::level_iterator::self_type &bi_tree<T>::l
 #include <iostream>
 
 int main(){
-    bi_tree<int> tree({1,2,3,4,5,6,7,8,9,10},0);
+    bi_tree<int> tree({1,0,2},0);
     for(auto &it:tree)
         std::cout<<it<<" ";
     std::cout<<std::endl;
@@ -504,4 +503,5 @@ int main(){
         std::cout<<(*it)<<" ";
     return 0;
 }
+
 */
