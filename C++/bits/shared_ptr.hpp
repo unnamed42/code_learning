@@ -46,18 +46,6 @@ namespace rubbish{
                 std::size_t count;
             };
             
-            // functions
-            void redirect(){
-                if(_data==nullptr)
-                    return;
-                if(--_data->count <= 0){
-                    auto &&deleter=Deleter();
-                    deleter(_data->ptr);
-                    delete _data;
-                    _data=nullptr;
-                }
-            }
-            
         public:
             explicit shared_ptr(T *ptr) { _data=new data; _data->ptr=ptr; _data->count=1; }
             
@@ -69,7 +57,19 @@ namespace rubbish{
                     ++_data->count;
             }
             
-            ~shared_ptr() { redirect(); }
+            ~shared_ptr() { reset(); }
+            
+            // Reset this pointer to nullptr
+            void reset(){
+                if(_data==nullptr)
+                    return;
+                if(--_data->count <= 0){
+                    auto &&deleter=Deleter();
+                    deleter(_data->ptr);
+                    delete _data;
+                    _data=nullptr;
+                }
+            }
             
             T& operator*(){
                 if(_data==nullptr)
@@ -98,7 +98,7 @@ namespace rubbish{
             self_type& operator=(const self_type &other) {
                 if(operator==(other))
                     return *this;
-                redirect();
+                reset();
                 _data=other._data;
                 ++_data->count;
                 return *this;
@@ -147,6 +147,6 @@ namespace rubbish{
         return shared_ptr<rm_ref<T>,Deleter>(data);
     }
 
-};  // namespace rubbish
+}  // namespace rubbish
 
 #endif 

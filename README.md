@@ -1,3 +1,7 @@
-This is a nice place to put my code, so I put them here. All code should be compiled under at least C++11/C99 specification. If you encounter any compile errors, please use GCC/Clang instead.
+This is the place used for code storage. Most of them are written to help understand data structure. Some of them are written for fun.
 
-Now I am a CS student and I have spent only little time writing code, so you might find my code(or my English) terrible. If you find any error or have any idea to help improve my code, feel free to open an issue to help me, I'd appreciate it.
+I started coding about one year ago (about 2015-03), so I have little coding experience. Consequently, you might find my code terrible. If you find any error or have any idea to help improve my code, feel free to open an issue to help me, I'd appreciate it.
+
+All code should be compiled under at least C++11/C99 specification. If you encounter any compile errors, please use GCC/Clang instead.
+
+All contents here are under MIT License.
