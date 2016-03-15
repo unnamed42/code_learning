@@ -20,15 +20,15 @@ namespace rubbish{
             void insert(node*&,const T&);
             
         public:
-            explicit bsearch_tree(node *root=nullptr):base_class(root){}
+            explicit bsearch_tree(node *root=nullptr);
             explicit bsearch_tree(std::initializer_list<T>&&);
             bsearch_tree(const bsearch_tree<T>&);
             
             // Insert data to this tree
             void insert(const T&);
             
-            iterator begin() {return iterator(m_root);}
-            iterator end() {return iterator(nullptr);}
+            iterator begin();
+            iterator end();
     };
 
 } // namespace rubbish

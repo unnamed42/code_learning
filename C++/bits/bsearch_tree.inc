@@ -1,3 +1,5 @@
+template <class T> rubbish::bsearch_tree<T>::bsearch_tree(node *root):base_class(root) {}
+
 template <class T> rubbish::bsearch_tree<T>::bsearch_tree(std::initializer_list<T> &&l){
     for(auto &&i:l)
         insert(m_root,i);
@@ -17,3 +19,7 @@ template <class T> void rubbish::bsearch_tree<T>::insert(node* &root,const T &da
 }
 
 template <class T> void rubbish::bsearch_tree<T>::insert(const T &data) {insert(m_root,data);}
+
+template <class T> typename rubbish::bsearch_tree<T>::iterator rubbish::bsearch_tree<T>::begin() {return iterator(m_root);}
+
+template <class T> typename rubbish::bsearch_tree<T>::iterator rubbish::bsearch_tree<T>::end() {return iterator(nullptr);}

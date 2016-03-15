@@ -2,7 +2,33 @@
 #define __LINKED_QUEUE__
 
 #include <stdexcept>
+#include "bits/forward_list_base.hpp"
 
+namespace rubbish{
+    
+    template <class T> class queue: public forward_list_base<T> {
+        private:
+            typedef forward_list_base<T> base_class;
+        public:
+            typedef typename base_class::node node;
+            typedef typename base_class::iterator iterator;
+            
+            explicit queue();
+            
+            void push(const T&);
+            T front();
+            void pop();
+            
+        private:
+            using base_class::m_head;
+            using base_class::m_end;
+            using base_class::m_length;
+    };
+    
+} // namespace rubbish
+
+
+/*
 template <class T> class queue{
     public:
         struct node{
@@ -125,3 +151,6 @@ template <class T> queue<T>::node::node(const T &_data):data(_data),next(nullptr
 template <class T> queue<T>::node::node(const node *p):data(p->data),next(nullptr){}
 
 #endif
+*/
+
+#endif // __LINKED_QUEUE__

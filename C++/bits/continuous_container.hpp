@@ -1,6 +1,7 @@
 #ifndef __CONTINUOUS_CONTAINER__
 #define __CONTINUOUS_CONTAINER__
 
+#include <initializer_list> // std::initializer_list
 #include <bits/stl_iterator_base_types.h> // std::random_access_iterator_tag
 
 namespace rubbish{
@@ -84,12 +85,27 @@ namespace rubbish{
             std::size_t m_size;
             std::size_t m_used;
         public:
+            continuous_container();
+            
+            continuous_container(continuous_container<T>&&);
+            
+            continuous_container(const continuous_container<T>&);
+            
             continuous_container(std::size_t count,const T &value=T());
             
-            virtual ~continuous_container() {delete[] m_base;}
+            explicit continuous_container(std::initializer_list<T>&&);
             
-            iterator begin() {return iterator(m_base);}
-            iterator end() {return iterator(m_base+m_used);}
+            virtual ~continuous_container();
+            
+            std::size_t capacity() const noexcept;
+            
+            std::size_t size() const noexcept;
+            
+            iterator begin();
+            
+            iterator end();
+            
+            continuous_container<T>& operator=(const continuous_container<T>&)=delete;
     };
     
 } // namespace rubbish
