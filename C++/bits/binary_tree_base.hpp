@@ -10,14 +10,21 @@ namespace rubbish{
 
     typedef enum {LEFT = 0, RIGHT} CHILD;
 
-    template <class T> class binary_tree_base{
+    template <class T> struct basic_tree_node{
+        T data;
+        basic_tree_node<T> *left,*right;
+        
+        explicit basic_tree_node():data(T()),left(nullptr),right(nullptr) {}
+        explicit basic_tree_node(const T &data_):data(data_),left(nullptr),right(nullptr) {}
+    };
+    
+    // Minimum requirements of type `node`:
+    //   A data member variable named `data`;
+    //   Two pointer member variables named `left`, `right`, respectively;
+    //   `node` can be default-initialized and value-initialized.
+    
+    template <class T,class node = rubbish::basic_tree_node<T> > class binary_tree_base{
         public:
-            struct node{
-                T data;
-                node *left,*right;
-                explicit node():data(T()),left(nullptr),right(nullptr) {}
-                explicit node(const T &data_):data(data_),left(nullptr),right(nullptr) {}
-            };
             
             class tree_iterator_base {
                 public:
@@ -25,7 +32,7 @@ namespace rubbish{
                     typedef T*                          pointer;
                     typedef T&                          reference;
                     typedef std::forward_iterator_tag   iterator_category;
-                    typedef long int                    difference_type;
+                    typedef std::ptrdiff_t              difference_type;
                     
                     typedef tree_iterator_base                  self_type;
                     typedef std::shared_ptr<std::deque<node*> > data_type;
@@ -132,10 +139,10 @@ namespace rubbish{
             binary_tree_base(std::initializer_list<T> &&pre,std::initializer_list<T> &&in);
 
             // Copy-construtor
-            binary_tree_base(const binary_tree_base<T> &);
+            binary_tree_base(const binary_tree_base<T,node> &);
             
             // Move-construtor
-            binary_tree_base(binary_tree_base<T>&&);
+            binary_tree_base(binary_tree_base<T,node>&&);
 
             // Destructor
             virtual ~binary_tree_base();
@@ -168,7 +175,7 @@ namespace rubbish{
             level_iterator level_end() {return level_iterator(nullptr);}
             
             // Copy assignment operator
-            binary_tree_base<T>& operator=(const binary_tree_base<T>&);
+            binary_tree_base<T,node>& operator=(const binary_tree_base<T,node>&)=delete;
     };
 
 } // namespace rubbish

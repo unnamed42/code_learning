@@ -1,16 +1,16 @@
 // Binary tree base class function implementions
-template <class T> rubbish::binary_tree_base<T>::binary_tree_base(node *root): m_root(root) {}
+template <class T,class node> rubbish::binary_tree_base<T,node>::binary_tree_base(node *root): m_root(root) {}
 
-template <class T> rubbish::binary_tree_base<T>::binary_tree_base(const binary_tree_base<T> &tree) {
+template <class T,class node> rubbish::binary_tree_base<T,node>::binary_tree_base(const binary_tree_base<T,node> &tree) {
     copy_subtree(m_root, tree.m_root);
 }
 
-template <class T> rubbish::binary_tree_base<T>::binary_tree_base(binary_tree_base<T> &&tree) {
+template <class T,class node> rubbish::binary_tree_base<T,node>::binary_tree_base(binary_tree_base<T,node> &&tree) {
     m_root = tree.m_root;
     tree.m_root = nullptr;
 }
 
-template <class T> rubbish::binary_tree_base<T>::binary_tree_base(std::initializer_list<T> &&pre,std::initializer_list<T> &&in):m_root(nullptr) {
+template <class T,class node> rubbish::binary_tree_base<T,node>::binary_tree_base(std::initializer_list<T> &&pre,std::initializer_list<T> &&in):m_root(nullptr) {
     if(pre.size()!=in.size()||pre.size()==0||in.size()==0)
         return;
     std::deque<node*> stack;
@@ -36,7 +36,7 @@ template <class T> rubbish::binary_tree_base<T>::binary_tree_base(std::initializ
     }
 }
 
-template <class T> rubbish::binary_tree_base<T>::binary_tree_base(std::initializer_list<T> &&v, const T &null): m_root(nullptr) {
+template <class T,class node> rubbish::binary_tree_base<T,node>::binary_tree_base(std::initializer_list<T> &&v, const T &null): m_root(nullptr) {
     auto size = v.size();
     auto it = v.begin();
     if(size == 0 || *it == null)
@@ -65,11 +65,11 @@ template <class T> rubbish::binary_tree_base<T>::binary_tree_base(std::initializ
     }
 }
 
-template <class T> rubbish::binary_tree_base<T>::~binary_tree_base() {
+template <class T,class node> rubbish::binary_tree_base<T,node>::~binary_tree_base() {
     delete_subtree(m_root);
 }
 
-template <class T> void rubbish::binary_tree_base<T>::delete_subtree(const node *root) {
+template <class T,class node> void rubbish::binary_tree_base<T,node>::delete_subtree(const node *root) {
     if(root == nullptr)
         return;
     delete_subtree(root->left);
@@ -77,7 +77,7 @@ template <class T> void rubbish::binary_tree_base<T>::delete_subtree(const node 
     delete root;
 }
 
-template <class T> void rubbish::binary_tree_base<T>::copy_subtree(node *&dest, const node *src) {
+template <class T,class node> void rubbish::binary_tree_base<T,node>::copy_subtree(node *&dest, const node *src) {
     if(src == nullptr)
         return;
     if(dest != nullptr)
@@ -87,7 +87,7 @@ template <class T> void rubbish::binary_tree_base<T>::copy_subtree(node *&dest, 
     copy_subtree(dest->right, src->right);
 }
 
-template <class T> void rubbish::binary_tree_base<T>::insert_parent(const T &_data, CHILD LR) {
+template <class T,class node> void rubbish::binary_tree_base<T,node>::insert_parent(const T &_data, CHILD LR) {
     node *parent = new node(_data);
     if(LR == LEFT)
         parent->left = m_root;
@@ -96,7 +96,7 @@ template <class T> void rubbish::binary_tree_base<T>::insert_parent(const T &_da
     m_root = parent;
 }
 
-template <class T> void rubbish::binary_tree_base<T>::insert_child(const T &_data, CHILD LR) {
+template <class T,class node> void rubbish::binary_tree_base<T,node>::insert_child(const T &_data, CHILD LR) {
     node *child = new node(_data);
     if(m_root == nullptr) {
         m_root = child;
@@ -113,11 +113,11 @@ template <class T> void rubbish::binary_tree_base<T>::insert_child(const T &_dat
     }
 }
 
-template <class T> unsigned int rubbish::binary_tree_base<T>::depth() const noexcept {
+template <class T,class node> unsigned int rubbish::binary_tree_base<T,node>::depth() const noexcept {
     return depth(m_root);
 }
 
-template <class T> unsigned int rubbish::binary_tree_base<T>::depth(const node *root) const noexcept {
+template <class T,class node> unsigned int rubbish::binary_tree_base<T,node>::depth(const node *root) const noexcept {
     if(root == nullptr)
         return 0;
     unsigned int left = depth(root->left), right = depth(root->right);
@@ -130,7 +130,7 @@ template <class T> unsigned int rubbish::binary_tree_base<T>::depth(const node *
 // Iterator function implementions
 
 
-template <class T> rubbish::binary_tree_base<T>::tree_iterator_base::tree_iterator_base(node *root):m_cursor(nullptr) {
+template <class T,class node> rubbish::binary_tree_base<T,node>::tree_iterator_base::tree_iterator_base(node *root):m_cursor(nullptr) {
     if(root==nullptr)
         return;
     m_cursor=std::make_shared<std::deque<node*> >(std::deque<node*>());
@@ -139,7 +139,7 @@ template <class T> rubbish::binary_tree_base<T>::tree_iterator_base::tree_iterat
 // Two iterators are equal iif they are both
 // empty or their "next node"-s are equal
 
-template <class T> bool rubbish::binary_tree_base<T>::tree_iterator_base::operator==(const self_type &other) const {
+template <class T,class node> bool rubbish::binary_tree_base<T,node>::tree_iterator_base::operator==(const self_type &other) const {
     if(other.m_cursor==nullptr&&m_cursor==nullptr)
         return true;
     if(other.m_cursor==nullptr)
@@ -147,12 +147,12 @@ template <class T> bool rubbish::binary_tree_base<T>::tree_iterator_base::operat
     return other.m_cursor->back()==m_cursor->back();
 }
 
-template <class T> rubbish::binary_tree_base<T>::preorder_iterator::preorder_iterator(node *root):base_class(root) {
+template <class T,class node> rubbish::binary_tree_base<T,node>::preorder_iterator::preorder_iterator(node *root):base_class(root) {
     if(m_cursor!=nullptr)
         m_cursor->push_back(root);
 }
 
-template <class T> typename rubbish::binary_tree_base<T>::preorder_iterator::self_type& rubbish::binary_tree_base<T>::preorder_iterator::operator++(){
+template <class T,class node> typename rubbish::binary_tree_base<T,node>::preorder_iterator::self_type& rubbish::binary_tree_base<T,node>::preorder_iterator::operator++(){
     if(m_cursor==nullptr||m_cursor->empty()){
         m_cursor.reset();
         return *this;
@@ -169,7 +169,7 @@ template <class T> typename rubbish::binary_tree_base<T>::preorder_iterator::sel
     return *this;
 }
 
-template <class T> rubbish::binary_tree_base<T>::inorder_iterator::inorder_iterator(node *root):base_class(root) {
+template <class T,class node> rubbish::binary_tree_base<T,node>::inorder_iterator::inorder_iterator(node *root):base_class(root) {
     if(m_cursor==nullptr)
         return;
     while(root!=nullptr){
@@ -178,7 +178,7 @@ template <class T> rubbish::binary_tree_base<T>::inorder_iterator::inorder_itera
     }
 }
 
-template <class T> typename rubbish::binary_tree_base<T>::inorder_iterator::self_type& rubbish::binary_tree_base<T>::inorder_iterator::operator++(){
+template <class T,class node> typename rubbish::binary_tree_base<T,node>::inorder_iterator::self_type& rubbish::binary_tree_base<T,node>::inorder_iterator::operator++(){
     if(m_cursor==nullptr||m_cursor->empty()){
         m_cursor.reset();
         return *this;
@@ -195,7 +195,7 @@ template <class T> typename rubbish::binary_tree_base<T>::inorder_iterator::self
     return *this;
 }
 
-template <class T> rubbish::binary_tree_base<T>::postorder_iterator::postorder_iterator(node *root):base_class(root) {
+template <class T,class node> rubbish::binary_tree_base<T,node>::postorder_iterator::postorder_iterator(node *root):base_class(root) {
     if(m_cursor==nullptr)
         return;
     for(;;) {
@@ -209,7 +209,7 @@ template <class T> rubbish::binary_tree_base<T>::postorder_iterator::postorder_i
     }
 }
 
-template <class T> typename rubbish::binary_tree_base<T>::postorder_iterator::self_type& rubbish::binary_tree_base<T>::postorder_iterator::operator++(){
+template <class T,class node> typename rubbish::binary_tree_base<T,node>::postorder_iterator::self_type& rubbish::binary_tree_base<T,node>::postorder_iterator::operator++(){
     if(m_cursor==nullptr||m_cursor->empty()){
         m_cursor.reset();
         return *this;
@@ -237,12 +237,12 @@ template <class T> typename rubbish::binary_tree_base<T>::postorder_iterator::se
     return *this;
 }
 
-template <class T> rubbish::binary_tree_base<T>::level_iterator::level_iterator(node *root):base_class(root) {
+template <class T,class node> rubbish::binary_tree_base<T,node>::level_iterator::level_iterator(node *root):base_class(root) {
     if(m_cursor!=nullptr)
         m_cursor->push_back(root);
 }
 
-template <class T> typename rubbish::binary_tree_base<T>::level_iterator::self_type& rubbish::binary_tree_base<T>::level_iterator::operator++() {
+template <class T,class node> typename rubbish::binary_tree_base<T,node>::level_iterator::self_type& rubbish::binary_tree_base<T,node>::level_iterator::operator++() {
     if(m_cursor==nullptr||m_cursor->empty()){
         m_cursor.reset();
         return *this;

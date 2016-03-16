@@ -1,11 +1,11 @@
-template <class T> rubbish::bsearch_tree<T>::bsearch_tree(node *root):base_class(root) {}
+template <class T,class node> rubbish::bsearch_tree<T,node>::bsearch_tree(node *root):base_class(root) {}
 
-template <class T> rubbish::bsearch_tree<T>::bsearch_tree(std::initializer_list<T> &&l){
+template <class T,class node> rubbish::bsearch_tree<T,node>::bsearch_tree(std::initializer_list<T,class node> &&l){
     for(auto &&i:l)
         insert(m_root,i);
 }
 
-template <class T> void rubbish::bsearch_tree<T>::insert(node* &root,const T &data){
+template <class T,class node> void rubbish::bsearch_tree<T,node>::insert(node* &root,const T &data){
     if(root==nullptr){
         root=new node(data);
         return;
@@ -18,8 +18,8 @@ template <class T> void rubbish::bsearch_tree<T>::insert(node* &root,const T &da
         insert(root->right,data);
 }
 
-template <class T> void rubbish::bsearch_tree<T>::insert(const T &data) {insert(m_root,data);}
+template <class T,class node> void rubbish::bsearch_tree<T,node>::insert(const T &data) {insert(m_root,data);}
 
-template <class T> typename rubbish::bsearch_tree<T>::iterator rubbish::bsearch_tree<T>::begin() {return iterator(m_root);}
+template <class T,class node> typename rubbish::bsearch_tree<T,node>::iterator rubbish::bsearch_tree<T,node>::begin() {return iterator(m_root);}
 
-template <class T> typename rubbish::bsearch_tree<T>::iterator rubbish::bsearch_tree<T>::end() {return iterator(nullptr);}
+template <class T,class node> typename rubbish::bsearch_tree<T,node>::iterator rubbish::bsearch_tree<T,node>::end() {return iterator(nullptr);}
