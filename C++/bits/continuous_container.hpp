@@ -14,7 +14,7 @@ namespace rubbish{
                     typedef T*                              pointer;
                     typedef T&                              reference;
                     typedef std::random_access_iterator_tag iterator_category;
-                    typedef long int                        difference_type;
+                    typedef std::ptrdiff_t                  difference_type;
                     
                     typedef iterator_base self_type;
                     typedef T* data_type;
@@ -53,10 +53,10 @@ namespace rubbish{
                     self_type operator++(int) {auto i=*this;operator++();return i;}
                     self_type& operator--() {--m_cursor;return *this;}
                     self_type operator--(int) {auto i=*this;operator--();return i;}
-                    self_type& operator+=(long diff) {m_cursor+=diff;return *this;}
-                    self_type operator+(long diff) const {return self_type(m_cursor+diff);}
-                    self_type& operator-=(long diff) {m_cursor-=diff;return *this;}
-                    self_type operator-(long diff) const {return self_type(m_cursor-diff);}
+                    self_type& operator+=(const difference_type &diff) {m_cursor+=diff;return *this;}
+                    self_type operator+(const difference_type &diff) const {return self_type(m_cursor+diff);}
+                    self_type& operator-=(const difference_type &diff) {m_cursor-=diff;return *this;}
+                    self_type operator-(const difference_type &diff) const {return self_type(m_cursor-diff);}
                 protected:
                     using base_class::m_cursor;
             };
@@ -72,10 +72,10 @@ namespace rubbish{
                     self_type operator++(int) {auto i=*this;operator++();return i;}
                     self_type& operator--() {++m_cursor;return *this;}
                     self_type operator--(int) {auto i=*this;operator--();return i;}
-                    self_type& operator+=(long diff) {m_cursor-=diff;return *this;}
-                    self_type operator+(long diff) const {return self_type(m_cursor-diff);}
-                    self_type& operator-=(long diff) {m_cursor+=diff;return *this;}
-                    self_type operator-(long diff) const {return self_type(m_cursor+diff);}
+                    self_type& operator+=(const difference_type &diff) {m_cursor-=diff;return *this;}
+                    self_type operator+(const difference_type &diff) const {return self_type(m_cursor-diff);}
+                    self_type& operator-=(const difference_type &diff) {m_cursor+=diff;return *this;}
+                    self_type operator-(const difference_type &diff) const {return self_type(m_cursor+diff);}
                 protected:
                     using base_class::m_cursor;
             };

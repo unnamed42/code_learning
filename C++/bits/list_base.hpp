@@ -20,11 +20,11 @@ namespace rubbish{
             
             class iterator_base{
                 public:
-                    typedef T                               value_type;
-                    typedef T&                              reference;
-                    typedef T*                              pointer;
-                    typedef std::bidirectional_iterator_tag iterator_category;
-                    typedef long int                        difference_type;
+                    typedef T                                value_type;
+                    typedef T&                               reference;
+                    typedef T*                               pointer;
+                    typedef std::bidirectional_iterator_tag  iterator_category;
+                    typedef std::ptrdiff_t                   difference_type;
                     
                     typedef iterator_base                 self_type;
                     typedef typename list_base<T>::node*  data_type;

@@ -24,7 +24,7 @@ namespace rubbish{
                     typedef T&                          reference;
                     typedef T*                          pointer;
                     typedef std::forward_iterator_tag   iterator_category;
-                    typedef long int                    difference_type;
+                    typedef std::ptrdiff_t              difference_type;
                     
                     typedef iterator_base                   self_type;
                     typedef typename forward_list_base<T>::node* data_type;
