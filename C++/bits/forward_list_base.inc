@@ -111,7 +111,7 @@ template <class T> void rubbish::forward_list_base<T>::push_back(const T &elem){
 
 template <class T> void rubbish::forward_list_base<T>::pop_front(){
     if(m_head==nullptr)
-        throw std::out_of_range("forward_list_base::pop_back: empty list!");
+        throw std::out_of_range("forward_list_base::pop_front: empty list!");
     --m_length;
     if(m_end==m_head){
         delete m_end;

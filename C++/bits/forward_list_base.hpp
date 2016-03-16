@@ -61,7 +61,7 @@ namespace rubbish{
             
         protected:
             node *m_head;
-            node *m_end;// the actual final node of forward_list_base, for acceleration of append()
+            node *m_end;// the actual final node of forward_list_base
             std::size_t m_length;
         public:
             // Initialize a forward_list_base of given length, filled by the given value. By default, it is an empty forward_list_base
