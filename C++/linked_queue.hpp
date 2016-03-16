@@ -11,7 +11,7 @@ namespace rubbish{
     //   Can push an element to its end by member function `void push_back(const T&)`
     //   Can destruct the element at its front by member function `void pop_front()`;
     //   Can access its first element by dereferencing `begin()`;
-    //   Can return its length by member function `std::size_t length()`;
+    //   Can return its length by member function `std::size_t size()`;
     //   Copy-constructible, move-constructible;
     //   Can be default-initialized.
     

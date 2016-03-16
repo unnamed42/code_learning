@@ -100,7 +100,7 @@ namespace rubbish{
             virtual ~list_base();
             
             // Return the size of this list_base
-            std::size_t length() const noexcept;
+            std::size_t size() const noexcept;
             
             // Reverse the whole list_base
             void reverse();

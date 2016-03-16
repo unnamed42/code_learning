@@ -53,7 +53,7 @@ template <class T> rubbish::list_base<T>::~list_base(){
     }
 }
 
-template <class T> std::size_t rubbish::list_base<T>::length() const noexcept {return m_length;}
+template <class T> std::size_t rubbish::list_base<T>::size() const noexcept {return m_length;}
 
 template <class T> void rubbish::list_base<T>::reverse(){
     if(m_head==nullptr||m_head->next==nullptr)

@@ -4,7 +4,7 @@ template <class T,class Container> rubbish::queue<T>::queue():m_base() {}
 
 template <class T,class Container> rubbish::queue<T>::queue(rubbish::queue<T> &&o):m_base(std::move(o.m_base)) {}
 
-template <class T,class Container> std::size_t rubbish::queue<T>::size() const {return m_base.length();}
+template <class T,class Container> std::size_t rubbish::queue<T>::size() const {return m_base.size();}
 
 template <class T,class Container> bool rubbish::queue<T>::empty() const {return size()==0;}
 

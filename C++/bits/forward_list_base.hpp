@@ -80,7 +80,7 @@ namespace rubbish{
             virtual ~forward_list_base();
             
             // Return the size of this forward_list_base
-            std::size_t length() const noexcept;
+            std::size_t size() const noexcept;
             
             // Reverse the whole forward_list_base
             void reverse();

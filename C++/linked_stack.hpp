@@ -8,10 +8,10 @@
 namespace rubbish{
     
     // Minimum requirements of type `Container`:
-    //   Can push an element to its end `void push_back(const T&)`
-    //   Can destruct the element at its end `void pop_back()`;
+    //   Can push an element to its end by member function `void push_back(const T&)`
+    //   Can destruct the element at its end by member function `void pop_back()`;
     //   Can access its final element by dereferencing `rbegin()`;
-    //   Can return its length;
+    //   Can return its length by member function `std::size_t size()`;
     //   Copy-constructible, move-constructible;
     //   Can be default-initialized.
     

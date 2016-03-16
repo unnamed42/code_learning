@@ -73,7 +73,7 @@ template <class T> void rubbish::forward_list_base<T>::remove_elem(const T &elem
         m_end=prev;
 }
 
-template <class T> std::size_t rubbish::forward_list_base<T>::length() const noexcept {return m_length;}
+template <class T> std::size_t rubbish::forward_list_base<T>::size() const noexcept {return m_length;}
 
 template <class T> typename rubbish::forward_list_base<T>::iterator rubbish::forward_list_base<T>::search(const T &elem) const{
     node *p=m_head;

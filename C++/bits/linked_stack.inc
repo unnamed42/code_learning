@@ -4,7 +4,7 @@ template <class T,class Container> rubbish::stack<T>::stack():m_base() {}
 
 template <class T,class Container> rubbish::stack<T>::stack(rubbish::stack<T> &&o):m_base(std::move(o.m_base)) {}
 
-template <class T,class Container> std::size_t rubbish::stack<T>::size() const {return m_base.length();}
+template <class T,class Container> std::size_t rubbish::stack<T>::size() const {return m_base.size();}
 
 template <class T,class Container> bool rubbish::stack<T>::empty() const {return size()==0;}
 
