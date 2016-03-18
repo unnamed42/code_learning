@@ -98,6 +98,9 @@ namespace rubbish{
             // Remove the element at the head of this list
             void pop_front();
             
+            // Get the element at then back
+            T& back();
+            
             // Remove the node after `it`
             void remove_after(iterator);
             

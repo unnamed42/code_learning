@@ -134,6 +134,8 @@ template <class T> void rubbish::forward_list_base<T>::push_front(const T &elem)
     m_head=tmp;
 }
 
+template <class T> T& rubbish::forward_list_base<T>::back() const {return m_end->data;}
+
 template <class T> typename rubbish::forward_list_base<T>::iterator rubbish::forward_list_base<T>::begin(){ return iterator(m_head); }
 
 template <class T> typename rubbish::forward_list_base<T>::iterator rubbish::forward_list_base<T>::end(){ return iterator(nullptr); }

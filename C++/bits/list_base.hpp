@@ -1,6 +1,7 @@
 #ifndef __LIST_BASE__
 #define __LIST_BASE__
 
+#include <stdexcept>
 #include <initializer_list> // std::initializer_list
 #include <bits/stl_iterator_base_types.h> // std::bidirectional_iterator_tag
 
@@ -88,7 +89,7 @@ namespace rubbish{
             list_base(std::size_t=0,const T& =T());
             
             // Move-constructor
-            list_base(list_base&&);
+            list_base(list_base<T>&&);
             
             // Copy-constructor
             list_base(const list_base<T>&);

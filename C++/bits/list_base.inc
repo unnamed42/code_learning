@@ -2,7 +2,7 @@
 template <class T> rubbish::list_base<T>::list_base(std::size_t len,const T &value):m_head(nullptr),m_end(nullptr),m_length(len){
     if(len==0)
         return;
-    node dummy();
+    node dummy;
     node *ptr=&dummy;
     for(;len>0;--len){
         ptr->next=new node(value);
@@ -69,7 +69,7 @@ template <class T> void rubbish::list_base<T>::reverse(){
     m_head=_node;
 }
 
-template <class T> void rubbish::forward_list_base<T>::push_back(const T &elem){
+template <class T> void rubbish::list_base<T>::push_back(const T &elem){
     ++m_length;
     if(m_head==nullptr){
         m_head=m_end=new node(elem);
@@ -80,9 +80,9 @@ template <class T> void rubbish::forward_list_base<T>::push_back(const T &elem){
     m_end=m_end->next;
 }
 
-template <class T> void rubbish::forward_list_base<T>::pop_back(){
+template <class T> void rubbish::list_base<T>::pop_back(){
     if(m_end==nullptr)
-        throw std::out_of_range("forward_list_base::pop_back: empty list!");
+        throw std::out_of_range("list_base::pop_back: empty list!");
     --m_length;
     if(m_end==m_head){
         delete m_end;
@@ -95,9 +95,9 @@ template <class T> void rubbish::forward_list_base<T>::pop_back(){
     m_end=save;
 }
 
-template <class T> void rubbish::forward_list_base<T>::pop_front(){
+template <class T> void rubbish::list_base<T>::pop_front(){
     if(m_head==nullptr)
-        throw std::out_of_range("forward_list_base::pop_back: empty list!");
+        throw std::out_of_range("list_base::pop_back: empty list!");
     --m_length;
     if(m_end==m_head){
         delete m_end;
@@ -110,7 +110,7 @@ template <class T> void rubbish::forward_list_base<T>::pop_front(){
     m_head=save;
 }
 
-template <class T> void rubbish::forward_list_base<T>::push_front(const T &elem){
+template <class T> void rubbish::list_base<T>::push_front(const T &elem){
     ++m_length;
     if(m_head==nullptr){
         m_head=m_end=new node(elem);
