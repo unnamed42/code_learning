@@ -4,32 +4,33 @@
 #include <iostream>
 #include <stdexcept>
 
-typedef typename bmp::file_header file_header;
-typedef typename bmp::info_header info_header;
+using namespace image;
 
-template <class T> static inline constexpr std::shared_ptr<T> create_array(T *arr) {return std::shared_ptr<T>(arr,std::default_delete<T[]>());}
+// Name alias for typing decrease
+typedef bmp_file_header file_header;
+typedef bmp_info_header info_header;
 
-bmp::bmp():_width(0),_height(0),_bit_count(0),_data_size(0),_data(create_array<uint8_t>(nullptr))/*,_data_RGB(create_array<uint8_t>(nullptr))*/{
-    /*_data=std::shared_ptr<uint8_t>(nullptr,std::default_delete<uint8_t[]>());
-    _data_RGB=std::shared_ptr<uint8_t>(nullptr,std::default_delete<uint8_t[]>());*/
-}
+// Helper factory
+template <class T> static inline std::shared_ptr<T> create_array(T *arr) {return std::shared_ptr<T>(arr,std::default_delete<T[]>());}
 
-bmp::bmp(const bmp &other):_width(other._width),_height(other._height),_bit_count(other._bit_count),_data_size(other._data_size),_data(other._data)/*,_data_RGB(other._data_RGB)*/{}
 
-bmp::bmp(const char *filename){read(filename);}
+bmp::bmp():m_width(0),m_height(0),m_bit_count(0),m_data_size(0),m_data(create_array<rgbquad>(nullptr)) {}
+
+bmp::bmp(const bmp &other):m_width(other.m_width),m_height(other.m_height),m_bit_count(other.m_bit_count),m_data_size(other.m_data_size),m_data(other.m_data) {}
+
+bmp::bmp(const char *filename) {read(filename);}
 
 void bmp::clear(){
-    _width=_height=_bit_count=_data_size=0;
-    _data.reset();
-    //_data_RGB.reset();
+    m_width=m_height=m_bit_count=m_data_size=0;
+    m_data.reset();
 }
 
 void bmp::show_info() const{
     std::cout << "===== bmp =====" << std::endl
-           << "Width: " << _width << " pixels" << std::endl
-           << "Height: " << _height << " pixels" << std::endl
-           << "Bit Count: " << _bit_count << " bits" << std::endl
-           << "Data Size: " << _data_size  << " bytes" << std::endl;
+           << "Width: " << m_width << " pixels" << std::endl
+           << "Height: " << m_height << " pixels" << std::endl
+           << "Bit Count: " << m_bit_count << " bits" << std::endl
+           << "Data Size: " << m_data_size  << " bytes" << std::endl;
 }
 
 void bmp::read(const char *filename){
@@ -38,13 +39,17 @@ void bmp::read(const char *filename){
         throw std::runtime_error("bmp::read: cannot open or read file");
     file_header f;
     file.read(reinterpret_cast<char*>(&f),sizeof(file_header));
+    
+    // Checking file signature
     if(f.signature[0]!='B'||f.signature[1]!='M'){
         file.close();
         throw std::runtime_error("bmp::read: Wrong image file type");
     }
+    
     info_header i;
     file.read(reinterpret_cast<char*>(&i),sizeof(info_header));
     
+    // Checking image format
     if(i.bit_count<8){
         file.close();
         throw std::runtime_error("Unsupported format.");
@@ -53,6 +58,8 @@ void bmp::read(const char *filename){
         file.close();
         throw std::runtime_error("Unsupported compression mode.");
     }
+    
+    // Recalculating file size
     file.seekg(0,std::ios::end);
     f.file_size=file.tellg();
     
@@ -62,40 +69,39 @@ void bmp::read(const char *filename){
     uint32_t image_size=f.file_size - f.off_bits;
     
     // write vars
-    _width=i.width;
-    _height=i.height;
-    _bit_count=i.bit_count;
-    _data_size=data_size;
-    //_data_RGB=create_array(new uint8_t[image_size]);
+    m_width=i.width;
+    m_height=i.height;
+    m_bit_count=i.bit_count;
+    m_data_size=data_size;
     
     // see if decoding is required
     if(i.compression==0){
         file.seekg(f.off_bits,std::ios::beg);
-        _data=create_array(new uint8_t[image_size]);
-        file.read(reinterpret_cast<char*>(_data.get()),image_size);
+        m_data=create_array(new uint8_t[image_size]);
+        file.read(reinterpret_cast<char*>(m_data.get()),image_size);
     } else if(i.compression==1) {
-        auto size=f.file_size-f.off_bits;
-        auto encoded=create_array(new uint8_t[size]);
+        auto size=(f.file_size-f.off_bits)/sizeof(rgbquad);
+        auto encoded=create_array(new rgbquad[size]);
         
         file.seekg(f.off_bits,std::ios::beg);
         file.read(reinterpret_cast<char*>(encoded.get()),size);
         
-        _data=decode_RLE8(encoded.get(),size);
+        m_data=decode_RLE8(encoded.get(),size);
     }
     file.close();
-    
+    /*
     // remove paddings
     if(i.compression==0&&paddings>0){
         int32_t line_width=i.width*i.bit_count/8;
         for(int x=1;x<i.height;++x)
-            std::memcpy(&_data.get()[x*line_width],&_data.get()[x*(line_width+paddings)],line_width);
+            std::memcpy(&m_data.get()[x*line_width],&m_data.get()[x*(line_width+paddings)],line_width);
     }
     
     if(i.height>0)
-        rotate(_data.get(),i.width,i.height,i.bit_count);
+        rotate(m_data.get(),i.width,i.height,i.bit_count);*/
 }
 
-void bmp::save(const char *filename,int32_t w,int32_t h, uint16_t bit_count,const uint8_t *data){
+void bmp::save(const char *filename,int32_t w,int32_t h, uint16_t bit_count,const rgbquad data[]){
     if(w == 0 || h == 0)
         throw std::runtime_error("Zero width or height");
 
@@ -103,8 +109,9 @@ void bmp::save(const char *filename,int32_t w,int32_t h, uint16_t bit_count,cons
     
     constexpr uint32_t MAX_COLOR=256; // max color number
     
-    const auto channel_count=bit_count/8;
+    const auto channel_count = bit_count/8;
     
+    // Default uncompressed file headers
     file_header f{{'B','M'},0,0,0,54};
     info_header i{40,w,h,1,bit_count,0,0,RES,RES,0,0};
     
@@ -136,11 +143,12 @@ void bmp::save(const char *filename,int32_t w,int32_t h, uint16_t bit_count,cons
 
     // copy image data
     std::memcpy(tmp_data.get(), data, data_size);
-
+    
+/*
     // flip the image upside down
     // If height is  negative, then it is bottom-top orientation (no need to flip)
-    if(h > 0)
-        rotate(tmp_data.get(), w, h, bit_count);
+    //if(h > 0)
+    //    rotate(tmp_data.get(), w, h, bit_count);
 
     // convert RGB to BGR order
     //if(channel_count == 3 || channel_count == 4)
@@ -153,7 +161,7 @@ void bmp::save(const char *filename,int32_t w,int32_t h, uint16_t bit_count,cons
         // add extra bytes for paddings in case the width is not divisible by 4
         data_with_paddings = create_array(new uint8_t[image_size]);
 
-        int line_width = w * channel_count;       // line _width in bytes
+        int line_width = w * channel_count;       // line m_width in bytes
 
         // copy single line at a time
         for(int i = 0; i < h; ++i){
@@ -164,7 +172,7 @@ void bmp::save(const char *filename,int32_t w,int32_t h, uint16_t bit_count,cons
             for(int j = 1; j <= paddings; ++j)
                 data_with_paddings.get()[(i+1)*(line_width+paddings) - j] = uint8_t(0);
         }
-    }
+    }*/
 
     // open output file to write data
     std::fstream file(filename,std::ios::out|std::ios::binary);
@@ -194,7 +202,7 @@ void bmp::save(const char *filename,int32_t w,int32_t h, uint16_t bit_count,cons
     file.close();
 }
 
-void bmp::save(const char *filename) {save(filename,_width,_height,_bit_count,_data.get());}
+void bmp::save(const char *filename) {save(filename,m_width,m_height,m_bit_count,m_data.get());}
 
 std::shared_ptr<uint8_t> bmp::decode_RLE8(uint8_t *input,uint32_t size){
     if(input==nullptr)
@@ -255,7 +263,7 @@ void bmp::rotate(uint8_t* data, int32_t width, int32_t height, uint32_t bit_coun
     }
 }
 
-void bmp::swap_RB(uint8_t *data,uint32_t data_size,uint16_t bit_count){
+void bmp::swap_RB(rgbquad data[],uint32_t data_size,uint16_t bit_count){
     auto channel_count=bit_count/8;
     if(data==nullptr || channel_count < 3 || data_size%channel_count!=0)  // channel_count must be 3 or 4, data_size must be divisible by the number of channels
         return;
@@ -265,7 +273,7 @@ void bmp::swap_RB(uint8_t *data,uint32_t data_size,uint16_t bit_count){
         data[i]^=data[i+2]^=data[i]^=data[i+2];
 }
 
-uint32_t bmp::get_color_count(const uint8_t *data,uint32_t data_size){
+uint32_t bmp::get_color_count(const rgbquad data[],uint32_t data_size){
     if(data==nullptr) 
         return 0;
     constexpr int MAX_COLOR = 256;  // max number of colors in 8-bit grayscale
@@ -354,12 +362,12 @@ std::shared_ptr<uint8_t> bmp::RGB_to_gray(const uint8_t *input,int32_t width,int
     return output;
 }
 
-int32_t bmp::width() const noexcept {return _width;}
+int32_t bmp::width() const noexcept {return m_width;}
 
-int32_t bmp::height() const noexcept {return _height;}
+int32_t bmp::height() const noexcept {return m_height;}
 
-uint16_t bmp::bit_count() const noexcept {return _bit_count;}
+uint16_t bmp::bit_count() const noexcept {return m_bit_count;}
 
-uint32_t bmp::data_size() const noexcept {return _data_size;}
+uint32_t bmp::data_size() const noexcept {return m_data_size;}
 
-std::shared_ptr<uint8_t> bmp::data() const noexcept {return _data;}
+std::shared_ptr<uint8_t> bmp::data() const noexcept {return m_data;}

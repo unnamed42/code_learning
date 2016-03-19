@@ -8,7 +8,7 @@ namespace rubbish{
     // Minimum requirements of type `node`:
     //   Same as requirements of `node` used in `binary_tree_base`.
     
-    template <class T,class node = rubbish::basic_tree_node<T> > class bsearch_tree: public binary_tree_base<T,node>{
+    template <class T,class node = rubbish::binary_tree_node<T> > class bsearch_tree: public binary_tree_base<T,node>{
         private:
             typedef binary_tree_base<T,node> base_class;
         public:

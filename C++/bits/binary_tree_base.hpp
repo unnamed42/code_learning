@@ -10,12 +10,12 @@ namespace rubbish{
 
     typedef enum {LEFT = 0, RIGHT} CHILD;
 
-    template <class T> struct basic_tree_node{
+    template <class T> struct binary_tree_node{
         T data;
-        basic_tree_node<T> *left,*right;
+        binary_tree_node<T> *left,*right;
         
-        explicit basic_tree_node():data(T()),left(nullptr),right(nullptr) {}
-        explicit basic_tree_node(const T &data_):data(data_),left(nullptr),right(nullptr) {}
+        explicit binary_tree_node():data(T()),left(nullptr),right(nullptr) {}
+        explicit binary_tree_node(const T &data_):data(data_),left(nullptr),right(nullptr) {}
     };
     
     // Minimum requirements of type `node`:
@@ -23,7 +23,7 @@ namespace rubbish{
     //   Two pointer member variables named `left`, `right`, respectively;
     //   `node` can be default-initialized and value-initialized.
     
-    template <class T,class node = rubbish::basic_tree_node<T> > class binary_tree_base{
+    template <class T,class node = rubbish::binary_tree_node<T> > class binary_tree_base{
         public:
             
             class tree_iterator_base {
@@ -44,7 +44,7 @@ namespace rubbish{
                     virtual reference operator*() const = 0;
                     pointer operator->() const { return &operator*(); }
                     data_type get() const {return m_cursor;}
-                    bool operator==(const self_type &other) const;
+                    virtual bool operator==(const self_type &other) const;
                     bool operator!=(const self_type &other) const {return !operator==(other);}
                     self_type& operator=(const self_type &other) {m_cursor=other.m_cursor; return *this;}
                 protected:
@@ -63,7 +63,7 @@ namespace rubbish{
                     reference operator*() const {return m_cursor->back()->data;}
                     self_type& operator++();
                     self_type operator++(int) {auto i=*this; operator++(); return i;}
-                    bool operator==(const self_type &other) ;
+                    bool operator==(const self_type &other) const {return base_class::operator==(other)&&other.m_cursor->back()==m_cursor->back();}
                 private:
                     using base_class::m_cursor;
             };
@@ -79,7 +79,7 @@ namespace rubbish{
                     reference operator*() const {return m_cursor->back()->data;}
                     self_type& operator++();
                     self_type operator++(int) {auto i=*this; operator++(); return i;}
-                    self_type& operator=(const self_type &other) {m_cursor=other.m_cursor;}
+                    bool operator==(const self_type &other) const {return base_class::operator==(other)&&other.m_cursor->back()==m_cursor->back();}
                 private:
                     using base_class::m_cursor;
             };
@@ -95,7 +95,7 @@ namespace rubbish{
                     reference operator*() const {return m_cursor->back()->data;}
                     self_type& operator++();
                     self_type operator++(int) {auto i=*this; operator++(); return i;}
-                    self_type& operator=(const self_type &other) {m_cursor=other.m_cursor;}
+                    bool operator==(const self_type &other) const {return base_class::operator==(other)&&other.m_cursor->back()==m_cursor->back();}
                 private:
                     using base_class::m_cursor;
             };
@@ -111,7 +111,7 @@ namespace rubbish{
                     reference operator*() const {return m_cursor->front()->data;}
                     self_type& operator++();
                     self_type operator++(int) {auto i=*this; operator++(); return i;}
-                    self_type& operator=(const self_type &other) {m_cursor=other.m_cursor;}
+                    bool operator==(const self_type &other) const {return base_class::operator==(other)&&other.m_cursor->front()==m_cursor->front();}
                 private:
                     using base_class::m_cursor;
             };

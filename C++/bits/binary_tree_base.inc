@@ -78,8 +78,10 @@ template <class T,class node> void rubbish::binary_tree_base<T,node>::delete_sub
 }
 
 template <class T,class node> void rubbish::binary_tree_base<T,node>::copy_subtree(node *&dest, const node *src) {
-    if(src == nullptr)
+    if(src == nullptr){
+        dest=nullptr;
         return;
+    }
     if(dest != nullptr)
         delete_subtree(dest);
     dest = new node(src);
@@ -144,7 +146,6 @@ template <class T,class node> bool rubbish::binary_tree_base<T,node>::tree_itera
         return true;
     if(other.m_cursor==nullptr)
         return false;
-    return other.m_cursor->back()==m_cursor->back();
 }
 
 template <class T,class node> rubbish::binary_tree_base<T,node>::preorder_iterator::preorder_iterator(node *root):base_class(root) {
