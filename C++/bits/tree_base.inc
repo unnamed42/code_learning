@@ -105,6 +105,7 @@ template <class T,class node> typename rubbish::tree_base<T,node>::postorder_ite
         return *this;
     }
     auto stack_top = m_cursor->back(), tmp = stack_top->sibling;
+    // TODO: find a better way to examine if `ptr` is `stack_top`'s child 
     if(ptr == stack_top->child && tmp != nullptr) {
         for(;;) {
             m_cursor->push_back(tmp);
