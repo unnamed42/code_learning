@@ -49,6 +49,7 @@ namespace rubbish{
                     
                     using base_class::base_class;
                     ~iterator()=default;
+                    
                     self_type& operator++() {++m_cursor;return *this;}
                     self_type operator++(int) {auto i=*this;operator++();return i;}
                     self_type& operator--() {--m_cursor;return *this;}
@@ -66,8 +67,12 @@ namespace rubbish{
                     typedef iterator_base base_class;
                 public:
                     typedef reverse_iterator self_type;
+                    typedef typename base_class::data_type data_type;
+                    typedef typename base_class::difference_type difference_type;
+                    
                     using base_class::base_class;
                     ~reverse_iterator()=default;
+                    
                     self_type& operator++() {--m_cursor;return *this;}
                     self_type operator++(int) {auto i=*this;operator++();return i;}
                     self_type& operator--() {++m_cursor;return *this;}

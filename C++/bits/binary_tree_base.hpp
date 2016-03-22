@@ -60,10 +60,10 @@ namespace rubbish{
                     
                     explicit preorder_iterator(node *root);
                     preorder_iterator(const self_type &other):base_class(other.m_cursor) {}
-                    reference operator*() const {return m_cursor->back()->data;}
+                    reference operator*() const override {return m_cursor->back()->data;}
                     self_type& operator++();
                     self_type operator++(int) {auto i=*this; operator++(); return i;}
-                    bool operator==(const self_type &other) const {return base_class::operator==(other)&&other.m_cursor->back()==m_cursor->back();}
+                    bool operator==(const self_type &other)  const override {return base_class::operator==(other)&&other.m_cursor->back()==m_cursor->back();}
                 private:
                     using base_class::m_cursor;
             };
@@ -76,10 +76,10 @@ namespace rubbish{
                     typedef typename tree_iterator_base::reference reference;
                     explicit inorder_iterator(node *root);
                     inorder_iterator(const self_type &other):base_class(other.m_cursor) {}
-                    reference operator*() const {return m_cursor->back()->data;}
+                    reference operator*() const override {return m_cursor->back()->data;}
                     self_type& operator++();
                     self_type operator++(int) {auto i=*this; operator++(); return i;}
-                    bool operator==(const self_type &other) const {return base_class::operator==(other)&&other.m_cursor->back()==m_cursor->back();}
+                    bool operator==(const self_type &other) const override {return base_class::operator==(other)&&other.m_cursor->back()==m_cursor->back();}
                 private:
                     using base_class::m_cursor;
             };
@@ -92,10 +92,10 @@ namespace rubbish{
                     typedef typename tree_iterator_base::reference reference;
                     explicit postorder_iterator(node *root);
                     postorder_iterator(const self_type &other):base_class(other.m_cursor) {}
-                    reference operator*() const {return m_cursor->back()->data;}
+                    reference operator*() const override {return m_cursor->back()->data;}
                     self_type& operator++();
                     self_type operator++(int) {auto i=*this; operator++(); return i;}
-                    bool operator==(const self_type &other) const {return base_class::operator==(other)&&other.m_cursor->back()==m_cursor->back();}
+                    bool operator==(const self_type &other) const override {return base_class::operator==(other)&&other.m_cursor->back()==m_cursor->back();}
                 private:
                     using base_class::m_cursor;
             };
@@ -108,10 +108,10 @@ namespace rubbish{
                     typedef typename tree_iterator_base::reference reference;
                     explicit level_iterator(node *root);
                     level_iterator(const self_type &other):base_class(other.m_cursor) {}
-                    reference operator*() const {return m_cursor->front()->data;}
+                    reference operator*() const override {return m_cursor->front()->data;}
                     self_type& operator++();
                     self_type operator++(int) {auto i=*this; operator++(); return i;}
-                    bool operator==(const self_type &other) const {return base_class::operator==(other)&&other.m_cursor->front()==m_cursor->front();}
+                    bool operator==(const self_type &other) const override {return base_class::operator==(other)&&other.m_cursor->front()==m_cursor->front();}
                 private:
                     using base_class::m_cursor;
             };
