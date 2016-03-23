@@ -9,25 +9,29 @@
 
 namespace rubbish{
 
-    template <class T> struct avl_tree_node{
-        T data;
-        short height;
-        avl_tree_node<T> *left,*right;
-                
-        explicit avl_tree_node():data(T()),height(0),left(nullptr),right(nullptr) {}
-        explicit avl_tree_node(const T &elem):data(elem),height(0),left(nullptr),right(nullptr) {}
-    };
+    namespace helper{
+        template <class T> struct avl_tree_node{
+            T data;
+            short height;
+            avl_tree_node<T> *left,*right;
+                    
+            explicit avl_tree_node():data(T()),height(0),left(nullptr),right(nullptr) {}
+            explicit avl_tree_node(const T &elem):data(elem),height(0),left(nullptr),right(nullptr) {}
+        };
+    } // namespace helper
     
-    // Minimum requirements of type `node`:
+    // Minimum requirements of type `Node`:
     //   A data member variable named `data`;
     //   A signed integral type member variable named `height`;
     //   Two pointer member variables named `left`, `right`, respectively;
     //   `node` can be default-initialized and value-initialized.
     
-    template <class T,class node = rubbish::avl_tree_node<T> > class avl_tree: public binary_tree_base<T,node> {
+    template <class T,class Node = rubbish::helper::avl_tree_node<T> > class avl_tree: public binary_tree_base<T,Node> {
         private:
-            typedef binary_tree_base<T,node> base_class;
+            typedef binary_tree_base<T,Node> base_class;
         public:
+            typedef typename base_class::node node;
+            
             typedef typename base_class::inorder_iterator iterator;
 
 
@@ -52,10 +56,10 @@ namespace rubbish{
             explicit avl_tree(std::initializer_list<T>&&);
             
             // Copy constructor
-            avl_tree(const avl_tree<T,node>&);
+            avl_tree(const avl_tree<T,Node>&);
             
             // Move constructor
-            avl_tree(avl_tree<T,node>&&);
+            avl_tree(avl_tree<T,Node>&&);
             
             // Insert a node to this tree, and return its location
             const node* insert(const T&);
@@ -79,25 +83,3 @@ namespace rubbish{
 #include "bits/avl_tree.inc"
 
 #endif // __AVL_TREE__
-
-
-/*
-// test code
-#include <iostream>
-using namespace rubbish;
-
-int main(){
-    std::initializer_list<int> &&p={1,1,1,2,56,9,44,100,9999999};
-    avl_tree<int> tree({1,1,1,2,56,9,44,100,9999999});
-    for(auto &i:tree)
-        std::cout<<i<<" ";
-    for(auto &&i:p){
-        tree.erase(i);
-        for(auto &i:tree)
-            std::cout<<i<<" ";
-        std::cout<<std::endl;
-    }
-    return 0;
-}
-
-*/

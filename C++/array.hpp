@@ -54,8 +54,8 @@ template <class T,std::size_t N> class array{
         };
         
     protected:
-        T *base;
-        std::size_t occupied;   // space in use
+        T *m_base;
+        std::size_t m_occupied;   // space in use
     public:
         
         // Construct from a given list
@@ -103,76 +103,76 @@ template <class T,std::size_t N> class array{
         iterator end();
 };
 
-template <class T,std::size_t N> array<T,N>::array(std::size_t count,const T &value):base(new T[N]),occupied(0){
+template <class T,std::size_t N> array<T,N>::array(std::size_t count,const T &value):m_base(new T[N]),m_occupied(0){
     if(count>N)
         count=N;
-    for(;occupied<=count;++occupied)
-        base[occupied]=value;
+    for(;m_occupied<=count;++m_occupied)
+        m_base[m_occupied]=value;
 }
 
-template <class T,std::size_t N> array<T,N>::array(const T (&arr)[N]):base(nullptr),occupied(N){
-    base=new T[N];
-    std::memcpy(base,arr,N*sizeof(T));
+template <class T,std::size_t N> array<T,N>::array(const T (&arr)[N]):m_base(nullptr),m_occupied(N){
+    m_base=new T[N];
+    std::memcpy(m_base,arr,N*sizeof(T));
 }
 
 template <class T,std::size_t N> array<T,N>::array(array<T,N> &&arr) {
-    base = arr.base;
-    occupied = arr.occupied;
-    arr.base = nullptr;
+    m_base = arr.m_base;
+    m_occupied = arr.m_occupied;
+    arr.m_base = nullptr;
 }
 
 template <class T,std::size_t N> array<T,N>::array(const array<T,N> &arr) {
-    base = new T[N];
-    occupied = arr.occupied;
-    std::memcpy(base,arr.base,occupied*sizeof(T));
+    m_base = new T[N];
+    m_occupied = arr.m_occupied;
+    std::memcpy(m_base,arr.m_base,m_occupied*sizeof(T));
 }
 
 template <class T,std::size_t N> array<T,N>::array(std::initializer_list<T> &&l){
-    base=new T[l.size()]();
-    occupied=0;
+    m_base=new T[l.size()]();
+    m_occupied=0;
     for(auto &&i:l)
-        base[occupied++]=i;
+        m_base[m_occupied++]=i;
 }
 
-template <class T,std::size_t N> array<T,N>::~array(){delete[] base;}
+template <class T,std::size_t N> array<T,N>::~array(){delete[] m_base;}
 
 template <class T,std::size_t N> std::size_t array<T,N>::capacity() const noexcept {return N;}
 
-template <class T,std::size_t N> std::size_t array<T,N>::size() const noexcept {return occupied;}
+template <class T,std::size_t N> std::size_t array<T,N>::size() const noexcept {return m_occupied;}
 
-template <class T,std::size_t N> bool array<T,N>::empty() const noexcept {return occupied==0;}
+template <class T,std::size_t N> bool array<T,N>::empty() const noexcept {return m_occupied==0;}
 
-template <class T,std::size_t N> typename array<T,N>::iterator array<T,N>::begin() {return iterator(base);}
+template <class T,std::size_t N> typename array<T,N>::iterator array<T,N>::begin() {return iterator(m_base);}
 
-template <class T,std::size_t N> typename array<T,N>::iterator array<T,N>::end() {return iterator(base+occupied);}
+template <class T,std::size_t N> typename array<T,N>::iterator array<T,N>::end() {return iterator(m_base+m_occupied);}
 
 template <class T,std::size_t N> void array<T,N>::append(const T &element){
-    if(occupied+1>length)
+    if(m_occupied+1>N)
         throw std::out_of_range("array::append: array is full");
-    base[occupied++]=element;
+    m_base[m_occupied++]=element;
 }
 
 template <class T,std::size_t N> void array<T,N>::insert(std::size_t index,const T &element){
-    if(occupied+1>length||index>occupied)
+    if(m_occupied+1>N||index>m_occupied)
         throw std::out_of_range("array::insert: array is full");
-    for(auto i=occupied;i>index;i--)
-        base[i]^=base[i-1]^=base[i]^=base[i-1];
-    base[index]=element;
-    occupied++;
+    for(auto i=m_occupied;i>index;i--)
+        m_base[i]^=m_base[i-1]^=m_base[i]^=m_base[i-1];
+    m_base[index]=element;
+    m_occupied++;
 }
 
 template <class T,std::size_t N> void array<T,N>::remove_elem(const T &element){
-    for(auto i=0UL;i<occupied;i++){
-        if(base[i]==element){
-            for(auto j=i;j<occupied-1;j++)
-                base[j]^=base[j+1]^=base[j]^=base[j+1];
-            occupied--;
+    for(auto i=0UL;i<m_occupied;i++){
+        if(m_base[i]==element){
+            for(auto j=i;j<m_occupied-1;j++)
+                m_base[j]^=m_base[j+1]^=m_base[j]^=m_base[j+1];
+            m_occupied--;
             i--;
         }
     }
 }
 
-template <class T,std::size_t N> T& array<T,N>::operator[](std::size_t index) const {return base[index];}
+template <class T,std::size_t N> T& array<T,N>::operator[](std::size_t index) const {return m_base[index];}
 
 
 // class array<T,N>::iterator_base

@@ -7,16 +7,26 @@
 
 namespace rubbish{
 
-    template <class T> class forward_list_base{
+    
+    namespace helper{
+        template <class T> struct forward_list_node{
+            T data;
+            forward_list_node<T>* next;
+                    
+            explicit forward_list_node():data(T()),next(nullptr) {}
+            explicit forward_list_node(const T &elem):data(elem),next(nullptr) {}
+            //explicit forward_list_node(const forward_list_node<T>* p):data(p->elem),next(nullptr) {}
+        };
+    } // namespace helper
+    
+    // Minimum requirements of type `Node`:
+    //   A data member variable named `data`;
+    //   A pointer member variable named `next`;
+    //   `Node` can be default-initialized and value-initialized.
+    
+    template <class T,class Node = rubbish::helper::forward_list_node<T> > class forward_list_base{
         public:
-            struct node{
-                T data;
-                node *next;
-                
-                explicit node():data(T()),next(nullptr) {}
-                explicit node(const T &elem):data(elem),next(nullptr) {}
-                explicit node(const node *p):data(p->elem),next(nullptr) {}
-            };
+            typedef Node node;
             
             class iterator_base{
                 public:
@@ -85,6 +95,9 @@ namespace rubbish{
             // Reverse the whole forward_list_base
             void reverse();
             
+            // Sort this list in ascending order, using merge sort method
+            void sort();
+            
             // Add an element to the end of this list
             void push_back(const T&);
             
@@ -98,8 +111,11 @@ namespace rubbish{
             // Remove the element at the head of this list
             void pop_front();
             
-            // Get the element at then back
-            T& back();
+            // Get the element at the front
+            T& front() const;
+            
+            // Get the element at the back
+            T& back() const;
             
             // Remove the node after `it`
             void remove_after(iterator);
@@ -127,25 +143,3 @@ namespace rubbish{
 #include "forward_list_base.inc"
 
 #endif // __FORWARD_LIST_BASE__
-
-/*
-// test code
-#include <algorithm>
-#include <iostream>
-
-struct test{
-    int data;
-    test(int n=0):data(n){}
-    void increment(){data++;}
-};
-
-int main(){
-    rubbish::forward_list_base<test> l;
-    for(int i=0;i<10;i++)
-        l.append(test(i));
-    for(auto &i:l)
-        i.increment();
-    std::for_each(l.begin(),l.end(),[](test &t){std::cout<<t.data<<" ";});
-    return 0;
-}
-*/

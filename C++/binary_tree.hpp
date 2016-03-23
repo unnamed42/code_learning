@@ -7,11 +7,13 @@ namespace rubbish{
     // Minimum requirements of type `node`:
     //   Same as requirements of `node` used in `binary_tree_base`.
     
-    template <class T,class node = rubbish::binary_tree_node<T> > class binary_tree: public binary_tree_base<T,node>{
+    template <class T,class Node = rubbish::helper::binary_tree_node<T> > class binary_tree: public binary_tree_base<T,Node>{
         private:
-            typedef binary_tree_base<T,node> base_class;
+            typedef binary_tree_base<T,Node> base_class;
             typedef typename base_class::preorder_iterator iterator;
         public:
+            typedef typename base_class::node node;
+            
             using base_class::base_class;
             using base_class::m_root;
             

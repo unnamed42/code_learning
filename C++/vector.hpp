@@ -50,16 +50,3 @@ namespace rubbish{
 #include "bits/vector.inc"
 
 #endif // __VECTOR__
-
-/*
-// test code
-#include <iostream>
-
-int main(){
-    using namespace rubbish;
-    vector<int> v{0,1,2,3,45};
-    
-    for(auto &i:v)
-        std::cout<<i<<" ";
-    return 0;
-}*/

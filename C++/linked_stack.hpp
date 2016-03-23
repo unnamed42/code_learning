@@ -26,10 +26,10 @@ namespace rubbish{
             explicit stack();
             
             // TODO: Copy-constructor
-            stack(const stack<T>&);
+            stack(const stack<T,Container>&);
             
             // Move-constructor
-            stack(stack<T>&&);
+            stack(stack<T,Container>&&);
             
             // Destructor
             ~stack()=default;

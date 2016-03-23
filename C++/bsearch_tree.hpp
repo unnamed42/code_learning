@@ -5,13 +5,14 @@
 #include <initializer_list>
 
 namespace rubbish{
-    // Minimum requirements of type `node`:
+    // Minimum requirements of type `Node`:
     //   Same as requirements of `node` used in `binary_tree_base`.
     
-    template <class T,class node = rubbish::binary_tree_node<T> > class bsearch_tree: public binary_tree_base<T,node>{
+    template <class T,class Node = rubbish::helper::binary_tree_node<T> > class bsearch_tree: public binary_tree_base<T,Node>{
         private:
-            typedef binary_tree_base<T,node> base_class;
+            typedef binary_tree_base<T,Node> base_class;
         public:
+            typedef typename base_class::node node;
             typedef typename base_class::inorder_iterator iterator;
 
         private:
@@ -38,18 +39,3 @@ namespace rubbish{
 
 #endif // __BINARY_SEARCH_TREE__
 
-/*
-//test code
-#include <iostream>
-
-int main(){
-    rubbish::bsearch_tree<int> tree({1,5,7,9,5,25,0,1,9,4,1});
-    for(auto &i:tree)
-        std::cout<<i<<" ";
-    std::cout<<std::endl;
-    for(auto it=tree.level_begin();it!=tree.level_end();++it)
-        std::cout<<(*it)<<" ";
-    std::cout<<"\nExit successfully.";
-    return 0;
-}
-*/

@@ -4,7 +4,7 @@
 #include <deque>
 #include <vector>
 #include <memory> // std::shared_ptr
-#include <utility> // std::pair
+#include <utility> // std::pair, std::forward
 #include <stdexcept>
 #include <initializer_list> // std::initializer_list
 #include <bits/stl_iterator_base_types.h> // std::forward_iterator_tag
@@ -37,6 +37,7 @@ namespace rubbish{
                     typedef long int                    difference_type;
                     
                     typedef iterator_base               self_type;
+                    typedef vex_node*                   data_type;
                     
                     explicit iterator_base(_index_t _index,std::vector<vex_node*>* =nullptr);
                     reference operator*() const;
@@ -148,27 +149,3 @@ namespace rubbish{
 #include "bits/graph.inc"
 
 #endif // __GRAPH__
-/*
-#include <iostream>
-int main(){
-    graph<int> a({0,1,2,3,4,5,6},{{0,1},{0,2},{1,3},{2,3},{2,4},{3,5},{4,5}},true);
-    std::vector<int> v;
-    struct op{
-        std::vector<int> *p;
-        void operator()(int c){
-            if(p==nullptr)
-                std::cout<<c;
-            else
-                p->push_back(c);
-        }
-        explicit op(std::vector<int> *_p=nullptr):p(_p){}
-    };
-    for(auto &i:a)
-        std::cout<<i<<" ";
-    std::cout<<std::endl;
-    for(auto i=a.bfs_begin();i!=a.bfs_end();++i)
-        std::cout<<*i<<" ";
-    a.topo_sort(op());
-    std::cout<<"\nEnd";
-    return 0;
-}*/

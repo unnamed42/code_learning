@@ -10,21 +10,24 @@ namespace rubbish{
 
     typedef enum {LEFT = 0, RIGHT} CHILD;
 
-    template <class T> struct binary_tree_node{
-        T data;
-        binary_tree_node<T> *left,*right;
-        
-        explicit binary_tree_node():data(T()),left(nullptr),right(nullptr) {}
-        explicit binary_tree_node(const T &data_):data(data_),left(nullptr),right(nullptr) {}
-    };
+    namespace helper{
+        template <class T> struct binary_tree_node{
+            T data;
+            binary_tree_node<T> *left,*right;
+            
+            explicit binary_tree_node():data(T()),left(nullptr),right(nullptr) {}
+            explicit binary_tree_node(const T &data_):data(data_),left(nullptr),right(nullptr) {}
+        };
+    } // namespace helper
     
     // Minimum requirements of type `node`:
     //   A data member variable named `data`;
     //   Two pointer member variables named `left`, `right`, respectively;
     //   `node` can be default-initialized and value-initialized.
     
-    template <class T,class node = rubbish::binary_tree_node<T> > class binary_tree_base{
+    template <class T,class Node = rubbish::helper::binary_tree_node<T> > class binary_tree_base{
         public:
+            typedef Node node;
             
             class tree_iterator_base {
                 public:
@@ -60,10 +63,10 @@ namespace rubbish{
                     
                     explicit preorder_iterator(node *root);
                     preorder_iterator(const self_type &other):base_class(other.m_cursor) {}
-                    reference operator*() const override {return m_cursor->back()->data;}
+                    reference operator*() const {return m_cursor->back()->data;}
                     self_type& operator++();
                     self_type operator++(int) {auto i=*this; operator++(); return i;}
-                    bool operator==(const self_type &other)  const override {return base_class::operator==(other)&&other.m_cursor->back()==m_cursor->back();}
+                    bool operator==(const self_type &other)  const {return base_class::operator==(other)&&other.m_cursor->back()==m_cursor->back();}
                 private:
                     using base_class::m_cursor;
             };
@@ -76,10 +79,10 @@ namespace rubbish{
                     typedef typename tree_iterator_base::reference reference;
                     explicit inorder_iterator(node *root);
                     inorder_iterator(const self_type &other):base_class(other.m_cursor) {}
-                    reference operator*() const override {return m_cursor->back()->data;}
+                    reference operator*() const {return m_cursor->back()->data;}
                     self_type& operator++();
                     self_type operator++(int) {auto i=*this; operator++(); return i;}
-                    bool operator==(const self_type &other) const override {return base_class::operator==(other)&&other.m_cursor->back()==m_cursor->back();}
+                    bool operator==(const self_type &other) const {return base_class::operator==(other)&&other.m_cursor->back()==m_cursor->back();}
                 private:
                     using base_class::m_cursor;
             };
@@ -92,10 +95,10 @@ namespace rubbish{
                     typedef typename tree_iterator_base::reference reference;
                     explicit postorder_iterator(node *root);
                     postorder_iterator(const self_type &other):base_class(other.m_cursor) {}
-                    reference operator*() const override {return m_cursor->back()->data;}
+                    reference operator*() const {return m_cursor->back()->data;}
                     self_type& operator++();
                     self_type operator++(int) {auto i=*this; operator++(); return i;}
-                    bool operator==(const self_type &other) const override {return base_class::operator==(other)&&other.m_cursor->back()==m_cursor->back();}
+                    bool operator==(const self_type &other) const {return base_class::operator==(other)&&other.m_cursor->back()==m_cursor->back();}
                 private:
                     using base_class::m_cursor;
             };
@@ -108,10 +111,10 @@ namespace rubbish{
                     typedef typename tree_iterator_base::reference reference;
                     explicit level_iterator(node *root);
                     level_iterator(const self_type &other):base_class(other.m_cursor) {}
-                    reference operator*() const override {return m_cursor->front()->data;}
+                    reference operator*() const {return m_cursor->front()->data;}
                     self_type& operator++();
                     self_type operator++(int) {auto i=*this; operator++(); return i;}
-                    bool operator==(const self_type &other) const override {return base_class::operator==(other)&&other.m_cursor->front()==m_cursor->front();}
+                    bool operator==(const self_type &other) const {return base_class::operator==(other)&&other.m_cursor->front()==m_cursor->front();}
                 private:
                     using base_class::m_cursor;
             };
@@ -139,10 +142,10 @@ namespace rubbish{
             binary_tree_base(std::initializer_list<T> &&pre,std::initializer_list<T> &&in);
 
             // Copy-construtor
-            binary_tree_base(const binary_tree_base<T,node> &);
+            binary_tree_base(const binary_tree_base<T,Node> &);
             
             // Move-construtor
-            binary_tree_base(binary_tree_base<T,node>&&);
+            binary_tree_base(binary_tree_base<T,Node>&&);
 
             // Destructor
             virtual ~binary_tree_base();
@@ -175,7 +178,7 @@ namespace rubbish{
             level_iterator level_end() {return level_iterator(nullptr);}
             
             // Copy assignment operator
-            binary_tree_base<T,node>& operator=(const binary_tree_base<T,node>&)=delete;
+            binary_tree_base<T,Node>& operator=(const binary_tree_base<T,Node>&)=delete;
     };
 
 } // namespace rubbish
@@ -186,28 +189,3 @@ using rubbish::CHILD::LEFT;
 using rubbish::CHILD::RIGHT;
 
 #endif // __BINARY_TREE_BASE__
-
-/*
-// test code
-#include <iostream>
-using namespace rubbish;
-
-int main(){
-    binary_tree_base<int> tree({1,2,3,4,5,6,7,8,9,10},0);
-    for(auto it=tree.preorder_begin();it!=tree.preorder_end();++it)
-        std::cout<<(*it)<<",";
-    std::cout<<std::endl;
-    for(auto it=tree.inorder_begin();it!=tree.inorder_end();++it)
-        std::cout<<(*it)<<",";
-    std::cout<<std::endl;
-    for(auto it=tree.postorder_begin();it!=tree.postorder_end();++it)
-        std::cout<<(*it)<<",";
-    std::cout<<std::endl;
-    for(auto it=tree.level_begin();it!=tree.level_end();++it)
-        std::cout<<(*it)<<",";
-    binary_tree_base<int> treea({1,2,4,8,9,5,10,3,6,7},{8,4,9,2,10,5,1,6,3,7});
-    for(auto it=treea.level_begin();it!=treea.level_end();++it)
-        std::cout<<(*it)<<",";
-    return 0;
-}
-*/

@@ -2,13 +2,15 @@
 #include "avl_tree.hpp"
 #include "binary_tree.hpp"
 #include "bsearch_tree.hpp"
-#include "circular-queue.hpp"
+// #include "circular-queue.hpp"
 #include "forward_list.hpp"
 #include "graph.hpp"
 #include "linked_queue.hpp"
 #include "linked_stack.hpp"
 #include "list.hpp"
-#include "stack.hpp"
+// Conflicts with linked one
+//#include "stack.hpp"
 #include "vector.hpp"
 
 #include "bits/shared_ptr.hpp"
+#include "bits/sfinae.hpp"

@@ -13,8 +13,12 @@ template <class T> rubbish::graph<T>::graph(const rubbish::graph<T> &g){
     directed=g.directed;
 }
 
-template <class T> rubbish::graph<T>::graph(std::initializer_list<T> &&value,std::initializer_list<std::pair<index_t,index_t>> &&adjacency,bool _directed):directed(_directed),nodes(value){
+template <class T> rubbish::graph<T>::graph(std::initializer_list<T> &&value,std::initializer_list< std::pair<index_t,index_t> > &&adjacency,bool _directed):nodes(),directed(_directed){
     auto size=value.size();
+    if(size==0)
+        return;
+    for(auto &&i:value)
+        nodes.push_back(new vex_node(i));
     for(auto &&i:adjacency){
         if(i.first>=size||i.second>=size)
             throw std::runtime_error("graph::constructor: adjacency list out of range");
@@ -23,24 +27,24 @@ template <class T> rubbish::graph<T>::graph(std::initializer_list<T> &&value,std
 }
 
 template <class T> rubbish::graph<T>::~graph(){
-    for(auto &node:nodes){
-        arc_node *p=node->next;
+    for(auto &_node:nodes){
+        arc_node *p=_node->next;
         while(p!=nullptr){
             arc_node *save=p->next;
             delete p;
             p=save;
         }
-        delete node;
+        delete _node;
     }
 }
 
 template <class T> void rubbish::graph<T>::append(const T &data){ nodes.push_back(new vex_node(data)); }
 
 template <class T> void rubbish::graph<T>::bind(index_t vex1,index_t vex2){
-    auto make_bind=[this](_index_t vex1,_index_t vex2){
-        vex_node *p=nodes[vex1];arc_node *node=new arc_node(vex2);
-        node->next=p->next;
-        p->next=node;
+    auto make_bind=[this](_index_t _vex1,_index_t _vex2){
+        vex_node *p=nodes[_vex1];arc_node *ptr=new arc_node(_vex2);
+        ptr->next=p->next;
+        p->next=ptr;
     };
     make_bind(vex1,vex2);
     if(!directed)
@@ -82,8 +86,8 @@ template <class T> typename rubbish::graph<T>::topo_iterator rubbish::graph<T>::
     long *indegree=new long[size](),stack=-1;
     // calculate in-degree
     for(auto ptr:nodes){
-        for(arc_node *node=ptr->next;node!=nullptr;node=node->next)
-            indegree[node->data]++;
+        for(arc_node *_ptr=ptr->next;_ptr!=nullptr;_ptr=_ptr->next)
+            indegree[_ptr->data]++;
     }
     for(index_t i=0;i<size;i++){
         if(indegree[i]==0){
@@ -115,8 +119,6 @@ template <class T> template <class U> rubbish::graph<T>::node<U>::node(const nod
 template <class T> rubbish::graph<T>::iterator_base::iterator_base(_index_t _index,std::vector<data_type> *_nodes):index(_index),nodes(_nodes){}
 
 template <class T> typename rubbish::graph<T>::iterator_base::reference rubbish::graph<T>::iterator_base::operator*() const {return nodes->at(index)->data;}
-
-template <class T> typename rubbish::graph<T>::iterator_base::pointer rubbish::graph<T>::iterator_base::operator->() const {return &(nodes->at(index)->data);}
 
 template <class T> typename rubbish::graph<T>::_index_t rubbish::graph<T>::iterator_base::get() const {return index;}
 
@@ -239,7 +241,7 @@ template <class T> typename rubbish::graph<T>::bfs_iterator::self_type& rubbish:
 
 
 // class rubbish::graph<T>::topo_iterator
-template <class T> rubbish::graph<T>::topo_iterator::topo_iterator(_index_t _index,std::vector<data_type> *_nodes,std::size_t _count,long _stack,long *_indegree):iterator_base(_index,_nodes),stack(_stack),count(_count){
+template <class T> rubbish::graph<T>::topo_iterator::topo_iterator(_index_t _index,std::vector<data_type> *_nodes,std::size_t _count,long _stack,long *_indegree):iterator_base(_index,_nodes),stack(_stack),count(_count),indegree(){
     indegree=std::shared_ptr<long>(_indegree,std::default_delete<long[]>());
 }
 
@@ -250,7 +252,7 @@ template <class T> typename rubbish::graph<T>::topo_iterator::self_type& rubbish
     stack=indegree.get()[stack];
     if((++count)>nodes->size())
         index=-1;       // Circle exists,cannot continue
-    for(arc_node *ptr=nodes[index]->next;ptr!=nullptr;ptr=ptr->next){
+    for(auto ptr=nodes->at(index)->next;ptr!=nullptr;ptr=ptr->next){
         if(--(indegree.get()[ptr->data])==0){
             indegree.get()[ptr->data]=stack;
             stack=ptr->data;

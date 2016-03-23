@@ -4,9 +4,9 @@
 #include "bits/forward_list_base.hpp"
 
 namespace rubbish{
-    template <class T> class forward_list: public forward_list_base<T>{
+    template <class T,class Node = rubbish::helper::forward_list_node<T> > class forward_list: public forward_list_base<T,Node>{
         private:
-            typedef forward_list_base<T> base_class;
+            typedef forward_list_base<T,Node> base_class;
         public:
             typedef typename base_class::node node;
             typedef typename base_class::iterator iterator;

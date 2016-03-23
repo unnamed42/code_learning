@@ -1,29 +1,33 @@
-// helper function
-template <class T> static inline T max(const T &lhs,const T &rhs) { return lhs>rhs?lhs:rhs; }
+namespace rubbish{
+    namespace helper{
+        // helper function
+        template <class T> static inline T max(const T &lhs,const T &rhs) { return lhs>rhs?lhs:rhs; }
 
-template <class T> static inline short height(const rubbish::avl_tree_node<T> *p) { return p==nullptr?0:p->height; }
+        template <class Node> static inline short avl_height(const Node *p) { return p==nullptr?0:p->height; }
 
-template <class T> static inline short balance(const rubbish::avl_tree_node<T> *p) { return p==nullptr?0:height(p->left)-height(p->right); }
+        template <class Node> static inline short avl_balance(const Node *p) { return p==nullptr?0:avl_height<Node>(p->left)-avl_height<Node>(p->right); }
 
-// return the node with minimum value found in a tree
-template <class node> static inline node* min_node(node *root){
-    auto current = root;
-    /* loop down to find the leftmost leaf */
-    while (current->left != nullptr)
-        current = current->left;
- 
-    return current;
-}
+        // return the node with minimum value found in a tree
+        template <class Node> static inline Node* min_node(Node *root){
+            auto current = root;
+            /* loop down to find the leftmost leaf */
+            while (current->left != nullptr)
+                current = current->left;
+        
+            return current;
+        }
+    } // namespace helper
+} // namespace rubbish
 
 
-template <class T,class node> rubbish::avl_tree<T,node>::avl_tree():base_class() {}
+template <class T,class Node> rubbish::avl_tree<T,Node>::avl_tree():base_class() {}
 
-template <class T,class node> rubbish::avl_tree<T,node>::avl_tree(std::initializer_list<T> &&l):base_class() {
+template <class T,class Node> rubbish::avl_tree<T,Node>::avl_tree(std::initializer_list<T> &&l):base_class() {
     for(auto &&i:l)
         insert(i);
 }
 
-template <class T,class node> const node* rubbish::avl_tree<T,node>::find(const T &value) const {
+template <class T,class Node> const typename rubbish::avl_tree<T,Node>::node* rubbish::avl_tree<T,Node>::find(const T &value) const {
     auto ptr=m_root;
     while(ptr!=nullptr){
         if(ptr->data==value)
@@ -37,7 +41,7 @@ template <class T,class node> const node* rubbish::avl_tree<T,node>::find(const 
 }
 
 
-template <class T,class node> const node* rubbish::avl_tree<T,node>::left_rotate(node* &root){
+template <class T,class Node> const typename rubbish::avl_tree<T,Node>::node* rubbish::avl_tree<T,Node>::left_rotate(node* &root){
     auto x=root->right,y=x->left;
     
     // Rotation
@@ -45,15 +49,15 @@ template <class T,class node> const node* rubbish::avl_tree<T,node>::left_rotate
     root->left = y;
     
     // Update height
-    root->height = max(height(root->left),height(root->right))+1;
-    x->height = max(height(x->left),height(x->right))+1;
+    root->height = rubbish::helper::max(rubbish::helper::avl_height<Node>(root->left),rubbish::helper::avl_height<Node>(root->right))+1;
+    x->height = rubbish::helper::max(rubbish::helper::avl_height<Node>(x->left),rubbish::helper::avl_height<Node>(x->right))+1;
     
     // Return new tree root
     return root=x;
 }
 
 // Right rotate subtree rooted with y
-template <class T,class node> const node* rubbish::avl_tree<T,node>::right_rotate(node* &root){
+template <class T,class Node> const typename rubbish::avl_tree<T,Node>::node* rubbish::avl_tree<T,Node>::right_rotate(node* &root){
     auto x=root->left,y=root->right;
     
     // Rotation
@@ -61,14 +65,14 @@ template <class T,class node> const node* rubbish::avl_tree<T,node>::right_rotat
     root->left = y;
     
     // Update height
-    root->height = max(height(root->left),height(root->right))+1;
-    x->height = max(height(x->left), height(x->right))+1;
+    root->height = rubbish::helper::max(rubbish::helper::avl_height<Node>(root->left),rubbish::helper::avl_height<Node>(root->right))+1;
+    x->height = rubbish::helper::max(rubbish::helper::avl_height<Node>(x->left), rubbish::helper::avl_height<Node>(x->right))+1;
     
     // Return new root
     return root=x;
 }
  
-template <class T,class node> const node* rubbish::avl_tree<T,node>::insert(node* &root,const T &value){
+template <class T,class Node> const typename rubbish::avl_tree<T,Node>::node* rubbish::avl_tree<T,Node>::insert(node* &root,const T &value){
     // Perform the normal BST rotation
     if(root==nullptr){
         root=new node(value);
@@ -83,10 +87,10 @@ template <class T,class node> const node* rubbish::avl_tree<T,node>::insert(node
         return insert(root->right, value);
     
     // Update root height
-    root->height = max(height(root->left), height(root->right)) + 1;
+    root->height = rubbish::helper::max(rubbish::helper::avl_height<Node>(root->left), rubbish::helper::avl_height<Node>(root->right)) + 1;
     
     // Get balance factor of root
-    auto factor = balance(root);
+    auto factor = rubbish::helper::avl_balance<Node>(root);
     
     // When unbalanced, do some rotations
     // 1. Left Left Case
@@ -113,7 +117,7 @@ template <class T,class node> const node* rubbish::avl_tree<T,node>::insert(node
     return root;
 }
 
-template <class T,class node> void rubbish::avl_tree<T,node>::erase(node* &root,const T &value){
+template <class T,class Node> void rubbish::avl_tree<T,Node>::erase(node* &root,const T &value){
     // PERFORM STANDARD BST DELETE
     if (root == nullptr)
         return;
@@ -161,45 +165,45 @@ template <class T,class node> void rubbish::avl_tree<T,node>::erase(node* &root,
       return;
     
     // UPDATE HEIGHT OF THE CURRENT NODE
-    root->height = max(height(root->left), height(root->right)) + 1;
+    root->height = rubbish::helper::max(rubbish::helper::avl_height<Node>(root->left), rubbish::helper::avl_height<Node>(root->right)) + 1;
  
     // STEP 3: GET THE BALANCE FACTOR OF THIS NODE (to check whether
     //  this node became unbalanced)
-    auto factor = balance(root);
+    auto factor = rubbish::helper::avl_balance<Node>(root);
  
     // If this node becomes unbalanced, then there are 4 cases
  
     // Left Left Case
-    if (factor > 1 && balance(root->left) >= 0){
+    if (factor > 1 && rubbish::helper::avl_balance<Node>(root->left) >= 0){
         right_rotate(root);
         return;
     }
  
     // Left Right Case
-    if (factor > 1 && balance(root->left) < 0){
+    if (factor > 1 && rubbish::helper::avl_balance<Node>(root->left) < 0){
         left_rotate(root->left);
         right_rotate(root);
         return;
     }
  
     // Right Right Case
-    if (factor < -1 && balance(root->right) <= 0){
+    if (factor < -1 && rubbish::helper::avl_balance<Node>(root->right) <= 0){
         left_rotate(root);
         return;
     }
  
     // Right Left Case
-    if (factor < -1 && balance(root->right) > 0){
+    if (factor < -1 && rubbish::helper::avl_balance<Node>(root->right) > 0){
         right_rotate(root->right);
         left_rotate(root);
         return;
     }
 }
 
-template <class T,class node> const node* rubbish::avl_tree<T,node>::insert(const T &value) { return insert(m_root,value); }
+template <class T,class Node> const typename rubbish::avl_tree<T,Node>::node* rubbish::avl_tree<T,Node>::insert(const T &value) { return insert(m_root,value); }
 
-template <class T,class node> void rubbish::avl_tree<T,node>::erase(const T &value) { return erase(m_root,value); }
+template <class T,class Node> void rubbish::avl_tree<T,Node>::erase(const T &value) { return erase(m_root,value); }
 
-template <class T,class node> typename rubbish::avl_tree<T,node>::iterator rubbish::avl_tree<T,node>::begin() { return iterator(m_root);}
+template <class T,class Node> typename rubbish::avl_tree<T,Node>::iterator rubbish::avl_tree<T,Node>::begin() { return iterator(m_root);}
 
-template <class T,class node> typename rubbish::avl_tree<T,node>::iterator rubbish::avl_tree<T,node>::end() { return iterator(nullptr);}
+template <class T,class Node> typename rubbish::avl_tree<T,Node>::iterator rubbish::avl_tree<T,Node>::end() { return iterator(nullptr);}

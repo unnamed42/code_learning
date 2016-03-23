@@ -118,13 +118,3 @@ namespace rubbish{
 #include "continuous_container.inc"
 
 #endif // __CONTINUOUS_CONTAINER__
-/*
-#include <iostream>
-
-int main(){
-    using namespace rubbish;
-    continuous_container<int> x(10,2);
-    for(auto &i:x)
-        std::cout<<i<<" ";
-    return 0;
-}*/
