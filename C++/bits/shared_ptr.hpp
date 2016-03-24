@@ -131,14 +131,14 @@ namespace rubbish{
     };
 
     template <class T,class Deleter = deleter<helper::raw_type<T> > >
-    inline shared_ptr<typename remove_reference<T>::type,Deleter> make_shared(T &&data){
-        auto ptr=new helper::raw_type<T>(std::forward<typename remove_reference<T>::type>(data));
-        return shared_ptr<typename remove_reference<T>::type,Deleter>(ptr);
+    inline shared_ptr<rm_ref<T>,Deleter> make_shared(T &&data){
+        auto ptr=new helper::raw_type<T>(std::forward<T>(data));
+        return shared_ptr<rm_ref<T>,Deleter>(ptr);
     }
 
     template <class T,class Deleter = deleter<helper::raw_type<T> > >
-    inline shared_ptr<typename remove_reference<T>::type,Deleter> make_shared(T *data){
-        return shared_ptr<typename remove_reference<T>::type,Deleter>(data);
+    inline shared_ptr<rm_ref<T>,Deleter> make_shared(T *data){
+        return shared_ptr<rm_ref<T>,Deleter>(data);
     }
 
 }  // namespace rubbish
