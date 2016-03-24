@@ -43,7 +43,7 @@ template <class T> class stack{
         // Get the element at stack top
         T top() const;
 };
-template <class T> stack<T>::stack(std::size_t _size=0){base=_top=new T[size=_size]();}
+template <class T> stack<T>::stack(std::size_t _size){base=_top=new T[size=_size]();}
 
 template <class T> stack<T>::stack(stack &&other){
     base=other.base;

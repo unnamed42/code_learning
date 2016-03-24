@@ -2,7 +2,7 @@ namespace rubbish{
     
     namespace helper{
         // Helper function of forward_list_base<T,Node>::sort()
-        template <class T,class Node> Node* forward_list_merge(Node *h1,Node *h2){
+        template <class Node> Node* forward_list_merge(Node *h1,Node *h2){
             Node dummy,*ptr=&dummy;
             while(h1!=nullptr&&h2!=nullptr){
                 if(h1->data<h2->data){
@@ -21,7 +21,7 @@ namespace rubbish{
             return dummy.next;
         }
         
-        template <class T,class Node> Node* forward_list_merge_sort(Node *head){
+        template <class Node> Node* forward_list_merge_sort(Node *head){
             if(head==nullptr||head->next==nullptr)
                 return head;
             if(head->next->next==nullptr){
@@ -41,9 +41,9 @@ namespace rubbish{
                     fast=fast->next;
             }
             // Reuse fast
-            fast=forward_list_merge_sort<T,Node>(slow->next);
+            fast=forward_list_merge_sort<Node>(slow->next);
             slow->next=nullptr;
-            return forward_list_merge<T,Node>(forward_list_merge_sort<T,Node>(head),fast);
+            return forward_list_merge<Node>(forward_list_merge_sort<Node>(head),fast);
         }
         
     } // namespace helper
@@ -128,7 +128,7 @@ template <class T,class Node> void rubbish::forward_list_base<T,Node>::remove_el
 template <class T,class Node> std::size_t rubbish::forward_list_base<T,Node>::size() const noexcept {return m_length;}
 
 template <class T,class Node> void rubbish::forward_list_base<T,Node>::sort() {
-    m_head=helper::forward_list_merge_sort<T,Node>(m_head);
+    m_head=helper::forward_list_merge_sort<Node>(m_head);
     auto ptr=m_head;
     while(ptr->next!=nullptr)
         ptr=ptr->next;

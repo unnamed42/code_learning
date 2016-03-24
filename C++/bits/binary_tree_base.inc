@@ -140,12 +140,14 @@ template <class T,class Node> rubbish::binary_tree_base<T,Node>::tree_iterator_b
 
 // Two iterators are equal iif they are both
 // empty or their "next node"-s are equal
-
 template <class T,class Node> bool rubbish::binary_tree_base<T,Node>::tree_iterator_base::operator==(const self_type &other) const {
     if(other.m_cursor==nullptr&&m_cursor==nullptr)
         return true;
     if(other.m_cursor==nullptr)
         return false;
+    // Further checks are made by derived classes' overloaded operators.
+    // Compiler keeps warning me, add this to make it happy
+    return true;
 }
 
 template <class T,class Node> rubbish::binary_tree_base<T,Node>::preorder_iterator::preorder_iterator(node *root):base_class(root) {
