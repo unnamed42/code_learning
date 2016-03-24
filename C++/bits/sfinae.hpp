@@ -101,8 +101,24 @@ namespace rubbish{
     // `remove_cv<const volatile int*>::type` is still `const volatile int*`,
     // but `remove_cv<int* const volatile>::type` is `int*`.
     template <class T> struct remove_cv { typedef typename remove_const<typename remove_volatile<T>::type>::type type; };
+
+    // Remove reference. This type alias is not part of std.
+    template <class T> using rm_ref = typename remove_reference<T>::type;
+    
+    // Remove pointer. This type alias is not part of std.
+    template <class T> using rm_ptr = typename remove_pointer<T>::type;
+    
+    // Remove const qualifiers. This type alias is not part of std.
+    template <class T> using rm_c = typename remove_const<T>::type;
+    
+    // Remove volatile qualifiers. This type alias is not part of std.
+    template <class T> using rm_v = typename remove_volatile<T>::type;
+    
+    // Remove cv-qualifiers. This type alias is not part of std.
+    template <class T> using rm_cv = typename remove_cv<T>::type;
     
     // Remove cv-qualifiers and reference. This type alias is not part of std.
+    // Pointer property is not removed.
     template <class T> using raw_type = typename remove_cv<typename remove_reference<T>::type>::type;
     
     template <class T,class U> struct is_same:public false_type {};
