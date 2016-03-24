@@ -2,13 +2,10 @@
 template <class T,class Node> rubbish::binary_tree_base<T,Node>::binary_tree_base(node *root): m_root(root) {}
 
 template <class T,class Node> rubbish::binary_tree_base<T,Node>::binary_tree_base(const binary_tree_base<T,Node> &tree) {
-    copy_subtree(m_root, tree.m_root);
+    copy_subtree(m_root,tree.m_root);
 }
 
-template <class T,class Node> rubbish::binary_tree_base<T,Node>::binary_tree_base(binary_tree_base<T,Node> &&tree) {
-    m_root = tree.m_root;
-    tree.m_root = nullptr;
-}
+template <class T,class Node> rubbish::binary_tree_base<T,Node>::binary_tree_base(binary_tree_base<T,Node> &&tree):m_root(tree.m_root) {tree.m_root = nullptr;}
 
 template <class T,class Node> rubbish::binary_tree_base<T,Node>::binary_tree_base(std::initializer_list<T> &&pre,std::initializer_list<T> &&in):m_root(nullptr) {
     if(pre.size()!=in.size()||pre.size()==0||in.size()==0)
@@ -84,7 +81,7 @@ template <class T,class Node> void rubbish::binary_tree_base<T,Node>::copy_subtr
     }
     if(dest != nullptr)
         delete_subtree(dest);
-    dest = new node(src);
+    dest = new node(*src);
     copy_subtree(dest->left, src->left);
     copy_subtree(dest->right, src->right);
 }

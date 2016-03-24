@@ -6,6 +6,7 @@
 
 #include <initializer_list>
 #include "bits/binary_tree_base.hpp"
+#include <bits/move.h> // std::forward
 
 namespace rubbish{
 
@@ -14,9 +15,10 @@ namespace rubbish{
             T data;
             short height;
             avl_tree_node<T> *left,*right;
-                    
+            
             explicit avl_tree_node():data(T()),height(0),left(nullptr),right(nullptr) {}
             explicit avl_tree_node(const T &elem):data(elem),height(0),left(nullptr),right(nullptr) {}
+            explicit avl_tree_node(T &&elem):data(std::move(elem)),height(0),left(nullptr),right(nullptr) {}
         };
     } // namespace helper
     
@@ -24,7 +26,9 @@ namespace rubbish{
     //   A data member variable named `data`;
     //   A signed integral type member variable named `height`;
     //   Two pointer member variables named `left`, `right`, respectively;
-    //   `node` can be default-initialized and value-initialized.
+    //   `Node` can be default-initialized and value-initialized.
+    // Minimum requirements of `data`:
+    //   Comparable using comparasion operator <, > and ==
     
     template <class T,class Node = rubbish::helper::avl_tree_node<T> > class avl_tree: public binary_tree_base<T,Node> {
         private:
@@ -34,19 +38,12 @@ namespace rubbish{
             
             typedef typename base_class::inorder_iterator iterator;
 
-
-        private:
-            // Left rotate tree whose root is `root` 
-            const node* left_rotate(node* &root);
-            
-            // Right rotate tree whose root is `root`
-            const node* right_rotate(node* &root);
-            
-            // Insert node to a tree whose root is `root`, and return its location
-            const node* insert(node* &root,const T&);
+        protected:
+            // Insert node to a tree whose root is `root`, and return its new root
+            template <class U> node* insert(node* root,U&&);
             
             // Delete nodes in given tree
-            void erase(node*&,const T&);
+            template <class U> node* erase(node*,U&&);
             
         public:
             // Construct an empty tree
@@ -61,14 +58,17 @@ namespace rubbish{
             // Move constructor
             avl_tree(avl_tree<T,Node>&&);
             
-            // Insert a node to this tree, and return its location
-            const node* insert(const T&);
+            // A destructor
+            virtual ~avl_tree() = default;
+            
+            // Insert a node to this tree, and return its new root
+            template <class U> node* insert(U&&);
             
             // Find a node and return location, if not found return `nullptr`
-            const node* find(const T&) const;
+            template <class U> node* find(U&&) const;
             
             // Delete nodes with given value
-            void erase(const T&);
+            template <class U> void erase(U&&);
             
             // Iterator functions
             iterator begin();
