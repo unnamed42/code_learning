@@ -70,7 +70,17 @@ namespace rubbish{
         template <class T,bool = is_arithmetic<T>::value> struct is_unsigned_h:public constant<bool,(T(0)<T(-1))> {};
         template <class T> struct is_unsigned_h<T,false>:public false_type {};
         
+        template <class T> struct is_char_h:public false_type {};
+        template <> struct is_char_h<char>:public true_type {};
+        template <> struct is_char_h<signed char>:public true_type {};
+        template <> struct is_char_h<unsigned char>:public true_type {};
+        template <> struct is_char_h<wchar_t>:public true_type {};
+        template <> struct is_char_h<char16_t>:public true_type {};
+        template <> struct is_char_h<char32_t>:public true_type {};
     } // namespace helper
+    
+    template <bool,class T = void> struct enable_if { typedef T type; };
+    template <class T> struct enable_if<false,T> {};
     
     template <class T> struct remove_reference { typedef T type; };
     template <class T> struct remove_reference<T&> { typedef T type; };
@@ -92,6 +102,9 @@ namespace rubbish{
     // but `remove_cv<int* const volatile>::type` is `int*`.
     template <class T> struct remove_cv { typedef typename remove_const<typename remove_volatile<T>::type>::type type; };
     
+    // Remove cv-qualifiers and reference. This type alias is not part of std.
+    template <class T> using raw_type = typename remove_cv<typename remove_reference<T>::type>::type;
+    
     template <class T,class U> struct is_same:public false_type {};
     template <class T> struct is_same<T,T>:public true_type {};
     
@@ -106,6 +119,8 @@ namespace rubbish{
     template <class T> struct is_signed:public helper::is_signed_h<T> {};
     
     template <class T> struct is_unsigned:public helper::is_unsigned_h<T> {};
+    
+    template <class T> struct is_char:public helper::is_char_h<typename remove_cv<T>::type> {};
     
     template <class T> struct is_class:public constant<bool,sizeof(helper::is_class_h::test<T>(0))==sizeof(helper::yes)> {};
     

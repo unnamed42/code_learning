@@ -3,15 +3,9 @@
 
 #include <cstddef> // std::size_t, std::nullptr_t
 #include <bits/move.h> // std::forward
+#include "sfinae.hpp" // type helpers
 
 namespace rubbish{
-
-    // helper alias
-    template <class T>
-    using raw_type = typename std::remove_reference< typename std::remove_cv<T>::type >::type;
-
-    template <class T>
-    using rm_ref = typename std::remove_reference<T>::type;
         
     template <class T> struct deleter{
         constexpr deleter() noexcept =default;
@@ -35,14 +29,14 @@ namespace rubbish{
 
 
 
-    template <class T,class Deleter = rubbish::deleter<raw_type<T> > >
+    template <class T,class Deleter = rubbish::deleter<helper::raw_type<T> > >
     class shared_ptr{
         protected:
             // type aliases
             typedef shared_ptr<T,Deleter> self_type;
             // type definitions
             struct data{
-                rm_ref<T>* ptr;
+                typename remove_reference<T>::type* ptr;
                 std::size_t count;
             };
             
@@ -136,15 +130,15 @@ namespace rubbish{
             data *_data;
     };
 
-    template <class T,class Deleter = deleter<raw_type<T> > >
-    inline shared_ptr<rm_ref<T>,Deleter> make_shared(T &&data){
-        auto ptr=new raw_type<T>(std::forward<rm_ref<T> >(data));
-        return shared_ptr<rm_ref<T>,Deleter>(ptr);
+    template <class T,class Deleter = deleter<helper::raw_type<T> > >
+    inline shared_ptr<typename remove_reference<T>::type,Deleter> make_shared(T &&data){
+        auto ptr=new helper::raw_type<T>(std::forward<typename remove_reference<T>::type>(data));
+        return shared_ptr<typename remove_reference<T>::type,Deleter>(ptr);
     }
 
-    template <class T,class Deleter = deleter<raw_type<T> > >
-    inline shared_ptr<rm_ref<T>,Deleter> make_shared(T *data){
-        return shared_ptr<rm_ref<T>,Deleter>(data);
+    template <class T,class Deleter = deleter<helper::raw_type<T> > >
+    inline shared_ptr<typename remove_reference<T>::type,Deleter> make_shared(T *data){
+        return shared_ptr<typename remove_reference<T>::type,Deleter>(data);
     }
 
 }  // namespace rubbish
