@@ -11,6 +11,6 @@
 // Conflicts with linked one
 //#include "stack.hpp"
 #include "vector.hpp"
-
+#include "map.hpp"
 #include "bits/shared_ptr.hpp"
 #include "bits/sfinae.hpp"

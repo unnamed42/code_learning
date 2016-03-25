@@ -35,7 +35,6 @@ namespace rubbish{
             typedef binary_tree_base<T,Node> base_class;
         public:
             typedef typename base_class::node node;
-            
             typedef typename base_class::inorder_iterator iterator;
 
         protected:
