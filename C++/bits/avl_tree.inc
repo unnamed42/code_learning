@@ -124,7 +124,7 @@ template <class T,class Node> template <class U> typename rubbish::avl_tree<T,No
 template <class T,class Node> template <class U> typename rubbish::avl_tree<T,Node>::node* rubbish::avl_tree<T,Node>::erase(node* root,U &&value){
     // PERFORM STANDARD BST DELETE
     if (root == nullptr)
-        return;
+        return nullptr;
     
     // If the value to be deleted is smaller than the root's value,
     // then it lies in left subtree
@@ -142,13 +142,18 @@ template <class T,class Node> template <class U> typename rubbish::avl_tree<T,No
         // node with only one child or no child
         if( (root->left == nullptr) || (root->right == nullptr) ){
              auto temp = root->left!=nullptr ? root->left : root->right;
- 
+
             // No child case
             if(temp == nullptr){
                 temp = root;
                 root = nullptr;
-            } else // One child case
-                *root = *temp; // Copy the contents of the non-empty child
+            } else{
+                 // One child case, copy the contents of the non-empty child
+                root->data=std::move(temp->data);
+                root->height=temp->height;
+                root->left=temp->left;
+                root->right=temp->right;
+            }
             delete temp;
         } else {
             // node with two children: Get the inorder successor (smallest

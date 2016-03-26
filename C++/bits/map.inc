@@ -1,8 +1,3 @@
-// Interfaces to make T1 comparable with pair<T1,T2> (such comparasion is used in avl_tree)
-template <class T1,class T2> bool operator<(const T1 &lhs,const pair<T1,T2> &rhs){return lhs<rhs.first;}
-template <class T1,class T2> bool operator==(const T1 &lhs,const pair<T1,T2> &rhs){return lhs==rhs.first;}
-template <class T1,class T2> bool operator>(const T1 &lhs,const pair<T1,T2> &rhs){return lhs>rhs.first;}
-
 template <class T1,class T2> rubbish::map<T1,T2>::map():m_base() {}
 
 template <class T1,class T2> rubbish::map<T1,T2>::map(const map<T1,T2> &o):m_base(o.m_base) {}

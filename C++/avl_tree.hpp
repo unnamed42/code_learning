@@ -6,7 +6,7 @@
 
 #include <initializer_list>
 #include "bits/binary_tree_base.hpp"
-#include <bits/move.h> // std::forward
+#include <bits/move.h> // std::forward, std::move
 
 namespace rubbish{
 
@@ -16,7 +16,7 @@ namespace rubbish{
             short height;
             avl_tree_node<T> *left,*right;
             
-            explicit avl_tree_node():data(T()),height(0),left(nullptr),right(nullptr) {}
+            explicit avl_tree_node():data(),height(0),left(nullptr),right(nullptr) {}
             explicit avl_tree_node(const T &elem):data(elem),height(0),left(nullptr),right(nullptr) {}
             explicit avl_tree_node(T &&elem):data(std::move(elem)),height(0),left(nullptr),right(nullptr) {}
         };
@@ -29,6 +29,7 @@ namespace rubbish{
     //   `Node` can be default-initialized and value-initialized.
     // Minimum requirements of `data`:
     //   Comparable using comparasion operator <, > and ==
+    //   Assignable
     
     template <class T,class Node = rubbish::helper::avl_tree_node<T> > class avl_tree: public binary_tree_base<T,Node> {
         private:

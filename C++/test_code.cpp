@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <initializer_list>
+#include <string>
 
 using namespace rubbish;
 
@@ -84,6 +85,15 @@ int main(){
     continuous_container<int> x(10,2);
     for(auto &i:x)
         std::cout<<i<<" ";
+    
+    const std::string str("abc");
+    map<std::string,int> m={{"abc",2568},{"ffg",45},{"eat",445}};
+    std::cout<<m.find(std::string("abc"))->second<<" ";
+    m.find(std::string(str))->second+=554;
+    std::cout<<m.find(std::string(str))->second;
+    m.erase(std::string("ffg"));
+    for(auto &i:m)
+        std::cout<<i.first<<" "<<i.second;
     
     return 0;
 }
