@@ -47,7 +47,7 @@ namespace rubbish{
             
         public:
             // Construct an empty tree
-            explicit avl_tree();
+            avl_tree();
             
             // Construct from given list
             explicit avl_tree(std::initializer_list<T>&&);
@@ -69,6 +69,7 @@ namespace rubbish{
             
             // Delete nodes with given value
             template <class U> void erase(U&&);
+            
             
             // Iterator functions
             iterator begin();

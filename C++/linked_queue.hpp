@@ -22,7 +22,7 @@ namespace rubbish{
             typedef typename Container::iterator iterator;
             
             // Initialize an empty queue
-            explicit queue();
+            queue();
             
             // TODO: Copy-constructor
             queue(const queue<T>&);

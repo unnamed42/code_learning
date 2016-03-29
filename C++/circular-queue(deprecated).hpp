@@ -12,7 +12,7 @@ template <class T,std::size_t N> class queue{
         std::size_t length;        //current number of elements
     public:
         // Zero-initialization constructor
-        explicit queue();
+        queue();
         
         // Copy-constructor
         queue(const queue<T,N>&);

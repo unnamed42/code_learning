@@ -18,8 +18,8 @@ namespace rubbish{
             typedef pair<T1,T2> value_type;
         private:
             typedef avl_tree<value_type> base_class;
-            typedef typename base_class::node node;
         public:
+            typedef typename base_class::node node;
             typedef typename base_class::iterator iterator;
             
             // Default constructor
@@ -44,6 +44,12 @@ namespace rubbish{
             
             // Delete nodes that equal to given value
             template <class key> void erase(key&&);
+            
+            // Reset to an empty map
+            void clear();
+            
+            // Check emptiness
+            bool empty() const noexcept;
             
             // Iterator functions
             iterator begin();

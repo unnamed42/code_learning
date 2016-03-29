@@ -15,8 +15,12 @@ template <class T1,class T2> template <class key> typename rubbish::map<T1,T2>::
     return &(map_node->data);
 }
 
-template <class T1,class T2> template <class key> void rubbish::map<T1, T2>::erase(key &&k){m_base.erase(std::forward<T1>(k));}
+template <class T1,class T2> template <class key> void rubbish::map<T1,T2>::erase(key &&k){m_base.erase(std::forward<T1>(k));}
 
-template <class T1,class T2> typename rubbish::map<T1, T2>::iterator rubbish::map<T1, T2>::begin() {return m_base.begin();}
+template <class T1,class T2> void rubbish::map<T1,T2>::clear() {m_base.clear();}
 
-template <class T1,class T2> typename rubbish::map<T1, T2>::iterator rubbish::map<T1, T2>::end() {return m_base.end();}
+template <class T1,class T2> bool rubbish::map<T1,T2>::empty() const noexcept {return m_base.empty();}
+
+template <class T1,class T2> typename rubbish::map<T1,T2>::iterator rubbish::map<T1,T2>::begin() {return m_base.begin();}
+
+template <class T1,class T2> typename rubbish::map<T1,T2>::iterator rubbish::map<T1,T2>::end() {return m_base.end();}

@@ -23,7 +23,7 @@ namespace rubbish{
             typedef typename Container::iterator iterator;
             
             // Initialize an empty stack
-            explicit stack();
+            stack();
             
             // TODO: Copy-constructor
             stack(const stack<T,Container>&);

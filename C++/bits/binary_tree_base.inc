@@ -123,7 +123,12 @@ template <class T,class Node> unsigned int rubbish::binary_tree_base<T,Node>::de
     return 1 + (left > right ? left : right);
 }
 
+template <class T,class Node> void rubbish::binary_tree_base<T,Node>::clear() {
+    delete_subtree(m_root);
+    m_root=nullptr;
+}
 
+template <class T,class Node> bool rubbish::binary_tree_base<T,Node>::empty() const noexcept {return m_root==nullptr;}
 
 
 // Iterator function implementions
@@ -138,13 +143,10 @@ template <class T,class Node> rubbish::binary_tree_base<T,Node>::tree_iterator_b
 // Two iterators are equal iif they are both
 // empty or their "next node"-s are equal
 template <class T,class Node> bool rubbish::binary_tree_base<T,Node>::tree_iterator_base::operator==(const self_type &other) const {
-    if(other.m_cursor==nullptr&&m_cursor==nullptr)
+    if(other.m_cursor==m_cursor)//==nullptr
         return true;
-    if(other.m_cursor==nullptr)
-        return false;
+    return m_cursor!=nullptr&&other.m_cursor!=nullptr;
     // Further checks are made by derived classes' overloaded operators.
-    // Compiler keeps warning me, add this to make it happy
-    return true;
 }
 
 template <class T,class Node> rubbish::binary_tree_base<T,Node>::preorder_iterator::preorder_iterator(node *root):base_class(root) {
