@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <initializer_list> // std::initializer_list
+#include <bits/move.h> // std::move
 #include <bits/stl_iterator_base_types.h> // std::forward_iterator_tag
 
 namespace rubbish{
@@ -12,10 +13,10 @@ namespace rubbish{
         template <class T> struct forward_list_node{
             T data;
             forward_list_node<T>* next;
-                    
-            explicit forward_list_node():data(T()),next(nullptr) {}
+            
+            forward_list_node():data(T()),next(nullptr) {}
             explicit forward_list_node(const T &elem):data(elem),next(nullptr) {}
-            //explicit forward_list_node(const forward_list_node<T>* p):data(p->elem),next(nullptr) {}
+            explicit forward_list_node(T &&elem):data(std::move(elem)),next(nullptr) {}
         };
     } // namespace helper
     

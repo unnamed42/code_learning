@@ -4,6 +4,7 @@
 #include <iostream>
 #include <initializer_list>
 #include <string>
+#include <random>
 
 using namespace rubbish;
 
@@ -20,6 +21,23 @@ int main(){
     for(auto &i:l)
         i.increment();
     std::for_each(l.begin(),l.end(),[](test &t){std::cout<<t.data<<" ";});
+    
+    list_base<int> list;
+    // Random integer generation
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dist(1,100);
+    for(auto i=0;i<10;++i)
+        list.push_back(dist(gen));
+    for(auto &i:list)
+        std::cout<<i<<" ";
+    std::cout<<std::endl;
+    list.sort();
+    for(auto &i:list)
+        std::cout<<i<<" ";
+    std::cout<<std::endl;
+    for(auto it=list.rbegin();it!=list.rend();++it)
+        std::cout<<*it<<" ";
     
     graph<int> a({0,1,2,3,4,5,6},{{0,1},{0,2},{1,3},{2,3},{2,4},{3,5},{4,5}},true);
     std::vector<int> sv;

@@ -3,22 +3,24 @@ namespace rubbish{
     namespace helper{
         // Helper function of forward_list_base<T,Node>::sort()
         template <class Node> Node* forward_list_merge(Node *h1,Node *h2){
-            Node dummy,*ptr=&dummy;
+            if(h1==h2)
+                return h1;
+            Node *head,**ptr=&head;
             while(h1!=nullptr&&h2!=nullptr){
                 if(h1->data<h2->data){
-                    ptr->next=h1;
+                    *ptr=h1;
                     h1=h1->next;
                 } else {
-                    ptr->next=h2;
+                    *ptr=h2;
                     h2=h2->next;
                 }
-                ptr=ptr->next;
+                ptr=&(*ptr)->next;
             }
             if(h1!=nullptr)
-                ptr->next=h1;
+                *ptr=h1;
             if(h2!=nullptr)
-                ptr->next=h2;
-            return dummy.next;
+                *ptr=h2;
+            return head;
         }
         
         template <class Node> Node* forward_list_merge_sort(Node *head){

@@ -3,21 +3,26 @@
 
 #include <stdexcept>
 #include <initializer_list> // std::initializer_list
+#include <bits/move.h> // std::move
 #include <bits/stl_iterator_base_types.h> // std::bidirectional_iterator_tag
 
 namespace rubbish{
 
-    template <class T> class list_base{
+    namespace helper{
+        template <class T> struct list_node{
+            T data;
+            list_node<T> *prev;
+            list_node<T> *next;
+            
+            list_node():data(T()),prev(nullptr),next(nullptr) {}
+            explicit list_node(const T &elem):data(elem),prev(nullptr),next(nullptr) {}
+            explicit list_node(T &&elem):data(std::move(elem)),prev(nullptr),next(nullptr) {}
+        };
+    } // namespace helper
+    
+    template <class T,class Node = helper::list_node<T> > class list_base{
         public:
-            struct node{
-                T data;
-                node *prev;
-                node *next;
-                
-                explicit node():data(T()),prev(nullptr),next(nullptr) {}
-                explicit node(const T &elem):data(elem),prev(nullptr),next(nullptr) {}
-                explicit node(const node *p):data(p->data),prev(nullptr),next(nullptr) {}
-            };
+            typedef Node node;
             
             class iterator_base{
                 public:
@@ -105,6 +110,9 @@ namespace rubbish{
             
             // Reverse the whole list_base
             void reverse();
+            
+            // Merge sort in acsending order
+            void sort();
             
             // Add an element to the end of this list
             void push_back(const T&);
