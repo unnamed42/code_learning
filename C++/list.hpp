@@ -1,5 +1,5 @@
-#ifndef __LIST__
-#define __LIST__
+#ifndef __RUBBISH_LIST__
+#define __RUBBISH_LIST__
 
 #include "bits/list_base.hpp"
 
@@ -18,4 +18,4 @@ namespace rubbish{
     
 } // namespace rubbish
 
-#endif // __LIST__
+#endif // __RUBBISH_LIST__

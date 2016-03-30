@@ -1,5 +1,5 @@
-#ifndef __DEQUE__
-#define __DEQUE__
+#ifndef __RUBBISH_DEQUE__
+#define __RUBBISH_DEQUE__
 
 #include "vector.hpp"
 
@@ -31,4 +31,4 @@ namespace rubbish{
 
 } // namespace rubbish
 
-#endif // __DEQUE__
+#endif // __RUBBISH_DEQUE__

@@ -1,5 +1,5 @@
-#ifndef __SFINAE__
-#define __SFINAE__
+#ifndef __RUBBISH_SFINAE__
+#define __RUBBISH_SFINAE__
 
 namespace rubbish{
     
@@ -149,4 +149,4 @@ namespace rubbish{
     
 } // namespace rubbish
 
-#endif // __SFINAE__
+#endif // __RUBBISH_SFINAE__

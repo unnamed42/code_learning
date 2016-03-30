@@ -1,5 +1,5 @@
-#ifndef __BINARY_TREE_BASE__
-#define __BINARY_TREE_BASE__
+#ifndef __RUBBISH_BINARY_TREE_BASE__
+#define __RUBBISH_BINARY_TREE_BASE__
 
 #include <deque> // stack, queue 
 #include <memory> // std::shared_ptr
@@ -15,7 +15,7 @@ namespace rubbish{
             T data;
             binary_tree_node<T> *left,*right;
             
-            explicit binary_tree_node():data(T()),left(nullptr),right(nullptr) {}
+            binary_tree_node():data(T()),left(nullptr),right(nullptr) {}
             explicit binary_tree_node(const T &data_):data(data_),left(nullptr),right(nullptr) {}
             explicit binary_tree_node(T &&data_):data(std::move(data_)),left(nullptr),right(nullptr) {}
         };
@@ -195,4 +195,4 @@ namespace rubbish{
 using rubbish::CHILD::LEFT;
 using rubbish::CHILD::RIGHT;
 
-#endif // __BINARY_TREE_BASE__
+#endif // __RUBBISH_BINARY_TREE_BASE__

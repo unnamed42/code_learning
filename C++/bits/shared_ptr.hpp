@@ -1,5 +1,5 @@
-#ifndef __SHARED_PTR__
-#define __SHARED_PTR__
+#ifndef __RUBBISH_SHARED_PTR__
+#define __RUBBISH_SHARED_PTR__
 
 #include <cstddef> // std::size_t, std::nullptr_t
 #include <bits/move.h> // std::forward
@@ -143,4 +143,4 @@ namespace rubbish{
 
 }  // namespace rubbish
 
-#endif 
+#endif // __RUBBISH_SHARED_PTR__

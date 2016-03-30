@@ -1,8 +1,8 @@
 // Algorithms are borrowed from http://www.geeksforgeeks.org/avl-tree-set-1-insertion/
 // and http://www.geeksforgeeks.org/avl-tree-set-2-deletion/
 
-#ifndef __AVL_TREE__
-#define __AVL_TREE__
+#ifndef __RUBBISH_AVL_TREE__
+#define __RUBBISH_AVL_TREE__
 
 #include <initializer_list>
 #include "bits/binary_tree_base.hpp"
@@ -16,7 +16,7 @@ namespace rubbish{
             short height;
             avl_tree_node<T> *left,*right;
             
-            explicit avl_tree_node():data(),height(0),left(nullptr),right(nullptr) {}
+            avl_tree_node():data(),height(0),left(nullptr),right(nullptr) {}
             explicit avl_tree_node(const T &elem):data(elem),height(0),left(nullptr),right(nullptr) {}
             explicit avl_tree_node(T &&elem):data(std::move(elem)),height(0),left(nullptr),right(nullptr) {}
         };
@@ -83,4 +83,4 @@ namespace rubbish{
 
 #include "bits/avl_tree.inc"
 
-#endif // __AVL_TREE__
+#endif // __RUBBISH_AVL_TREE__

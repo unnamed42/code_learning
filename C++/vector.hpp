@@ -1,5 +1,5 @@
-#ifndef __VECTOR__
-#define __VECTOR__
+#ifndef __RUBBISH_VECTOR__
+#define __RUBBISH_VECTOR__
 
 #include <bits/move.h> // std::move
 #include <initializer_list> // std::initializer_list
@@ -49,4 +49,4 @@ namespace rubbish{
 
 #include "bits/vector.inc"
 
-#endif // __VECTOR__
+#endif // __RUBBISH_VECTOR__

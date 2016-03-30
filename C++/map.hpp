@@ -1,5 +1,5 @@
-#ifndef __MAP__
-#define __MAP__
+#ifndef __RUBBISH_MAP__
+#define __RUBBISH_MAP__
 
 #include "avl_tree.hpp"
 #include "bits/pair.hpp"
@@ -66,4 +66,4 @@ namespace rubbish{
 
 #include "bits/map.inc"
 
-#endif // __MAP__
+#endif // __RUBBISH_MAP__

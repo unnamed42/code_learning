@@ -1,5 +1,5 @@
-#ifndef __PAIR__
-#define __PAIR__
+#ifndef __RUBBISH_PAIR__
+#define __RUBBISH_PAIR__
 
 #include <bits/move.h> // std::forward, std::move
 
@@ -39,4 +39,4 @@ namespace rubbish{
     
 } // namespace rubbish
 
-#endif // __PAIR__
+#endif // __RUBBISH_PAIR__

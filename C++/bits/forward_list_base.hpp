@@ -1,5 +1,5 @@
-#ifndef __FORWARD_LIST_BASE__
-#define __FORWARD_LIST_BASE__
+#ifndef __RUBBISH_FORWARD_LIST_BASE__
+#define __RUBBISH_FORWARD_LIST_BASE__
 
 #include <stdexcept>
 #include <initializer_list> // std::initializer_list
@@ -143,4 +143,4 @@ namespace rubbish{
 
 #include "forward_list_base.inc"
 
-#endif // __FORWARD_LIST_BASE__
+#endif // __RUBBISH_FORWARD_LIST_BASE__

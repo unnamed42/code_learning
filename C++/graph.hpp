@@ -1,5 +1,5 @@
-#ifndef __GRAPH__
-#define __GRAPH__
+#ifndef __RUBBISH_GRAPH__
+#define __RUBBISH_GRAPH__
 
 #include <deque>
 #include <vector>
@@ -148,4 +148,4 @@ namespace rubbish{
 
 #include "bits/graph.inc"
 
-#endif // __GRAPH__
+#endif // __RUBBISH_GRAPH__

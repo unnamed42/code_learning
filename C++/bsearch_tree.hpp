@@ -1,5 +1,5 @@
-#ifndef __BINARY_SEARCH_TREE__
-#define __BINARY_SEARCH_TREE__
+#ifndef __RUBBISH_BINARY_SEARCH_TREE__
+#define __RUBBISH_BINARY_SEARCH_TREE__
 
 #include "bits/binary_tree_base.hpp"
 #include <initializer_list>
@@ -37,5 +37,5 @@ namespace rubbish{
 
 #include "bits/bsearch_tree.inc"
 
-#endif // __BINARY_SEARCH_TREE__
+#endif // __RUBBISH_BINARY_SEARCH_TREE__
 

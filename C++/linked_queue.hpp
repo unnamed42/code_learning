@@ -1,5 +1,5 @@
-#ifndef __LINKED_QUEUE__
-#define __LINKED_QUEUE__
+#ifndef __RUBBISH_LINKED_QUEUE__
+#define __RUBBISH_LINKED_QUEUE__
 
 #include <stdexcept>
 #include <bits/move.h> // std::move
@@ -51,4 +51,4 @@ namespace rubbish{
     
 } // namespace rubbish
 
-#endif // __LINKED_QUEUE__
+#endif // __RUBBISH_LINKED_QUEUE__

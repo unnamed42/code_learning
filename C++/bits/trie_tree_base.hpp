@@ -1,7 +1,7 @@
 #include <iostream>
 
-#ifndef __TRIE__BASE__
-#define __TRIE__BASE__
+#ifndef __RUBBISH_TRIE__BASE__
+#define __RUBBISH_TRIE__BASE__
 
 #include "../avl_tree.hpp"
 #include "sfinae.hpp" // type checks
@@ -66,4 +66,4 @@ namespace rubbish{
 
 #undef NULL_TERMINATOR
 
-#endif // __TRIE__BASE__
+#endif // __RUBBISH_TRIE__BASE__

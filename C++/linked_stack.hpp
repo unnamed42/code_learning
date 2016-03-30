@@ -1,5 +1,5 @@
-#ifndef __LINKED_STACK__
-#define __LINKED_STACK__
+#ifndef __RUBBISH_LINKED_STACK__
+#define __RUBBISH_LINKED_STACK__
 
 #include <stdexcept>
 #include "list.hpp" // for default Container
@@ -58,4 +58,4 @@ namespace rubbish{
 
 #include "bits/linked_stack.inc"
 
-#endif // __LINKED_STACK__
+#endif // __RUBBISH_LINKED_STACK__

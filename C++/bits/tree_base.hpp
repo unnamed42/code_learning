@@ -1,5 +1,5 @@
-#ifndef __TREE_BASE__
-#define __TREE_BASE__
+#ifndef __RUBBISH_TREE_BASE__
+#define __RUBBISH_TREE_BASE__
 
 #include <deque>
 #include <memory> // std::shared_ptr
@@ -12,8 +12,9 @@ namespace rubbish{
         T data;
         tree_node<T> *child,*sibling;
         
-        explicit tree_node():data(T()),child(nullptr),sibling(nullptr){}
+        tree_node():data(T()),child(nullptr),sibling(nullptr){}
         explicit tree_node(const T &e):data(e),child(nullptr),sibling(nullptr){}
+        explicit tree_node(T &&e):data(e),child(nullptr),sibling(nullptr){}
     };
     
     // Minimum requirements of type `node`:
@@ -151,4 +152,4 @@ namespace rubbish{
 
 #include "tree_base.inc"
 
-#endif // __TREE_BASE__
+#endif // __RUBBISH_TREE_BASE__

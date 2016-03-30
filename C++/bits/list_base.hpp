@@ -1,5 +1,5 @@
-#ifndef __LIST_BASE__
-#define __LIST_BASE__
+#ifndef __RUBBISH_LIST_BASE__
+#define __RUBBISH_LIST_BASE__
 
 #include <stdexcept>
 #include <initializer_list> // std::initializer_list
@@ -145,4 +145,4 @@ namespace rubbish{
 
 #include "list_base.inc"
 
-#endif // __LIST_BASE__
+#endif // __RUBBISH_LIST_BASE__

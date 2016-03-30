@@ -1,5 +1,5 @@
-#ifndef __CONTINUOUS_CONTAINER__
-#define __CONTINUOUS_CONTAINER__
+#ifndef __RUBBISH_CONTINUOUS_CONTAINER__
+#define __RUBBISH_CONTINUOUS_CONTAINER__
 
 #include <initializer_list> // std::initializer_list
 #include <bits/stl_iterator_base_types.h> // std::random_access_iterator_tag
@@ -117,4 +117,4 @@ namespace rubbish{
 
 #include "continuous_container.inc"
 
-#endif // __CONTINUOUS_CONTAINER__
+#endif // __RUBBISH_CONTINUOUS_CONTAINER__

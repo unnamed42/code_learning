@@ -1,5 +1,5 @@
-#ifndef __FORWARD_LIST__
-#define __FORWARD_LIST__
+#ifndef __RUBBISH_FORWARD_LIST__
+#define __RUBBISH_FORWARD_LIST__
 
 #include "bits/forward_list_base.hpp"
 
@@ -18,4 +18,4 @@ namespace rubbish{
     };
 } // namespace rubbish
 
-#endif // __FORWARD_LIST__
+#endif // __RUBBISH_FORWARD_LIST__

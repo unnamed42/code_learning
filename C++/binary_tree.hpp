@@ -1,5 +1,5 @@
-#ifndef __BINARY_TREE__
-#define __BINARY_TREE__
+#ifndef __RUBBISH_BINARY_TREE__
+#define __RUBBISH_BINARY_TREE__
 
 #include "bits/binary_tree_base.hpp"
 
@@ -7,7 +7,7 @@ namespace rubbish{
     // Minimum requirements of type `node`:
     //   Same as requirements of `node` used in `binary_tree_base`.
     
-    template <class T,class Node = rubbish::helper::binary_tree_node<T> > class binary_tree: public binary_tree_base<T,Node>{
+    template <class T,class Node = helper::binary_tree_node<T> > class binary_tree: public binary_tree_base<T,Node>{
         private:
             typedef binary_tree_base<T,Node> base_class;
             typedef typename base_class::preorder_iterator iterator;
@@ -22,4 +22,4 @@ namespace rubbish{
     };
 } // namespace rubbish
 
-#endif // __BINARY_TREE__
+#endif // __RUBBISH_BINARY_TREE__
