@@ -10,15 +10,15 @@ namespace rubbish{
     template <class T,class Node = helper::binary_tree_node<T> > class binary_tree: public binary_tree_base<T,Node>{
         private:
             typedef binary_tree_base<T,Node> base_class;
-            typedef typename base_class::preorder_iterator iterator;
         public:
             typedef typename base_class::node node;
-            
-            using base_class::base_class;
-            using base_class::m_root;
+            typedef typename base_class::preorder_iterator iterator;
             
             iterator begin() {return iterator(m_root);}
             iterator end() {return iterator(nullptr);}
+        private:
+            using base_class::base_class;
+            using base_class::m_root;
     };
 } // namespace rubbish
 
