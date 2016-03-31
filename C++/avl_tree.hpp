@@ -58,11 +58,11 @@ namespace rubbish{
             // A destructor
             virtual ~avl_tree() = default;
             
-            // Insert a node to this tree, and return its new root
+            // Insert a node to this tree, and return its location
             // Cannot use rvalue reference, reason see above
             iterator insert(const T&);
             
-            // Find a node and return location, if not found return `nullptr`
+            // Find a node and return location, if not found return end iterator
             template <class U> iterator find(U&&) const;
             
             // Delete nodes with given value
