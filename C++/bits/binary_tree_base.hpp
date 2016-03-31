@@ -122,7 +122,7 @@ namespace rubbish{
                     
                     reference operator*() const {return m_cursor->front()->data;}
                     pointer operator->() const { return &operator*(); }
-                    std::shared_ptr<std::deque<data_type>> get() const {return m_cursor;}
+                    data_type get() const {return m_cursor==nullptr?nullptr:m_cursor->front();}
                     self_type& operator++();
                     self_type operator++(int) {auto i=*this; operator++(); return i;}
                     bool operator==(const self_type &other) const;

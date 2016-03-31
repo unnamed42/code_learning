@@ -13,6 +13,7 @@ namespace rubbish{
     template <class T1,class T2> bool operator==(const T1 &lhs,const pair<T1,T2> &rhs){return lhs==rhs.first;}
     template <class T1,class T2> bool operator>(const T1 &lhs,const pair<T1,T2> &rhs){return lhs>rhs.first;}
     
+    // Key is `T1`, value is `T2`
     template <class T1,class T2> class map{
         public:
             typedef pair<T1,T2> value_type;
@@ -37,10 +38,10 @@ namespace rubbish{
             // The templates below are universal reference wrappers
             
             // Insert a node
-            template <class value> void insert(value&&);
+            template <class value> iterator insert(value&&);
             
             // Find a node whose `first` equals key
-            template <class key> value_type* find(key&&) const;
+            template <class key> iterator find(key&&) const;
             
             // Delete nodes that equal to given value
             template <class key> void erase(key&&);

@@ -65,16 +65,23 @@ int main(){
     for(auto &i:v)
         std::cout<<i<<" ";
     
-    std::initializer_list<int> &&p={1,1,1,2,56,9,44,100,9999999};
-    avl_tree<int> tree({1,1,1,2,56,9,44,100,9999999});
-    for(auto &i:tree)
-        std::cout<<i<<" ";
-    for(auto &&i:p){
-        tree.erase(i);
-        for(auto &j:tree)
-            std::cout<<j<<" ";
-        std::cout<<std::endl;
+    avl_tree<int> te({1,2,3,3,3,86,651,32,41,651,984,16,19,41,0});
+    for(auto it=te.level_begin();it!=te.level_end();++it){
+        auto &&ptr=it.get();
+        std::cout<<"this:"<<val(ptr)<<" left:"<<val(ptr->left)<<" right:"<<val(ptr->right)<<" parent:"<<val(ptr->parent)<<std::endl;
     }
+    for(auto &i:te)
+        std::cout<<i<<" ";
+    std::cout<<std::endl;
+    te.erase(3);
+    for(auto &i:te)
+        std::cout<<i<<" ";
+    std::cout<<std::endl;
+    auto it=te.insert(195);
+    std::cout<<(it!=te.end()?*it:0)<<std::endl;
+    for(auto &i:te)
+        std::cout<<i<<" ";
+    std::cout<<std::endl;
     
     bsearch_tree<int> treea({1,5,7,9,5,25,0,1,9,4,1});
     for(auto &i:treea)
