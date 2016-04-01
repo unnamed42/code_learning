@@ -4,7 +4,8 @@
 #include <deque> // stack, queue 
 #include <memory> // std::shared_ptr
 #include <initializer_list> // std::initializer_list
-#include <bits/stl_iterator_base_types.h> // std::forward_iterator_tag
+#include "iterator.hpp"
+#include "sfinae.hpp"
 
 namespace rubbish{
 
@@ -31,106 +32,7 @@ namespace rubbish{
         public:
             typedef Node node;
             
-            class tree_iterator_base {
-                public:
-                    typedef T                           value_type;
-                    typedef T*                          pointer;
-                    typedef T&                          reference;
-                    typedef std::forward_iterator_tag   iterator_category;
-                    typedef std::ptrdiff_t              difference_type;
-                    
-                    typedef tree_iterator_base self_type;
-                    typedef node*              data_type;
-                    
-                    explicit tree_iterator_base(const data_type &cursor):m_cursor(cursor) {}
-                    tree_iterator_base(const tree_iterator_base &other):m_cursor(other.m_cursor) {}
-                    virtual ~tree_iterator_base() = default;
-                    reference operator*() const {return m_cursor->data;}
-                    pointer operator->() const { return &operator*(); }
-                    data_type get() const {return m_cursor;}
-                    bool operator==(const self_type &other) const {return m_cursor==other.m_cursor;}
-                    bool operator!=(const self_type &other) const {return !operator==(other);}
-                    //self_type& operator=(const self_type &other) {m_cursor=other.m_cursor; return *this;}
-                protected:
-                    data_type m_cursor;
-            };
-            
-            class preorder_iterator: public tree_iterator_base{
-                private:
-                    typedef tree_iterator_base base_class;
-                public:
-                    typedef preorder_iterator self_type;
-                    typedef typename base_class::reference reference;
-                    typedef typename base_class::data_type data_type;
-                    
-                    explicit preorder_iterator(const data_type &cursor):base_class(cursor) {}
-                    preorder_iterator(const self_type &other):base_class(other.m_cursor) {}
-                    self_type& operator++();
-                    self_type operator++(int) {auto i=*this; operator++(); return i;}
-                private:
-                    using base_class::m_cursor;
-            };
-            
-            class inorder_iterator: public tree_iterator_base{
-                private:
-                    typedef tree_iterator_base base_class;
-                public:
-                    typedef inorder_iterator self_type;
-                    typedef typename base_class::reference reference;
-                    typedef typename base_class::data_type data_type;
-                    
-                    explicit inorder_iterator(const data_type &cursor);
-                    inorder_iterator(const self_type &other):base_class(other.m_cursor) {}
-                    self_type& operator++();
-                    self_type operator++(int) {auto i=*this; operator++(); return i;}
-                private:
-                    using base_class::m_cursor;
-            };
-            
-            class postorder_iterator: public tree_iterator_base{
-                private:
-                    typedef tree_iterator_base base_class;
-                public:
-                    typedef postorder_iterator self_type;
-                    typedef typename base_class::reference reference;
-                    typedef typename base_class::data_type data_type;
-                    
-                    explicit postorder_iterator(const data_type &cursor);
-                    postorder_iterator(const self_type &other):base_class(other.m_cursor) {}
-                    self_type& operator++();
-                    self_type operator++(int) {auto i=*this; operator++(); return i;}
-                private:
-                    using base_class::m_cursor;
-            };
-            
-            // This kind of iterator is totally different from the above three kinds,
-            // so do not inherit from tree_iterator_base here
-            class level_iterator {
-                public:
-                    typedef T                           value_type;
-                    typedef T*                          pointer;
-                    typedef T&                          reference;
-                    typedef std::forward_iterator_tag   iterator_category;
-                    typedef std::ptrdiff_t              difference_type;
-                    
-                    typedef level_iterator self_type;
-                    typedef node*          data_type;
-                    
-                    explicit level_iterator(const data_type &cursor);
-                    level_iterator(const self_type &other):m_cursor(other.m_cursor) {}
-                    ~level_iterator() = default;
-                    
-                    reference operator*() const {return m_cursor->front()->data;}
-                    pointer operator->() const { return &operator*(); }
-                    data_type get() const {return m_cursor==nullptr?nullptr:m_cursor->front();}
-                    self_type& operator++();
-                    self_type operator++(int) {auto i=*this; operator++(); return i;}
-                    bool operator==(const self_type &other) const;
-                    bool operator!=(const self_type &other) const {return !operator==(other);}
-                    self_type& operator=(const self_type &other) {m_cursor=other.m_cursor; return *this;}
-                private:
-                    std::shared_ptr< std::deque<data_type> > m_cursor;
-            };
+            #include "binary_tree_iterators.inc"
             
         protected:
             // Deep-copy a tree from `src` to `dest`, recursively
@@ -181,23 +83,24 @@ namespace rubbish{
             
             // Iterator functions
             preorder_iterator preorder_begin() {return preorder_iterator(m_root);}
-            
             preorder_iterator preorder_end() {return preorder_iterator(nullptr);}
-            
             inorder_iterator inorder_begin() {return inorder_iterator(m_root);}
-            
             inorder_iterator inorder_end() {return inorder_iterator(nullptr);}
-            
             postorder_iterator postorder_begin() {return postorder_iterator(m_root);}
-            
             postorder_iterator postorder_end() {return postorder_iterator(nullptr);}
-            
             level_iterator level_begin() {return level_iterator(m_root);}
-            
             level_iterator level_end() {return level_iterator(nullptr);}
+            const_preorder_iterator preorder_cbegin() const {return const_preorder_iterator(m_root);}
+            const_preorder_iterator preorder_cend() const {return const_preorder_iterator(nullptr);}
+            const_inorder_iterator inorder_cbegin() const {return const_inorder_iterator(m_root);}
+            const_inorder_iterator inorder_cend() const {return const_inorder_iterator(nullptr);}
+            const_postorder_iterator postorder_cbegin() const {return const_postorder_iterator(m_root);}
+            const_postorder_iterator postorder_cend() const {return const_postorder_iterator(nullptr);}
+            const_level_iterator level_cbegin() const {return const_level_iterator(m_root);}
+            const_level_iterator level_cend() const {return const_level_iterator(nullptr);}
             
             // Copy assignment operator
-            binary_tree_base<T,Node>& operator=(const binary_tree_base<T,Node>&)=delete;
+            binary_tree_base<T,Node>& operator=(const binary_tree_base<T,Node>&);
     };
 
 } // namespace rubbish

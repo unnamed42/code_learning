@@ -32,6 +32,7 @@ namespace rubbish{
         public:
             typedef typename base_class::node node;
             typedef typename base_class::inorder_iterator iterator;
+            typedef typename base_class::const_inorder_iterator const_iterator;
 
         protected:
             // Insert node to a tree whose root is `root`, and return its new root
@@ -63,16 +64,18 @@ namespace rubbish{
             iterator insert(const T&);
             
             // Find a node and return location, if not found return end iterator
-            template <class U> iterator find(U&&) const;
+            template <class U> const_iterator find(U&&) const;
+            template <class U> iterator find(U&&);
             
             // Delete nodes with given value
             template <class U> void erase(U&&);
             
-            
             // Iterator functions
             iterator begin();
-            
             iterator end();
+            const_iterator cbegin() const;
+            const_iterator cend() const;
+            
         private:
             using base_class::m_root;
     };

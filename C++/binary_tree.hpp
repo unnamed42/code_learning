@@ -13,11 +13,15 @@ namespace rubbish{
         public:
             typedef typename base_class::node node;
             typedef typename base_class::preorder_iterator iterator;
+            typedef typename base_class::const_preorder_iterator const_iterator;
+            
+            using base_class::base_class;
             
             iterator begin() {return iterator(m_root);}
             iterator end() {return iterator(nullptr);}
+            const_iterator cbegin() const {return const_iterator(m_root);}
+            const_iterator cend() const {return const_iterator(nullptr);}
         private:
-            using base_class::base_class;
             using base_class::m_root;
     };
 } // namespace rubbish

@@ -224,8 +224,21 @@ template <class T,class Node> rubbish::avl_tree<T,Node>::avl_tree(const rubbish:
 
 template <class T,class Node> rubbish::avl_tree<T,Node>::avl_tree(rubbish::avl_tree<T,Node> &&other):base_class(std::move(other)) {}
 
-template <class T,class Node> template <class U> typename rubbish::avl_tree<T,Node>::iterator rubbish::avl_tree<T,Node>::find(U &&value) const {
-    auto ptr=m_root;
+template <class T,class Node> template <class U> typename rubbish::avl_tree<T,Node>::const_iterator rubbish::avl_tree<T,Node>::find(U &&value) const {
+    node *ptr=m_root;
+    while(ptr!=nullptr){
+        if(value==ptr->data)
+            break;
+        else if(value<ptr->data)
+            ptr=ptr->left;
+        else
+            ptr=ptr->right;
+    }
+    return const_iterator(ptr);
+}
+
+template <class T,class Node> template <class U> typename rubbish::avl_tree<T,Node>::iterator rubbish::avl_tree<T,Node>::find(U &&value){
+    node *ptr=m_root;
     while(ptr!=nullptr){
         if(value==ptr->data)
             break;
@@ -248,3 +261,7 @@ template <class T,class Node> template <class U> void rubbish::avl_tree<T,Node>:
 template <class T,class Node> typename rubbish::avl_tree<T,Node>::iterator rubbish::avl_tree<T,Node>::begin() { return iterator(m_root);}
 
 template <class T,class Node> typename rubbish::avl_tree<T,Node>::iterator rubbish::avl_tree<T,Node>::end() { return iterator(nullptr);}
+
+template <class T,class Node> typename rubbish::avl_tree<T,Node>::const_iterator rubbish::avl_tree<T,Node>::cbegin() const { return const_iterator(m_root);}
+
+template <class T,class Node> typename rubbish::avl_tree<T,Node>::const_iterator rubbish::avl_tree<T,Node>::cend() const { return const_iterator(nullptr);}

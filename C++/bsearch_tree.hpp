@@ -14,6 +14,7 @@ namespace rubbish{
         public:
             typedef typename base_class::node node;
             typedef typename base_class::inorder_iterator iterator;
+            typedef typename base_class::const_inorder_iterator const_iterator;
 
         private:
             using base_class::m_root;
@@ -31,6 +32,8 @@ namespace rubbish{
             
             iterator begin();
             iterator end();
+            const_iterator cbegin() const;
+            const_iterator cend() const;
     };
 
 } // namespace rubbish

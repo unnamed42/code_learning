@@ -22,6 +22,7 @@ namespace rubbish{
         public:
             typedef typename base_class::node node;
             typedef typename base_class::iterator iterator;
+            typedef typename base_class::const_inorder_iterator const_iterator;
             
             // Default constructor
             map();
@@ -38,10 +39,11 @@ namespace rubbish{
             // The templates below are universal reference wrappers
             
             // Insert a node
-            template <class value> iterator insert(value&&);
+            iterator insert(value_type&&);
             
             // Find a node whose `first` equals key
-            template <class key> iterator find(key&&) const;
+            template <class key> const_iterator find(key&&) const;
+            template <class key> iterator find(key&&);
             
             // Delete nodes that equal to given value
             template <class key> void erase(key&&);
@@ -54,8 +56,9 @@ namespace rubbish{
             
             // Iterator functions
             iterator begin();
-            
             iterator end();
+            const_iterator cbegin() const;
+            const_iterator cend() const;
             
         private:
             base_class m_base;
