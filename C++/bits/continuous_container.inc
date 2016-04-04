@@ -34,3 +34,15 @@ template <class T> std::size_t rubbish::continuous_container<T>::size() const no
 template <class T> typename rubbish::continuous_container<T>::iterator rubbish::continuous_container<T>::begin() {return iterator(m_base);}
 
 template <class T> typename rubbish::continuous_container<T>::iterator rubbish::continuous_container<T>::end() {return iterator(m_base+m_used);}
+
+template <class T> typename rubbish::continuous_container<T>::const_iterator rubbish::continuous_container<T>::cbegin() const {return const_iterator(m_base);}
+
+template <class T> typename rubbish::continuous_container<T>::const_iterator rubbish::continuous_container<T>::cend() const {return const_iterator(m_base+m_used);}
+
+template <class T> typename rubbish::continuous_container<T>::reverse_iterator rubbish::continuous_container<T>::rbegin() {return reverse_iterator(end());}
+
+template <class T> typename rubbish::continuous_container<T>::reverse_iterator rubbish::continuous_container<T>::rend() {return reverse_iterator(begin());}
+
+template <class T> typename rubbish::continuous_container<T>::const_reverse_iterator rubbish::continuous_container<T>::crbegin() const {return const_reverse_iterator(cend());}
+
+template <class T> typename rubbish::continuous_container<T>::const_reverse_iterator rubbish::continuous_container<T>::crend() const {return const_reverse_iterator(cbegin());}

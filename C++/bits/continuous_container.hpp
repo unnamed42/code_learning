@@ -2,53 +2,52 @@
 #define __RUBBISH_CONTINUOUS_CONTAINER__
 
 #include <initializer_list> // std::initializer_list
-#include <bits/stl_iterator_base_types.h> // std::random_access_iterator_tag
+#include "iterator.hpp"
+#include "sfinae.hpp"
 
 namespace rubbish{
 
     template <class T> class continuous_container{
         public:
-            class iterator_base{
+            template <bool not_const> class iterator_base:public iterator<std::random_access_iterator_tag,typename condition<not_const,T,const T>::type>{
+                private:
+                    typedef iterator<std::random_access_iterator_tag,typename condition<not_const,T,const T>::type> base_class;
                 public:
-                    typedef T                               value_type;
-                    typedef T*                              pointer;
-                    typedef T&                              reference;
-                    typedef std::random_access_iterator_tag iterator_category;
-                    typedef std::ptrdiff_t                  difference_type;
+                    typedef typename base_class::pointer         pointer;
+                    typedef typename base_class::reference       reference;
+                    typedef typename base_class::difference_type difference_type;
                     
-                    typedef iterator_base self_type;
-                    typedef T* data_type;
+                    typedef iterator_base<not_const>     self_type;
+                    typedef typename base_class::pointer data_type;
                     
-                    iterator_base(const data_type &cursor):m_cursor(cursor) {}
-                    iterator_base(const self_type &other):m_cursor(other.m_cursor){}
-                    virtual ~iterator_base()=default;
+                    explicit iterator_base(const data_type &cursor):m_cursor(cursor) {}
+                    iterator_base(const self_type &other):m_cursor(other.m_cursor) {}
+                    virtual ~iterator_base() = default;
                     
-                    self_type& operator=(const self_type &other) {m_cursor=other.m_cursor; return *this;}
-                    reference operator[](std::size_t len) const {return m_cursor[len];}
                     reference operator*() const {return *m_cursor;}
+                    pointer operator->() const {return &operator*();}
                     data_type get() const {return m_cursor;}
-                    
-                    bool operator==(const self_type &other) const {return m_cursor==other.m_cursor;}
-                    bool operator<(const self_type &other) const {return m_cursor<other.m_cursor;}
-                    bool operator>(const self_type &other) const {return m_cursor>other.m_cursor;}
+                    reference operator[](long n) const {return m_cursor[n];}
+                    bool operator<(const self_type& other) const {return m_cursor<other.m_cursor;}
+                    bool operator>(const self_type& other) const {return m_cursor>other.m_cursor;}
                     bool operator<=(const self_type& other) const {return !operator>(other);}
                     bool operator>=(const self_type& other) const {return !operator<(other);}
+                    bool operator==(const self_type &other) const {return m_cursor==other.m_cursor;}
                     bool operator!=(const self_type &other) const {return !operator==(other);}
                     difference_type operator-(const self_type &other) const {return m_cursor-other.m_cursor;}
                 protected:
                     data_type m_cursor;
             };
             
-            class iterator: public iterator_base {
+            template <bool not_const> class _iterator: public iterator_base<not_const> {
                 private:
-                    typedef iterator_base base_class;
+                    typedef iterator_base<not_const> base_class;
                 public:
-                    typedef iterator self_type;
+                    typedef _iterator self_type;
                     typedef typename base_class::data_type data_type;
                     typedef typename base_class::difference_type difference_type;
                     
                     using base_class::base_class;
-                    ~iterator()=default;
                     
                     self_type& operator++() {++m_cursor;return *this;}
                     self_type operator++(int) {auto i=*this;operator++();return i;}
@@ -62,28 +61,11 @@ namespace rubbish{
                     using base_class::m_cursor;
             };
             
-            class reverse_iterator: public iterator_base{
-                private:
-                    typedef iterator_base base_class;
-                public:
-                    typedef reverse_iterator self_type;
-                    typedef typename base_class::data_type data_type;
-                    typedef typename base_class::difference_type difference_type;
-                    
-                    using base_class::base_class;
-                    ~reverse_iterator()=default;
-                    
-                    self_type& operator++() {--m_cursor;return *this;}
-                    self_type operator++(int) {auto i=*this;operator++();return i;}
-                    self_type& operator--() {++m_cursor;return *this;}
-                    self_type operator--(int) {auto i=*this;operator--();return i;}
-                    self_type& operator+=(const difference_type &diff) {m_cursor-=diff;return *this;}
-                    self_type operator+(const difference_type &diff) const {return self_type(m_cursor-diff);}
-                    self_type& operator-=(const difference_type &diff) {m_cursor+=diff;return *this;}
-                    self_type operator-(const difference_type &diff) const {return self_type(m_cursor+diff);}
-                protected:
-                    using base_class::m_cursor;
-            };
+            typedef _iterator<true>  iterator;
+            typedef _iterator<false> const_iterator;
+            
+            typedef rubbish::reverse_iterator<iterator>       reverse_iterator;
+            typedef rubbish::reverse_iterator<const_iterator> const_reverse_iterator;
             
         protected:
             T *m_base;
@@ -107,10 +89,15 @@ namespace rubbish{
             std::size_t size() const noexcept;
             
             iterator begin();
-            
             iterator end();
+            const_iterator cbegin() const;
+            const_iterator cend() const;
+            reverse_iterator rbegin();
+            reverse_iterator rend();
+            const_reverse_iterator crbegin() const;
+            const_reverse_iterator crend() const;
             
-            continuous_container<T>& operator=(const continuous_container<T>&)=delete;
+            continuous_container<T>& operator=(const continuous_container<T>&);
     };
     
 } // namespace rubbish

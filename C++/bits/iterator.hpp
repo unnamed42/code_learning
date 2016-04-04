@@ -39,15 +39,40 @@ namespace rubbish{
         typedef std::random_access_iterator_tag iterator_category;
     };
     
-    template <class Iterator> class const_iterator{
+    // `Iterator` must at least satisfies BidirectionalIterator
+    template <class Iterator> class reverse_iterator{
         public:
             typedef typename iterator_traits<Iterator>::value_type        value_type;
-            typedef const typename iterator_traits<Iterator>::pointer     pointer;
-            typedef const typename iterator_traits<Iterator>::reference   reference;
+            typedef typename iterator_traits<Iterator>::pointer           pointer;
+            typedef typename iterator_traits<Iterator>::reference         reference;
             typedef typename iterator_traits<Iterator>::difference_type   difference_type;
             typedef typename iterator_traits<Iterator>::iterator_category iterator_category;
             
+            typedef reverse_iterator<Iterator> self_type;
             
+            explicit reverse_iterator(const Iterator &iter):m_iter(iter) {}
+            reverse_iterator(const self_type &other):m_iter(other.m_iter) {}
+            
+            reference operator*() const {return *(m_iter-1);}
+            pointer operator->() const {return &operator*();}
+            reference operator[](long n) const {return m_iter[-n-1];}
+            Iterator base() const {return m_iter;}
+            
+            self_type& operator++() {--m_iter;return *this;}
+            self_type operator++(int) {auto i=*this;operator++();return i;}
+            self_type& operator--() {++m_iter;return *this;}
+            self_type operator--(int) {auto i=*this;operator--();return i;}
+            self_type& operator+=(const difference_type &diff) {m_iter-=diff;return *this;}
+            self_type operator+(const difference_type &diff) const {return self_type(m_iter-diff);}
+            self_type& operator-=(const difference_type &diff) {m_iter+=diff;return *this;}
+            self_type operator-(const difference_type &diff) const {return self_type(m_iter+diff);}
+            
+            bool operator<(const self_type &other) const {return m_iter<other.m_iter;}
+            bool operator>(const self_type &other) const {return m_iter>other.m_iter;}
+            bool operator<=(const self_type &other) const {return !operator>(other);}
+            bool operator>=(const self_type &other) const {return !operator<(other);}
+            bool operator==(const self_type &other) const {return m_iter==other.m_iter;}
+            bool operator!=(const self_type &other) const {return !operator==(other);}
         private:
             Iterator m_iter;
     };
