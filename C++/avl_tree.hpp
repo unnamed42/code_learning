@@ -16,6 +16,9 @@ namespace rubbish{
             avl_tree_node():data(),left(nullptr),right(nullptr),parent(nullptr),height(1) {}
             explicit avl_tree_node(const T &elem):data(elem),left(nullptr),right(nullptr),parent(nullptr),height(1) {}
             explicit avl_tree_node(T &&elem):data(std::move(elem)),left(nullptr),right(nullptr),parent(nullptr),height(1) {}
+            // Should I copy full information from `o`?
+            avl_tree_node(const avl_tree_node<T> &o):data(o.data),left(o.left),right(o.right),parent(o.parent),height(o.height) {}
+            avl_tree_node(avl_tree_node<T> &&o):data(std::move(o.data)),left(o.left),right(o.right),parent(o.parent),height(o.height) {}
         };
     } // namespace helper
     

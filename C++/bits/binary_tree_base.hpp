@@ -20,6 +20,9 @@ namespace rubbish{
             binary_tree_node():data(T()),left(nullptr),right(nullptr),parent(nullptr) {}
             explicit binary_tree_node(const T &_data):data(_data),left(nullptr),right(nullptr),parent(nullptr) {}
             explicit binary_tree_node(T &&_data):data(std::move(_data)),left(nullptr),right(nullptr),parent(nullptr) {}
+            // Should I copy full information from `o`?
+            binary_tree_node(const binary_tree_node<T> &o):data(o.data),left(o.left),right(o.right),parent(o.parent) {}
+            binary_tree_node(binary_tree_node<T> &&o):data(std::move(o.data)),left(o.left),right(o.right),parent(o.parent) {}
         };
     } // namespace helper
     
