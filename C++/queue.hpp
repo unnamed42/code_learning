@@ -1,53 +1,58 @@
-#ifndef __RUBBISH_STACK__
-#define __RUBBISH_STACK__
+#ifndef __RUBBISH_LINKED_QUEUE__
+#define __RUBBISH_LINKED_QUEUE__
 
+#include <stdexcept>
+#include <bits/move.h> // std::move
 #include "deque.hpp"
-#include <bits/move.h>
 
 namespace rubbish{
     
     // Minimum requirements of type `Container`:
-    //   Can push an element to its end by member function `void push_back(const T&)` or `void push(T&&)`
-    //   Can destruct the element at its end by member function `void pop_back()`;
-    //   Can access its final element by member function `front()`;
+    //   Can push an element to its end by member function `void push_back(const T&)`
+    //   Can destruct the element at its front by member function `void pop_front()`;
+    //   Can access its first element by dereferencing `begin()`;
     //   Can return its length by member function `std::size_t size()`;
     //   Copy-constructible, move-constructible;
     //   Can be default-initialized.
-    template <class T,class Container = rubbish::deque<T> > class stack{
+    
+    template <class T,class Container = rubbish::deque<T> > class queue{
+        private:
+            Container m_base;
         public:
             typedef typename Container::iterator iterator;
             typedef typename Container::const_iterator const_iterator;
             typedef typename Container::reverse_iterator reverse_iterator;
             typedef typename Container::const_reverse_iterator const_reverse_iterator;
             
-            // Default constructor
-            stack();
+            // Initialize an empty queue
+            queue();
             
-            // Copy constructor
-            stack(const stack<T,Container>&);
+            // Copy-constructor
+            queue(const queue<T,Container>&);
             
-            // Move constructor
-            stack(stack<T,Container>&&);
+            // Move-constructor
+            queue(queue<T,Container>&&);
             
-            ~stack() = default;
+            // Destructor
+            ~queue()=default;
             
-            // Return the length current in use
-            std::size_t size() const noexcept;
+            // Return the length of this queue
+            std::size_t size() const;
             
-            // Check if the stack holds no element
+            // Check if the queue holds no element
             bool empty() const;
             
-            // Push an element to stack top
-            void push(const T&);
+            // Push an element to queue back
+            void push(const T &elem);
             
             // Just an rvalue reference overload
             void push(T&&);
             
-            // Delete the element at stack top. May throw an exception.
+            // Delete the element at queue front. May throw an exception
             void pop();
             
-            // Get the element at stack top. May throw an exception.
-            T top() const;
+            // Get the element at queue front. May throw an exception
+            T front() const;
             
             // Iterators
             iterator begin();
@@ -58,13 +63,10 @@ namespace rubbish{
             reverse_iterator rend();
             const_reverse_iterator crbegin() const;
             const_reverse_iterator crend() const;
-            
-        private:
-            Container m_base;
     };
     
 } // namespace rubbish
 
-#include "bits/stack.inc"
+#include "bits/queue.inc"
 
-#endif // __RUBBISH_STACK__
+#endif // __RUBBISH_LINKED_QUEUE__

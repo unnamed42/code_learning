@@ -1,8 +1,8 @@
 template <class T,class Container> rubbish::stack<T,Container>::stack():m_base() {}
 
-template <class T,class Container> rubbish::stack<T,Container>::stack(const stack<T> &o):m_base(o.m_base) {}
+template <class T,class Container> rubbish::stack<T,Container>::stack(const stack<T,Container> &o):m_base(o.m_base) {}
 
-template <class T,class Container> rubbish::stack<T,Container>::stack(stack<T> &&o):m_base(std::move(o.m_base)) {}
+template <class T,class Container> rubbish::stack<T,Container>::stack(stack<T,Container> &&o):m_base(std::move(o.m_base)) {}
 
 template <class T,class Container> std::size_t rubbish::stack<T,Container>::size() const noexcept {return m_base.size();}
 
