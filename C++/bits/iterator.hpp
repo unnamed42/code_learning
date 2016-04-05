@@ -52,8 +52,9 @@ namespace rubbish{
             
             explicit reverse_iterator(const Iterator &iter):m_iter(iter) {}
             reverse_iterator(const self_type &other):m_iter(other.m_iter) {}
+            virtual ~reverse_iterator {}
             
-            reference operator*() const {return *(m_iter-1);}
+            virtual reference operator*() const {return *(m_iter-1);}
             pointer operator->() const {return &operator*();}
             reference operator[](long n) const {return m_iter[-n-1];}
             Iterator base() const {return m_iter;}
