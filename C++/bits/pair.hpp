@@ -35,6 +35,11 @@ namespace rubbish{
     
     template <class T1,class T2> bool operator>=(const pair<T1,T2> &lhs,const pair<T1,T2> &rhs){return !(lhs<rhs);}
     
+    // Interfaces to make T1 comparable with rubbish::pair<T1,T2> (such comparasion is used in avl_tree)
+    template <class T1,class T2> bool operator<(const T1 &lhs,const pair<T1,T2> &rhs){return lhs<rhs.first;}
+    template <class T1,class T2> bool operator==(const T1 &lhs,const pair<T1,T2> &rhs){return lhs==rhs.first;}
+    template <class T1,class T2> bool operator>(const T1 &lhs,const pair<T1,T2> &rhs){return lhs>rhs.first;}
+    
     template <class T1,class T2> pair<T1,T2> make_pair(T1 &&f,T2 &&s) {return pair<T1,T2>(std::forward(f),std::forward(s));}
     
 } // namespace rubbish

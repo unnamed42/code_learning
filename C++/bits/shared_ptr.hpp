@@ -13,14 +13,6 @@ namespace rubbish{
         void operator() (T *ptr) {delete ptr;}
         void operator() (std::nullptr_t) {}
     };
-
-    template <class T> struct deleter<T*>{
-        constexpr deleter() noexcept =default;
-        
-        void operator() (T *ptr){delete ptr;}
-        void operator() (std::nullptr_t) {}
-    };
-
     template <class T> struct deleter<T[]>{
         constexpr deleter() noexcept =default;
         
@@ -29,7 +21,7 @@ namespace rubbish{
 
 
 
-    template <class T,class Deleter = rubbish::deleter<helper::raw_type<T> > >
+    template <class T,class Deleter = rubbish::deleter<raw_type<T> > >
     class shared_ptr{
         protected:
             // type aliases
@@ -130,13 +122,13 @@ namespace rubbish{
             data *_data;
     };
 
-    template <class T,class Deleter = deleter<helper::raw_type<T> > >
+    template <class T,class Deleter = deleter<raw_type<T> > >
     inline shared_ptr<rm_ref<T>,Deleter> make_shared(T &&data){
-        auto ptr=new helper::raw_type<T>(std::forward<T>(data));
+        auto ptr=new raw_type<T>(std::forward<T>(data));
         return shared_ptr<rm_ref<T>,Deleter>(ptr);
     }
 
-    template <class T,class Deleter = deleter<helper::raw_type<T> > >
+    template <class T,class Deleter = deleter<raw_type<T> > >
     inline shared_ptr<rm_ref<T>,Deleter> make_shared(T *data){
         return shared_ptr<rm_ref<T>,Deleter>(data);
     }
