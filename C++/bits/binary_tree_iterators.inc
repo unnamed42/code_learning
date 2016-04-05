@@ -1,9 +1,9 @@
 // This file is included inside a class declaration,
 // so do not need to add namespace here
 
-            template <bool not_const> class tree_iterator_base:public iterator<std::forward_iterator_tag,T> {
+            template <bool not_const> class tree_iterator_base:public iterator<std::forward_iterator_tag,typename condition<not_const,T,const T>::type> {
                 private:
-                    typedef iterator<std::forward_iterator_tag,T> base_class;
+                    typedef iterator<std::forward_iterator_tag,typename condition<not_const,T,const T>::type> base_class;
                 public:
                     typedef typename base_class::reference reference;
                     typedef typename base_class::pointer pointer;
@@ -167,9 +167,9 @@
             
             // This kind of iterator is totally different from the above three kinds,
             // so do not inherit from tree_iterator_base here
-            template <bool not_const> class level_order_iterator:public iterator<std::forward_iterator_tag,T> {
+            template <bool not_const> class level_order_iterator:public iterator<std::forward_iterator_tag,typename condition<not_const,T,const T>::type> {
                 private:
-                    typedef iterator<std::forward_iterator_tag,T> base_class;
+                    typedef iterator<std::forward_iterator_tag,typename condition<not_const,T,const T>::type> base_class;
                 public:
                     typedef typename base_class::reference reference;
                     typedef typename base_class::pointer pointer;
@@ -221,6 +221,6 @@
             typedef post_order_iterator<true>   postorder_iterator;
             typedef level_order_iterator<true>  level_iterator;
             typedef pre_order_iterator<false>   const_preorder_iterator;
-            typedef pre_order_iterator<false>   const_inorder_iterator;
-            typedef pre_order_iterator<false>   const_postorder_iterator;
+            typedef in_order_iterator<false>    const_inorder_iterator;
+            typedef post_order_iterator<false>  const_postorder_iterator;
             typedef level_order_iterator<false> const_level_iterator;

@@ -36,13 +36,13 @@ namespace rubbish{
             
         protected:
             // Deep-copy a tree from `src` to `dest`, recursively
-            void copy_subtree(node* &dest, const node *src);
+            static void copy_subtree(node* &dest, const node *src);
             
             // Return the depth of a binary tree whose root is `root`, recursively
-            unsigned int depth(const node *root) const;
+            static unsigned int depth(const node *root);
             
             // Destroy a tree whose root is `root`, recursively
-            void delete_subtree(const node *root);
+            static void delete_subtree(const node *root);
             
             // Data member, root of tree
             node *m_root;

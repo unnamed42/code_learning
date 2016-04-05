@@ -8,11 +8,6 @@
 
 namespace rubbish{
     
-    // Interfaces to make T1 comparable with rubbish::pair<T1,T2> (such comparasion is used in avl_tree)
-    template <class T1,class T2> bool operator<(const T1 &lhs,const pair<T1,T2> &rhs){return lhs<rhs.first;}
-    template <class T1,class T2> bool operator==(const T1 &lhs,const pair<T1,T2> &rhs){return lhs==rhs.first;}
-    template <class T1,class T2> bool operator>(const T1 &lhs,const pair<T1,T2> &rhs){return lhs>rhs.first;}
-    
     // Key is `T1`, value is `T2`
     template <class T1,class T2> class map{
         public:

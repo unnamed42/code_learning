@@ -10,7 +10,7 @@ template <class T1,class T2> typename rubbish::map<T1,T2>::iterator rubbish::map
 
 template <class T1,class T2> template <class key> typename rubbish::map<T1,T2>::const_iterator rubbish::map<T1, T2>::find(key &&k) const {return m_base.find(std::forward<T1>(k));}
 
-template <class T1,class T2> template <class key> typename rubbish::map<T1,T2>::iterator rubbish::map<T1, T2>::find(key &&k) {return m_base.find(std::forward<T1>(k));}
+template <class T1,class T2> template <class key> typename rubbish::map<T1,T2>::iterator rubbish::map<T1, T2>::find(key &&k) {return m_base.find(std::forward<key>(k));}
 
 template <class T1,class T2> template <class key> void rubbish::map<T1,T2>::erase(key &&k){m_base.erase(std::forward<T1>(k));}
 

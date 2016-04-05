@@ -6,7 +6,7 @@
 #include <bits/move.h> // std::forward, std::move
 
 namespace rubbish{
-
+    
     namespace helper{
         template <class T> struct avl_tree_node{
             T data;

@@ -14,20 +14,15 @@ namespace rubbish{
     
     namespace helper{
         
-        template <class Char> struct trie_node{
-            Char data;
-            map<const Char,trie_node<Char>*> children;
+        template <class Char,bool=is_char<Char>::value> struct trie_node{
+            map<Char,trie_node<Char>*> children;
             
-            trie_node():data(NULL_TERMINATOR),children() {}
-            explicit trie_node(const Char &d):data(d),children() {}
-            trie_node(const trie_node<Char> &other):data(other.data),children(other.children) {}
-            // Provided for expensive time cost on copy of `children`
-            trie_node(trie_node<Char> &&other):data(std::move(other.data)),children(std::move(other.children)) {}
-            
-            bool operator<(const trie_node<Char> &other) const {return data<other.data;}
-            bool operator==(const trie_node<Char> &other) const {return data==other.data;}
-            bool operator>(const trie_node<Char> &other) const {return data>other.data;}
+            trie_node():children() {}
+            explicit trie_node(const Char &d):children({{d,nullptr}}) {}
+            trie_node(const trie_node<Char> &other):children(other.children) {}
+            trie_node(trie_node<Char> &&other):children(std::move(other.children)) {}
         };
+        template <class T> struct trie_node<T,false> {};
         
     } // namespace helper
     
@@ -42,19 +37,24 @@ namespace rubbish{
     template <class Char,class Node = helper::trie_node<Char>,bool = is_char<Char>::value> class trie_tree_base{
         public:
             typedef Node node;
+        protected:
+            // Delete trie tree rooted with this node
+            static void delete_subtree(const node*);
             
+        public:
             explicit trie_tree_base(const Char* =nullptr);
             
-            virtual ~trie_tree_base() = default;
+            virtual ~trie_tree_base();
             
             void insert(const Char*);
             
             // Check if this tree contains the given string, 
             // will return `true` if string pointer is `nullptr` or is an empty string.
+            // But an empty tree contains nothing, even the empty string.
             bool has_str(const Char*) const;
             
         protected:
-            node m_root;
+            node* m_root;
     };
     // Other types are invalid.
     template <class Char,class Node> class trie_tree_base<Char,Node,false> {};
@@ -64,36 +64,51 @@ namespace rubbish{
     
 } // namespace rubbish
 
-template <class Char,class Node,bool is_char> bool rubbish::trie_tree_base<Char,Node,is_char>::has_str(const Char *str) const {
-    if(str==nullptr)
-        return true;
-    auto trie_node=&m_root;
-    while(*str!=NULL_TERMINATOR){
-        auto &&children=trie_node->children;
-        auto &&tmp=children.find(*str);
-        if(tmp==children.cend())
-            return false;
-        trie_node=tmp->second;
-        std::cout<<trie_node->data<<" ";
-        ++str;
-    }
-    std::cout<<std::endl;
-    return true;
+template <class Char,class Node,bool is_char> void rubbish::trie_tree_base<Char,Node,is_char>::delete_subtree(const node *root){
+    if(root==nullptr)
+        return;
+    auto &&children=root->children;
+    for(auto it=children.cbegin();it!=children.cbegin();++it)
+        delete_subtree(it->second);
+    delete root;
 }
 
-template <class Char,class Node,bool is_char> rubbish::trie_tree_base<Char,Node,is_char>::trie_tree_base(const Char *str):m_root(NULL_TERMINATOR) {insert(str);}
+template <class Char,class Node,bool is_char> rubbish::trie_tree_base<Char,Node,is_char>::trie_tree_base(const Char *str):m_root(nullptr) {insert(str);}
+
+template <class Char,class Node,bool is_char> rubbish::trie_tree_base<Char,Node,is_char>::~trie_tree_base() {delete_subtree(m_root);}
 
 template <class Char,class Node,bool is_char> void rubbish::trie_tree_base<Char,Node,is_char>::insert(const Char *str){
     if(str==nullptr||*str==NULL_TERMINATOR)
         return;
     auto trie_node=&m_root;
     while(*str!=NULL_TERMINATOR){
-        auto &&tmp=trie_node->children.insert({*str,nullptr});
-        std::cout<<tmp->first<<" ";
+        if(*trie_node==nullptr)
+            *trie_node=new node(*str);
+        else{
+            auto &&tmp=(*trie_node)->children.insert({*str,nullptr});
+            trie_node=&(tmp->second);
+        }
+        ++str;
+    }
+}
+
+template <class Char,class Node,bool is_char> bool rubbish::trie_tree_base<Char,Node,is_char>::has_str(const Char *str) const {
+    if(m_root==nullptr)
+        return false;
+    if(str==nullptr)
+        return true;
+    auto trie_node=m_root;
+    while(*str!=NULL_TERMINATOR){
+        if(trie_node==nullptr)
+            return false;
+        auto &&children=trie_node->children;
+        auto &&tmp=children.find(*str);
+        if(tmp==children.end())
+            return false;
         trie_node=tmp->second;
         ++str;
     }
-    std::cout<<std::endl;
+    return true;
 }
 
 #include "trie_tree_base.inc"

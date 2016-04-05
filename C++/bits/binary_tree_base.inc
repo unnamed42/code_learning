@@ -127,7 +127,7 @@ template <class T,class Node> void rubbish::binary_tree_base<T,Node>::insert_chi
 
 template <class T,class Node> unsigned int rubbish::binary_tree_base<T,Node>::depth() const {return depth(m_root);}
 
-template <class T,class Node> unsigned int rubbish::binary_tree_base<T,Node>::depth(const node *root) const {
+template <class T,class Node> unsigned int rubbish::binary_tree_base<T,Node>::depth(const node *root) {
     if(root == nullptr)
         return 0;
     unsigned int left = depth(root->left), right = depth(root->right);
