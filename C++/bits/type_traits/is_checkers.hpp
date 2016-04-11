@@ -1,31 +1,15 @@
-#ifndef __RUBBISH_SFINAE__
-#define __RUBBISH_SFINAE__
+#ifndef __RUBBISH_IS_CHECKERS__
+#define __RUBBISH_IS_CHECKERS__
+
+#include "basic_traits.hpp"
+#include "remove_qualifier.hpp"
 
 namespace rubbish{
     
-    // Forward-declaration area
+    // Forward-declaration
     template <class T> struct is_arithmetic;
     
-    // Base class of nearly all
-    template <class T,T t> struct constant{
-        constexpr static T value = t;
-        constexpr operator T() const {return value;}
-        constexpr T& operator()() const { return value; }
-    };
-    typedef constant<bool,true> true_type;
-    typedef constant<bool,false> false_type;
-    
     namespace helper{
-        
-        // Just to ensure sizeof(yes)!=sizeof(no)
-        typedef char yes;
-        typedef struct{char c[2];} no;
-        
-        struct is_class_h{
-            template <class T> static yes test(int T::*);
-            template <class T> static no test(...);
-        };
-        
         // This helper is from https://stackoverflow.com/a/2913870
         template <class Base,class Derived> struct is_base_of_h{
             operator Base*() const;
@@ -33,6 +17,11 @@ namespace rubbish{
             // Optional: split functions and custom conversion operators in two classes
             template <class T> static yes test(Derived*,T);
             static no test(Base*,int);
+        };
+        
+        struct is_class_h{
+            template <class T> static yes test(int T::*);
+            template <class T> static no test(...);
         };
         
         template <class T> struct is_pointer_h:public false_type{};
@@ -79,53 +68,15 @@ namespace rubbish{
         template <> struct is_char_h<char32_t>:public true_type {};
     } // namespace helper
     
-    template <class T> struct remove_reference { typedef T type; };
-    template <class T> struct remove_reference<T&> { typedef T type; };
-    template <class T> struct remove_reference<T&&> { typedef T type; };
-    
-    template <class T> struct remove_pointer { typedef T type; };
-    template <class T> struct remove_pointer<T*> { typedef T type; };
-    template <class T> struct remove_pointer<T* const> { typedef T type; };
-    template <class T> struct remove_pointer<T* const volatile> { typedef T type; };
-    
-    template <class T> struct remove_const { typedef T type; };
-    template <class T> struct remove_const<const T> {typedef T type;};
-    
-    template <class T> struct remove_volatile { typedef T type; };
-    template <class T> struct remove_volatile<volatile T> {typedef T type;};
-    
-    // Remove the top most cv-qualifiers. Keep in mind that
-    // `remove_cv<const volatile int*>::type` is still `const volatile int*`,
-    // but `remove_cv<int* const volatile>::type` is `int*`.
-    template <class T> struct remove_cv { typedef typename remove_const<typename remove_volatile<T>::type>::type type; };
-    
-    // Always set `type` as an lvalue reference
-    template <class T> struct add_lvalue_reference {typedef T& type;};
-    template <class T> struct add_lvalue_reference<T&> {typedef T& type;};
-    template <class T> struct add_lvalue_reference<T&&> {typedef T& type;};
-    
-    // Always set `type` as an rvalue reference
-    template <class T> struct add_rvalue_reference {typedef T&& type;};
-    template <class T> struct add_rvalue_reference<T&> {typedef T&& type;};
-    template <class T> struct add_rvalue_reference<T&&> {typedef T&& type;};
-    
-    // This is uncompleted
-    template <class T> struct add_pointer {typedef T* type;};
-    
-    template <class T> struct add_const {typedef const T type;};
-    
-    template <class T> struct add_volatile {typedef volatile T type;};
-    
-    template <class T> struct add_cv {typedef typename add_const<typename add_volatile<T>::type>::type type;};
+    template <class T> struct is_array:public false_type {};
+    template <class T> struct is_array<T[]>:public true_type {};
+    template <class T, unsigned long long N> struct is_array<T[N]>:public true_type {};
     
     template <class T> struct is_const:public false_type {};
     template <class T> struct is_const<const T>:public true_type {};
     
     template <class T> struct is_volatile:public false_type {};
     template <class T> struct is_volatile<volatile T>:public true_type {};
-    
-    template <class T,class U> struct is_same:public false_type {};
-    template <class T> struct is_same<T,T>:public true_type {};
     
     template <class T> struct is_void:public is_same<void,typename remove_cv<T>::type> {};
     
@@ -150,34 +101,38 @@ namespace rubbish{
     
     template <class T> struct is_member_pointer:public helper::is_member_pointer_h<typename remove_cv<T>::type> {};
     
-    template <bool,class True,class False> struct condition {typedef True type;};
-    template <class True,class False> struct condition<false,True,False> {typedef False type;};
+    // Check if type T is a function.
+    // Types like function, lambdas,classes with overloaded operator() and pointers to functions doesn't count as a function type.
+    template <class> struct is_function:public false_type { };
+    // Regular functions
+    template <class Ret,class ...Args> struct is_function<Ret(Args...) >:public true_type {};
+    // Variadic functions
+    template <class Ret,class ...Args> struct is_function<Ret(Args...,...) >:public true_type {};
+    // cv-qualified functions
+    template <class Ret,class ...Args> struct is_function<Ret(Args...) const>:public true_type {};
+    template <class Ret,class ...Args> struct is_function<Ret(Args...) volatile>:public true_type {};
+    template <class Ret,class ...Args> struct is_function<Ret(Args...) const volatile>:public true_type {};
+    template <class Ret,class ...Args> struct is_function<Ret(Args...,...) const>:public true_type {};
+    template <class Ret,class ...Args> struct is_function<Ret(Args...,...) volatile>:public true_type {};
+    template <class Ret,class ...Args> struct is_function<Ret(Args...,...) const volatile>:public true_type {};
+    // ref-qualified, cv-qualified functions
+    template <class Ret,class ...Args> struct is_function<Ret(Args...)&>:public true_type {};
+    template <class Ret,class ...Args> struct is_function<Ret(Args...) const&>:public true_type {};
+    template <class Ret,class ...Args> struct is_function<Ret(Args...) volatile&>:public true_type {};
+    template <class Ret,class ...Args> struct is_function<Ret(Args...) const volatile&>:public true_type {};
+    template <class Ret,class ...Args> struct is_function<Ret(Args...,...)&>:public true_type {};
+    template <class Ret,class ...Args> struct is_function<Ret(Args...,...) const&>:public true_type {};
+    template <class Ret,class ...Args> struct is_function<Ret(Args...,...) volatile&>:public true_type {};
+    template <class Ret,class ...Args> struct is_function<Ret(Args...,...) const volatile&>:public true_type {};
+    template <class Ret,class ...Args> struct is_function<Ret(Args...)&&>:public true_type {};
+    template <class Ret,class ...Args> struct is_function<Ret(Args...) const&&>:public true_type {};
+    template <class Ret,class ...Args> struct is_function<Ret(Args...) volatile&&>:public true_type {};
+    template <class Ret,class ...Args> struct is_function<Ret(Args...) const volatile&&>:public true_type {};
+    template <class Ret,class ...Args> struct is_function<Ret(Args...,...)&&>:public true_type {};
+    template <class Ret,class ...Args> struct is_function<Ret(Args...,...) const&&>:public true_type {};
+    template <class Ret,class ...Args> struct is_function<Ret(Args...,...) volatile&&>:public true_type {};
+    template <class Ret,class ...Args> struct is_function<Ret(Args...,...) const volatile&&>:public true_type {};
     
-    template <bool,class T = void> struct enable_if {};
-    template <class T> struct enable_if<true,T> {typedef T type;};
-    
-    
-    
-    
-    // Remove reference. This type alias is not a part of std.
-    template <class T> using rm_ref = typename remove_reference<T>::type;
-    
-    // Remove pointer. This type alias is not a part of std.
-    template <class T> using rm_ptr = typename remove_pointer<T>::type;
-    
-    // Remove const qualifiers. This type alias is not a part of std.
-    template <class T> using rm_c = typename remove_const<T>::type;
-    
-    // Remove volatile qualifiers. This type alias is not a part of std.
-    template <class T> using rm_v = typename remove_volatile<T>::type;
-    
-    // Remove cv-qualifiers. This type alias is not a part of std.
-    template <class T> using rm_cv = typename remove_cv<T>::type;
-    
-    // Remove cv-qualifiers and reference. This type alias is not a part of std.
-    // Pointer property is not removed.
-    template <class T> using raw_type = typename remove_cv<typename remove_reference<T>::type>::type;
     
 } // namespace rubbish
-
-#endif // __RUBBISH_SFINAE__
+#endif // __RUBBISH_IS_CHECKERS__

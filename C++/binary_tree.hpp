@@ -1,7 +1,7 @@
 #ifndef __RUBBISH_BINARY_TREE__
 #define __RUBBISH_BINARY_TREE__
 
-#include "bits/binary_tree_base.hpp"
+#include "bits/tree/binary_tree_base.hpp"
 
 namespace rubbish{
     // Minimum requirements of type `node`:

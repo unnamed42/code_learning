@@ -1,7 +1,7 @@
 #ifndef __RUBBISH_LIST__
 #define __RUBBISH_LIST__
 
-#include "bits/list_base.hpp"
+#include "bits/linear/list_base.hpp"
 
 namespace rubbish{
     

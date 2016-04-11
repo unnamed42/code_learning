@@ -1,7 +1,6 @@
 #ifndef __RUBBISH_ITERATOR__
 #define __RUBBISH_ITERATOR__
 
-#include "sfinae.hpp"
 #include <cstddef> // std::ptrdiff_t
 #include <bits/stl_iterator_base_types.h> // std iterator tags
 
@@ -10,7 +9,16 @@ namespace rubbish{
     template<class Category,class T,class Distance = std::ptrdiff_t,
              class Pointer = T*,class Reference = T& > 
     struct iterator{
-        typedef typename remove_const<T>::type value_type;
+        typedef T                              value_type;
+        typedef Pointer                        pointer;
+        typedef Reference                      reference;
+        typedef Distance                       difference_type;
+        typedef Category                       iterator_category;
+    };
+    template<class Category,class T,class Distance,
+             class Pointer,class Reference> 
+    struct iterator<Category,const T,Distance,Pointer,Reference>{
+        typedef T                              value_type;
         typedef Pointer                        pointer;
         typedef Reference                      reference;
         typedef Distance                       difference_type;
@@ -52,7 +60,7 @@ namespace rubbish{
             
             explicit reverse_iterator(const Iterator &iter):m_iter(iter) {}
             reverse_iterator(const self_type &other):m_iter(other.m_iter) {}
-            virtual ~reverse_iterator {}
+            virtual ~reverse_iterator() {}
             
             virtual reference operator*() const {return *(m_iter-1);}
             pointer operator->() const {return &operator*();}

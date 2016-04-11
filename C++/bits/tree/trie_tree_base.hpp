@@ -1,11 +1,9 @@
-#include <iostream>
+#ifndef __RUBBISH_TRIE_BASE__
+#define __RUBBISH_TRIE_BASE__
 
-#ifndef __RUBBISH_TRIE__BASE__
-#define __RUBBISH_TRIE__BASE__
-
-#include "../map.hpp"
-#include "sfinae.hpp" // type checks
-#include "pair.hpp"
+#include "map.hpp"
+#include "type_traits/is_checkers.hpp" // type checks
+#include "../utility/pair.hpp"
 #include <bits/move.h> // std::move
 
 #define NULL_TERMINATOR '\0'
@@ -115,4 +113,4 @@ template <class Char,class Node,bool is_char> bool rubbish::trie_tree_base<Char,
 
 #undef NULL_TERMINATOR
 
-#endif // __RUBBISH_TRIE__BASE__
+#endif // __RUBBISH_TRIE_BASE__

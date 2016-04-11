@@ -1,5 +1,5 @@
 // This file is included inside a class declaration,
-// so do not need to add namespace here
+// so do not need to add namespace or include files here
 
             template <bool not_const> class tree_iterator_base:public iterator<std::forward_iterator_tag,typename condition<not_const,T,const T>::type> {
                 private:

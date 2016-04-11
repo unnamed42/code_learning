@@ -1,7 +1,7 @@
 #ifndef __RUBBISH_WRAPPER__
 #define __RUBBISH_WRAPPER__
 
-#include "sfinae.hpp"
+#include "../../type_traits.hpp"
 #include <cstddef>
 
 #define HAS_DETECTOR(func_name)\

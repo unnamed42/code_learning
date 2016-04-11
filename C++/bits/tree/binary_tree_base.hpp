@@ -4,8 +4,8 @@
 #include <deque> // stack, queue 
 #include <memory> // std::shared_ptr
 #include <initializer_list> // std::initializer_list
-#include "iterator.hpp"
-#include "sfinae.hpp"
+#include "../iterator.hpp"
+#include "../type_traits/basic_traits.hpp" // rubbish::condition, used in iterators
 
 namespace rubbish{
 

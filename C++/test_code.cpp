@@ -14,6 +14,8 @@ struct test{
     void increment(){data++;}
 };
 
+int val(helper::avl_tree_node<int> *p) {return p==nullptr?-1:p->data;}
+
 int main(){
     forward_list_base<test> l;
     for(int i=0;i<10;i++)
@@ -77,8 +79,8 @@ int main(){
     for(auto &i:te)
         std::cout<<i<<" ";
     std::cout<<std::endl;
-    auto it=te.insert(195);
-    std::cout<<(it!=te.end()?*it:0)<<std::endl;
+    auto x=te.insert(195);
+    std::cout<<(x!=te.end()?*x:0)<<std::endl;
     for(auto &i:te)
         std::cout<<i<<" ";
     std::cout<<std::endl;
@@ -107,8 +109,8 @@ int main(){
     for(auto it=treeba.level_begin();it!=treeba.level_end();++it)
         std::cout<<(*it)<<",";
     
-    continuous_container<int> x(10,2);
-    for(auto &i:x)
+    continuous_container<int> cc(10,2);
+    for(auto &i:cc)
         std::cout<<i<<" ";
     
     const std::string str("abc");

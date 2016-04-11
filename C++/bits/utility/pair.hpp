@@ -40,7 +40,7 @@ namespace rubbish{
     template <class T1,class T2> bool operator==(const T1 &lhs,const pair<T1,T2> &rhs){return lhs==rhs.first;}
     template <class T1,class T2> bool operator>(const T1 &lhs,const pair<T1,T2> &rhs){return lhs>rhs.first;}
     
-    template <class T1,class T2> pair<T1,T2> make_pair(T1 &&f,T2 &&s) {return pair<T1,T2>(std::forward(f),std::forward(s));}
+    template <class T1,class T2> pair<T1,T2> make_pair(T1 &&f,T2 &&s) {return pair<T1,T2>(std::forward<T1>(f),std::forward<T2>(s));}
     
 } // namespace rubbish
 
