@@ -141,6 +141,6 @@ namespace rubbish{
 
 } // namespace rubbish
 
-#include "forward_list_base.inc"
+#include "forward_list_base.cc"
 
 #endif // __RUBBISH_FORWARD_LIST_BASE__

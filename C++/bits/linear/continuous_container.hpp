@@ -102,6 +102,6 @@ namespace rubbish{
     
 } // namespace rubbish
 
-#include "continuous_container.inc"
+#include "continuous_container.cc"
 
 #endif // __RUBBISH_CONTINUOUS_CONTAINER__

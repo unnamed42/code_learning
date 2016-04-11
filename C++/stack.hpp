@@ -65,6 +65,6 @@ namespace rubbish{
     
 } // namespace rubbish
 
-#include "bits/stack.inc"
+#include "bits/stack.cc"
 
 #endif // __RUBBISH_STACK__

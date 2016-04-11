@@ -35,7 +35,7 @@ namespace rubbish{
         public:
             typedef Node node;
             
-            #include "binary_tree_iterators.inc"
+            #include "binary_tree_iterators.cc"
             
         protected:
             // Deep-copy a tree from `src` to `dest`, recursively
@@ -108,7 +108,7 @@ namespace rubbish{
 
 } // namespace rubbish
 
-#include "binary_tree_base.inc"
+#include "binary_tree_base.cc"
 
 using rubbish::CHILD::LEFT;
 using rubbish::CHILD::RIGHT;

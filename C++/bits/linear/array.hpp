@@ -133,6 +133,6 @@ namespace rubbish{
     
 } // namespace rubbish
 
-#include "array.inc"
+#include "array.cc"
 
 #endif // __RUBBISH_ARRAY__

@@ -67,6 +67,6 @@ namespace rubbish{
     
 } // namespace rubbish
 
-#include "bits/queue.inc"
+#include "bits/queue.cc"
 
 #endif // __RUBBISH_LINKED_QUEUE__

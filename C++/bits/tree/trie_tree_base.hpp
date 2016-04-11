@@ -109,7 +109,7 @@ template <class Char,class Node,bool is_char> bool rubbish::trie_tree_base<Char,
     return true;
 }
 
-#include "trie_tree_base.inc"
+#include "trie_tree_base.cc"
 
 #undef NULL_TERMINATOR
 

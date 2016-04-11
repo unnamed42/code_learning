@@ -150,6 +150,6 @@ namespace rubbish{
     
 } // namespace rubbish
 
-#include "tree_base.inc"
+#include "tree_base.cc"
 
 #endif // __RUBBISH_TREE_BASE__

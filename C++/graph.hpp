@@ -146,6 +146,6 @@ namespace rubbish{
     };
 } // namespace rubbish
 
-#include "bits/graph.inc"
+#include "bits/graph.cc"
 
 #endif // __RUBBISH_GRAPH__

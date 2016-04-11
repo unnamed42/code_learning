@@ -47,6 +47,6 @@ namespace rubbish{
     
 } // namespace rubbish
 
-#include "vector.inc"
+#include "vector.cc"
 
 #endif // __RUBBISH_VECTOR__

@@ -143,6 +143,6 @@ namespace rubbish{
     };
 } // namespace rubbish
 
-#include "list_base.inc"
+#include "list_base.cc"
 
 #endif // __RUBBISH_LIST_BASE__

@@ -85,6 +85,6 @@ namespace rubbish{
     
 } // namespace rubbish
 
-#include "avl_tree.inc"
+#include "avl_tree.cc"
 
 #endif // __RUBBISH_AVL_TREE__

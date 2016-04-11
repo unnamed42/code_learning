@@ -38,7 +38,7 @@ namespace rubbish{
 
 } // namespace rubbish
 
-#include "bsearch_tree.inc"
+#include "bsearch_tree.cc"
 
 #endif // __RUBBISH_BINARY_SEARCH_TREE__
 
