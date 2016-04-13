@@ -21,11 +21,11 @@ namespace rubbish{
         }
         
         // T1, T2 and T3 are subtrees of the tree rooted with y (on left side) 
-        // or x (on right side)           
+        // or x (on right side)
         //              y                          x
-        //             / \     Right Rotation     /  \
+        //             / \     Right Rotation     /  \ 
         //            x   T3   – – – – – – – >   T1   y 
-        //           / \       < - - - - - - -       / \
+        //           / \       < - - - - - - -       / \ 
         //          T1  T2     Left Rotation       T2  T3
         
         template <class Node> Node* avl_left_rotate(Node *root){

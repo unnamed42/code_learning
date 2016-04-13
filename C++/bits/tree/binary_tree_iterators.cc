@@ -13,7 +13,8 @@
                     
                     explicit tree_iterator_base(const data_type &cursor):m_cursor(cursor) {}
                     tree_iterator_base(const self_type &other):m_cursor(other.m_cursor) {}
-                    virtual ~tree_iterator_base() = default;
+                    virtual ~tree_iterator_base() {}
+                    
                     reference operator*() const {return m_cursor->data;}
                     pointer operator->() const { return &operator*(); }
                     data_type get() const {return m_cursor;}
@@ -177,43 +178,39 @@
                     typedef level_order_iterator<not_const>                       self_type;
                     typedef typename condition<not_const,node*,const node*>::type data_type;
                     
-                    explicit level_order_iterator(const data_type &cursor):m_cursor(nullptr) {
+                    explicit level_order_iterator(const data_type &cursor):m_cursor() {
                         if(cursor!=nullptr){
-                            m_cursor=std::make_shared<std::deque<data_type>>(std::deque<data_type>());
-                            m_cursor->push_back(cursor);
+                            m_cursor.push_back(cursor);
                             // Make iteration doable starting at any node
                             data_type parent=cursor->parent;
                             if(parent!=nullptr && parent->left==cursor)
-                                m_cursor->push_back(parent->right);
+                                m_cursor.push_back(parent->right);
                         }
                     }
                     level_order_iterator(const self_type &other):m_cursor(other.m_cursor) {}
+                    level_order_iterator(self_type &&other):m_cursor(std::move(other.m_cursor)) {}
                     ~level_order_iterator() = default;
                     
-                    reference operator*() const {return m_cursor->front()->data;}
+                    reference operator*() const {return m_cursor.front()->data;}
                     pointer operator->() const { return &operator*(); }
-                    data_type get() const {return m_cursor==nullptr?nullptr:m_cursor->front();}
+                    const std::deque<data_type>& get() const {return m_cursor;}
                     self_type& operator++() {
-                        if(m_cursor==nullptr||m_cursor->empty()){
-                            m_cursor.reset();
+                        if(m_cursor.empty())
                             return *this;
-                        }
-                        auto ptr=m_cursor->front();m_cursor->pop_front();
+                        auto ptr=m_cursor.front();m_cursor.pop_front();
                         if(ptr->left != nullptr)
-                            m_cursor->push_back(ptr->left);
+                            m_cursor.push_back(ptr->left);
                         if(ptr->right != nullptr)
-                            m_cursor->push_back(ptr->right);
-                        // Double check if the iteration comes to an end
-                        if(m_cursor->empty())
-                            m_cursor.reset();
+                            m_cursor.push_back(ptr->right);
                         return *this;
                     }
                     self_type operator++(int) {auto i=*this; operator++(); return i;}
-                    bool operator==(const self_type &other) const {return m_cursor==other.m_cursor || (m_cursor!=nullptr && other.m_cursor!=nullptr && m_cursor->front()==other.m_cursor->front());}
+                    bool operator==(const self_type &other) const {return (m_cursor.empty()&&other.m_cursor.empty()) || (!m_cursor.empty()&&!other.m_cursor.empty() && m_cursor.front()==other.m_cursor.front());}
                     bool operator!=(const self_type &other) const {return !operator==(other);}
                     self_type& operator=(const self_type &other) {m_cursor=other.m_cursor; return *this;}
+                    self_type& operator=(self_type &&other) {m_cursor=std::move(other.m_cursor); return *this;}
                 private:
-                    std::shared_ptr< std::deque<data_type> > m_cursor;
+                    std::deque<data_type> m_cursor;
             };
             
             typedef pre_order_iterator<true>    preorder_iterator;

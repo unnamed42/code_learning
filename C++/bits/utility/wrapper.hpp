@@ -1,17 +1,22 @@
 #ifndef __RUBBISH_WRAPPER__
 #define __RUBBISH_WRAPPER__
 
-#include "../../type_traits.hpp"
-#include <cstddef>
+#include "../type_traits/basic_traits.hpp"
+#include "../type_traits/remove_qualifier.hpp"
 
+// Only normal and const member functions can be detected.
 #define HAS_DETECTOR(func_name)\
 template <class T,class ReturnType,class ...Args> struct has_##func_name{\
-    template <class U,ReturnType (U::*)(Args...)> struct sfinae;\
-    template <class U,ReturnType (U::*)(Args...) const> struct sfinae_const;\
-    template <class U> static yes test(sfinae<U,&U::func_name>*);\
-    template <class U> static yes test(sfinae_const<U,&U::func_name>*);\
-    template <class U> static no test(...);\
-    constexpr static bool value = sizeof(test<T>(0))==sizeof(yes);\
+    private:\
+        typedef char yes;\
+        typedef struct{char c[2];} no;\
+    public:\
+        template <class U,ReturnType (U::*)(Args...)> struct sfinae;\
+        template <class U,ReturnType (U::*)(Args...) const> struct sfinae_const;\
+        template <class U> static yes test(sfinae<U,&U::func_name>*);\
+        template <class U> static yes test(sfinae_const<U,&U::func_name>*);\
+        template <class U> static no test(...);\
+        constexpr static bool value = sizeof(test<T>(0))==sizeof(yes);\
 }
 
 namespace rubbish{

@@ -42,6 +42,6 @@ namespace rubbish{
                     typename remove_cv<U>::type
                 >::type
             >::type type;
-    };   
+    };
 }
 #endif // __RUBBISH_ADD_QUALIFIER__

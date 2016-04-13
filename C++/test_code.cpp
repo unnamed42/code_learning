@@ -69,7 +69,7 @@ int main(){
     
     avl_tree<int> te({1,2,3,3,3,86,651,32,41,651,984,16,19,41,0});
     for(auto it=te.level_begin();it!=te.level_end();++it){
-        auto &&ptr=it.get();
+        auto &&ptr=it.get().front();
         std::cout<<"this:"<<val(ptr)<<" left:"<<val(ptr->left)<<" right:"<<val(ptr->right)<<" parent:"<<val(ptr->parent)<<std::endl;
     }
     for(auto &i:te)

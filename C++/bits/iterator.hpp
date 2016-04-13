@@ -3,26 +3,21 @@
 
 #include <cstddef> // std::ptrdiff_t
 #include <bits/stl_iterator_base_types.h> // std iterator tags
+#include "type_traits/remove_qualifier.hpp"
 
 namespace rubbish{
     
     template<class Category,class T,class Distance = std::ptrdiff_t,
              class Pointer = T*,class Reference = T& > 
     struct iterator{
-        typedef T                              value_type;
+        typedef typename remove_const<T>::type value_type;
         typedef Pointer                        pointer;
         typedef Reference                      reference;
         typedef Distance                       difference_type;
         typedef Category                       iterator_category;
-    };
-    template<class Category,class T,class Distance,
-             class Pointer,class Reference> 
-    struct iterator<Category,const T,Distance,Pointer,Reference>{
-        typedef T                              value_type;
-        typedef Pointer                        pointer;
-        typedef Reference                      reference;
-        typedef Distance                       difference_type;
-        typedef Category                       iterator_category;
+        
+        // Trival one to remove warning [-Wnon-virtual-dtor]
+        virtual ~iterator() {}
     };
     
     template <class Iterator> struct iterator_traits{

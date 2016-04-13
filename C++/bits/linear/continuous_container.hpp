@@ -22,7 +22,7 @@ namespace rubbish{
                     
                     explicit iterator_base(const data_type &cursor):m_cursor(cursor) {}
                     iterator_base(const self_type &other):m_cursor(other.m_cursor) {}
-                    virtual ~iterator_base() = default;
+                    virtual ~iterator_base() {}
                     
                     reference operator*() const {return *m_cursor;}
                     pointer operator->() const {return &operator*();}
@@ -35,6 +35,8 @@ namespace rubbish{
                     bool operator==(const self_type &other) const {return m_cursor==other.m_cursor;}
                     bool operator!=(const self_type &other) const {return !operator==(other);}
                     difference_type operator-(const self_type &other) const {return m_cursor-other.m_cursor;}
+                    
+                    self_type& operator=(const self_type &other) {m_cursor=other.m_cursor;}
                 protected:
                     data_type m_cursor;
             };

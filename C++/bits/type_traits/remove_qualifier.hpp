@@ -28,7 +28,7 @@ namespace rubbish{
     // but `remove_cv<int* const volatile>::type` is `int*`.
     template <class T> struct remove_cv { typedef typename remove_const<typename remove_volatile<T>::type>::type type; };
     
-// Remove reference. This type alias is not a part of std.
+    // Remove reference. This type alias is not a part of std.
     template <class T> using rm_ref = typename remove_reference<T>::type;
     
     // Remove pointer. This type alias is not a part of std.
