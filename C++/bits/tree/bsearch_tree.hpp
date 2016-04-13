@@ -3,6 +3,7 @@
 
 #include "binary_tree_base.hpp"
 #include <initializer_list>
+#include <bits/move.h> // std::move
 
 namespace rubbish{
     // Minimum requirements of type `Node`:
@@ -29,6 +30,11 @@ namespace rubbish{
             
             // Insert data to this tree
             void insert(const T&);
+            void insert(T &&);
+            
+            // Find an element and return its location
+            iterator find(const T&);
+            const_iterator find(const T&) const;
             
             iterator begin();
             iterator end();
