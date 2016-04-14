@@ -13,16 +13,22 @@ namespace rubbish{
 
     namespace helper{
         template <class T> struct binary_tree_node{
+            typedef binary_tree_node<T> self_type;
+            
             T data;
-            binary_tree_node<T> *left,*right;
-            binary_tree_node<T> *parent;
+            self_type *left,*right;
+            self_type *parent;
             
             binary_tree_node():data(T()),left(nullptr),right(nullptr),parent(nullptr) {}
             explicit binary_tree_node(const T &_data):data(_data),left(nullptr),right(nullptr),parent(nullptr) {}
             explicit binary_tree_node(T &&_data):data(std::move(_data)),left(nullptr),right(nullptr),parent(nullptr) {}
             // Should I copy full information from `o`?
-            binary_tree_node(const binary_tree_node<T> &o):data(o.data),left(o.left),right(o.right),parent(o.parent) {}
-            binary_tree_node(binary_tree_node<T> &&o):data(std::move(o.data)),left(o.left),right(o.right),parent(o.parent) {}
+            binary_tree_node(const self_type &o):data(o.data),left(o.left),right(o.right),parent(o.parent) {}
+            binary_tree_node(self_type &&o):data(std::move(o.data)),left(o.left),right(o.right),parent(o.parent) {}
+            
+            // Assignment operators to avoid warning [-Weffc++]
+            self_type& operator=(const self_type &o) {data=o.data; left=o.left; right=o.right; parent=o.parent; return *this;}
+            self_type& operator=(self_type &&o) {data=std::move(o.data); left=o.left; right=o.right; parent=o.parent; return *this;}
         };
     } // namespace helper
     
@@ -105,7 +111,6 @@ namespace rubbish{
             // Copy assignment operator
             binary_tree_base<T,Node>& operator=(const binary_tree_base<T,Node>&);
     };
-
 } // namespace rubbish
 
 #include "binary_tree_base.cc"

@@ -4,19 +4,26 @@
 #include <stdexcept>
 #include <initializer_list> // std::initializer_list
 #include <bits/move.h> // std::move
-#include <bits/stl_iterator_base_types.h> // std::bidirectional_iterator_tag
+#include "../iterator.hpp"
 
 namespace rubbish{
 
     namespace helper{
         template <class T> struct list_node{
+            typedef list_node<T> self_type;
+            
             T data;
-            list_node<T> *prev;
-            list_node<T> *next;
+            self_type *prev;
+            self_type *next;
             
             list_node():data(T()),prev(nullptr),next(nullptr) {}
             explicit list_node(const T &elem):data(elem),prev(nullptr),next(nullptr) {}
             explicit list_node(T &&elem):data(std::move(elem)),prev(nullptr),next(nullptr) {}
+            list_node(const self_type &o):data(o.data),next(o.next),prev(o.prev) {}
+            list_node(self_type &&o):data(std::move(data)),next(o.next),prev(o.prev) {}
+            
+            self_type& operator=(const self_type &o) {data=o.data;next=o.next;prev=o.prev;return *this;}
+            self_type& operator=(self_type &&o) {data=std::move(o.data);next=o.next;prev=o.prev;return *this;}
         };
     } // namespace helper
     
@@ -33,7 +40,7 @@ namespace rubbish{
                     typedef std::ptrdiff_t                   difference_type;
                     
                     typedef iterator_base                 self_type;
-                    typedef typename list_base<T>::node*  data_type;
+                    typedef typename list_base<T,Node>::node*  data_type;
                     
                     explicit iterator_base(const data_type &cursor):m_cursor(cursor) {}
                     iterator_base(const self_type &other):m_cursor(other.m_cursor) {}
@@ -89,15 +96,17 @@ namespace rubbish{
             node *m_end; // actual end of list_base
             std::size_t m_length;
         public:
+            // Default initialization
+            constexpr list_base();
             
-            // Initialize a list_base of given length, filled by the given value. By default, it is an empty list_base
-            list_base(std::size_t=0,const T& =T());
+            // Initialize a list_base of given length, filled by the given value.
+            list_base(std::size_t,const T&);
             
             // Move-constructor
-            list_base(list_base<T>&&);
+            list_base(list_base<T,Node>&&);
             
             // Copy-constructor
-            list_base(const list_base<T>&);
+            list_base(const list_base<T,Node>&);
             
             // Construct from the given list_base
             list_base(std::initializer_list<T>&&);
@@ -110,6 +119,9 @@ namespace rubbish{
             
             // Reverse the whole list_base
             void reverse();
+            
+            // Check emptiness
+            bool empty() const;
             
             // Merge sort in acsending order
             void sort();
@@ -131,15 +143,13 @@ namespace rubbish{
             
             // Iterator functions
             iterator begin();
-            
             iterator end();
-            
             reverse_iterator rbegin();
-            
             reverse_iterator rend();
             
-            // Deleted copy assignment operator 
-            list_base<T>& operator=(const list_base<T>&)=delete;
+            // Assignment operator to avoid warning [-Weffc++]
+            list_base<T,Node>& operator=(const list_base<T,Node>&);
+            list_base<T,Node>& operator=(list_base<T,Node>&&);
     };
 } // namespace rubbish
 

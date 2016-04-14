@@ -22,7 +22,7 @@ template <class T,class Node> void rubbish::bsearch_tree<T,Node>::insert(const T
 
 template <class T,class Node> void rubbish::bsearch_tree<T,Node>::insert(T &&data) {insert(m_root,std::move(data));}
 
-template <class T,class Node> const_iterator rubbish::bsearch_tree<T,Node>::find(const T &data) const {
+template <class T,class Node> typename rubbish::bsearch_tree<T,Node>::const_iterator rubbish::bsearch_tree<T,Node>::find(const T &data) const {
     auto ptr=m_root;
     while(ptr!=nullptr){
         if(ptr->data == data)
@@ -35,7 +35,7 @@ template <class T,class Node> const_iterator rubbish::bsearch_tree<T,Node>::find
     return const_iterator(ptr);
 }
 
-template <class T,class Node> iterator rubbish::bsearch_tree<T,Node>::find(const T &data) {
+template <class T,class Node> typename rubbish::bsearch_tree<T,Node>::iterator rubbish::bsearch_tree<T,Node>::find(const T &data) {
     auto ptr=m_root;
     while(ptr!=nullptr){
         if(ptr->data == data)

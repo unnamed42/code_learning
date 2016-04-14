@@ -107,13 +107,6 @@ template <class T> typename rubbish::graph<T>::topo_iterator rubbish::graph<T>::
 
 template <class T> typename rubbish::graph<T>::topo_iterator rubbish::graph<T>::topo_end(){ return topo_iterator(-1); }
 
-// class rubbish::graph<T>::node<U>
-template <class T> template <class U> rubbish::graph<T>::node<U>::node():data(U()),next(nullptr){}
-
-template <class T> template <class U> rubbish::graph<T>::node<U>::node(const U &e):data(e),next(nullptr){}
-
-template <class T> template <class U> rubbish::graph<T>::node<U>::node(const node<U> *p):data(p->data),next(nullptr){}
-
 
 // class rubbish::graph<T>::iterator_base
 template <class T> rubbish::graph<T>::iterator_base::iterator_base(_index_t _index,std::vector<data_type> *_nodes):index(_index),nodes(_nodes){}

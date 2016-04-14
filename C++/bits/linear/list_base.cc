@@ -55,6 +55,7 @@ namespace rubbish{
     } // namespace helper
 } // namespace rubbish
 
+template <class T,class Node> rubbish::list_base<T,Node>::list_base():m_head(nullptr),m_end(nullptr),m_length(0){}
 
 template <class T,class Node> rubbish::list_base<T,Node>::list_base(std::size_t len,const T &value):m_head(nullptr),m_end(nullptr),m_length(len){
     if(len==0)
@@ -70,13 +71,6 @@ template <class T,class Node> rubbish::list_base<T,Node>::list_base(std::size_t 
     m_head->prev=nullptr;
 }
 
-template <class T,class Node> rubbish::list_base<T,Node>::list_base(rubbish::list_base<T> &&other){
-    m_head=other.m_head;
-    m_end=other.m_end;
-    m_length=other.m_length;
-    other.m_head=other.m_end=nullptr;
-}
-
 template <class T,class Node> rubbish::list_base<T,Node>::list_base(std::initializer_list<T> &&l):m_head(nullptr),m_end(nullptr),m_length(0){
     if(l.size()==0)
         return;
@@ -89,17 +83,21 @@ template <class T,class Node> rubbish::list_base<T,Node>::list_base(std::initial
     }
 }
 
-template <class T,class Node> rubbish::list_base<T,Node>::list_base(const rubbish::list_base<T> &l){
-    node *another=l.m_head;
-    m_head=m_end=new node(another);
-    another=another->next;
-    while(another!=nullptr){
-        m_end->next=new node(another);
+template <class T,class Node> rubbish::list_base<T,Node>::list_base(const rubbish::list_base<T> &o):m_head(nullptr),m_end(nullptr),m_length(o.m_length){
+    if(o.empty())
+        return;
+    const node *optr=o.m_head;
+    m_head=m_end=new node(*optr);
+    optr=optr->next;
+    while(optr!=nullptr){
+        m_end->next=new node(*optr);
         m_end->next->prev=m_end;
         m_end=m_end->next;
-        another=another->next;
+        optr=optr->next;
     }
 }
+
+template <class T,class Node> rubbish::list_base<T,Node>::list_base(rubbish::list_base<T> &&o):m_head(o.m_head),m_end(o.m_end),m_length(o.m_length) {o.m_head=o.m_end=nullptr;o.m_length=0;}
 
 template <class T,class Node> rubbish::list_base<T,Node>::~list_base(){
     node *save;
@@ -111,6 +109,8 @@ template <class T,class Node> rubbish::list_base<T,Node>::~list_base(){
 }
 
 template <class T,class Node> std::size_t rubbish::list_base<T,Node>::size() const noexcept {return m_length;}
+
+template <class T,class Node> bool rubbish::list_base<T,Node>::empty() const {return m_head==nullptr;}
 
 template <class T,class Node> void rubbish::list_base<T,Node>::reverse(){
     if(m_head==nullptr||m_head->next==nullptr)
@@ -225,4 +225,31 @@ template <class T,class Node> typename rubbish::list_base<T,Node>::reverse_itera
 
 template <class T,class Node> typename rubbish::list_base<T,Node>::reverse_iterator rubbish::list_base<T,Node>::rend() {return reverse_iterator(nullptr);}
 
+template <class T,class Node> rubbish::list_base<T,Node>& rubbish::list_base<T,Node>::operator=(const rubbish::list_base<T,Node> &o) {
+    this->~list_base();
+    m_length=o.m_length;
+    if(o.empty()){
+        m_head=m_end=nullptr;
+        return *this;
+    }
+    const node *optr=o.m_head;
+    m_head=m_end=new node(*optr);
+    optr=optr->next;
+    while(optr!=nullptr){
+        m_end->next=new node(*optr);
+        m_end->next->prev=m_end;
+        m_end=m_end->next;
+        optr=optr->next;
+    }
+    return *this;
+}
 
+template <class T,class Node> rubbish::list_base<T,Node>& rubbish::list_base<T,Node>::operator=(rubbish::list_base<T,Node> &&o) {
+    this->~list_base();
+    m_head=o.m_head;
+    m_end=o.m_end;
+    m_length=o.m_length;
+    o.m_head=o.m_end=nullptr;
+    o.m_length=0;
+    return *this;
+}

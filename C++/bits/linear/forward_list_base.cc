@@ -52,7 +52,8 @@ namespace rubbish{
     
 } // namespace rubbish
 
-// member functions
+template <class T,class Node> rubbish::forward_list_base<T,Node>::forward_list_base():m_head(nullptr),m_end(nullptr),m_length(nullptr) {}
+
 template <class T,class Node> rubbish::forward_list_base<T,Node>::forward_list_base(std::size_t len,const T &value):m_head(nullptr),m_end(nullptr),m_length(len){
     if(len==0)
         return;
@@ -63,19 +64,18 @@ template <class T,class Node> rubbish::forward_list_base<T,Node>::forward_list_b
     }
 }
 
-template <class T,class Node> rubbish::forward_list_base<T,Node>::forward_list_base(rubbish::forward_list_base<T> &&other){
-    m_head=other.m_head;
-    m_end=other.m_end;
-    m_length=other.m_length;
-    other.m_head=other.m_end=nullptr;
-}
+template <class T,class Node> rubbish::forward_list_base<T,Node>::forward_list_base(rubbish::forward_list_base<T,Node> &&other):m_head(o.m_head),m_end(o.m_end),m_length(o.m_length) {other.m_head=other.m_end=nullptr;o.m_length=0;}
 
-template <class T,class Node> rubbish::forward_list_base<T,Node>::forward_list_base(const rubbish::forward_list_base<T> &other):m_head(nullptr),m_end(nullptr),m_length(other.m_length){
+template <class T,class Node> rubbish::forward_list_base<T,Node>::forward_list_base(const rubbish::forward_list_base<T,Node> &other):m_head(nullptr),m_end(nullptr),m_length(other.m_length){
+    if(other.empty())
+        return;
     node **ptr=&m_head;const node *optr=other.m_head;
+    *ptr=new node(*optr); optr=optr->next;
     while(optr!=nullptr){
-        *ptr=new node(optr);
+        (*ptr)->next=new node(*optr);
         ptr=&(*ptr)->next;
     }
+    m_end=*ptr;
 }
 
 template <class T,class Node> rubbish::forward_list_base<T,Node>::forward_list_base(std::initializer_list<T> &&l):m_head(nullptr),m_end(nullptr),m_length(0){
@@ -126,6 +126,8 @@ template <class T,class Node> void rubbish::forward_list_base<T,Node>::remove_el
     if(prev->next==nullptr)
         m_end=prev;
 }
+
+template <class T,class Node> bool rubbish::forward_list_base<T,Node>::empty() const {return m_head==nullptr;}
 
 template <class T,class Node> std::size_t rubbish::forward_list_base<T,Node>::size() const noexcept {return m_length;}
 
@@ -226,4 +228,31 @@ template <class T,class Node> void rubbish::forward_list_base<T,Node>::remove_af
     delete _it->next;
     _it->next=save;
     m_length--;
+}
+
+template <class T,class Node> rubbish::forward_list_base<T,Node>& rubbish::forward_list_base<T,Node>::operator=(const rubbish::forward_list_base<T,Node> &other) {
+    this->~forward_list_base();
+    m_length=other.m_length;
+    if(other.empty()){
+        m_head=m_end=nullptr;
+        return *this;
+    }
+    node **ptr=&m_head;const node *optr=other.m_head;
+    *ptr=new node(*optr); optr=optr->next;
+    while(optr!=nullptr){
+        (*ptr)->next=new node(*optr);
+        ptr=&(*ptr)->next;
+    }
+    m_end=*ptr;
+    return *this;
+}
+
+template <class T,class Node> rubbish::forward_list_base<T,Node>& rubbish::forward_list_base<T,Node>::operator=(rubbish::forward_list_base<T,Node> &&other) {
+    this->~forward_list_base();
+    m_head=other.m_head;
+    m_end=other.m_end;
+    m_length=other.m_length;
+    other.m_head=other.m_end=nullptr;
+    other.m_length=0;
+    return *this;
 }

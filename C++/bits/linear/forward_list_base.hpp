@@ -14,7 +14,7 @@ namespace rubbish{
             T data;
             forward_list_node<T>* next;
             
-            forward_list_node():data(T()),next(nullptr) {}
+            constexpr forward_list_node():data(T()),next(nullptr) {}
             explicit forward_list_node(const T &elem):data(elem),next(nullptr) {}
             explicit forward_list_node(T &&elem):data(std::move(elem)),next(nullptr) {}
         };
@@ -38,7 +38,7 @@ namespace rubbish{
                     typedef std::ptrdiff_t              difference_type;
                     
                     typedef iterator_base                   self_type;
-                    typedef typename forward_list_base<T>::node* data_type;
+                    typedef typename forward_list_base<T,Node>::node* data_type;
                     
                     explicit iterator_base(const data_type &cursor):m_cursor(cursor) {}
                     iterator_base(const self_type &other):m_cursor(other.m_cursor) {}
@@ -75,14 +75,17 @@ namespace rubbish{
             node *m_end;// the actual final node of forward_list_base
             std::size_t m_length;
         public:
-            // Initialize a forward_list_base of given length, filled by the given value. By default, it is an empty forward_list_base
-            forward_list_base(std::size_t=0,const T& =T());
+            // Default Initialization
+            constexpr forward_list_base();
+            
+            // Initialize a forward_list_base of given length, filled by the given value.
+            forward_list_base(std::size_t,const T&);
             
             // Move-constructor
-            forward_list_base(forward_list_base<T>&&);
+            forward_list_base(forward_list_base<T,Node>&&);
             
             // Copy-constructor
-            forward_list_base(const forward_list_base<T>&);
+            forward_list_base(const forward_list_base<T,Node>&);
             
             // Construct from the given forward_list_base
             explicit forward_list_base(std::initializer_list<T>&&);
@@ -95,6 +98,9 @@ namespace rubbish{
             
             // Reverse the whole forward_list_base
             void reverse();
+            
+            // Check emptiness
+            bool empty() const;
             
             // Sort this list in ascending order, using merge sort method
             void sort();
@@ -135,8 +141,9 @@ namespace rubbish{
             
             iterator end();
             
-            // deleted copy assignment operator
-            forward_list_base<T>& operator=(const forward_list_base<T>&) =delete;
+            // Assignment operators to remove warning [-Weffc++]
+            forward_list_base<T,Node>& operator=(const forward_list_base<T,Node>&);
+            forward_list_base<T,Node>& operator=(forward_list_base<T,Node>&&);
     };
 
 } // namespace rubbish
