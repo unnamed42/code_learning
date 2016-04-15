@@ -43,6 +43,11 @@ namespace rubbish{
             
             #include "binary_tree_iterators.cc"
             
+            typedef const_iterator<preorder_iterator>  const_preorder_iterator;
+            typedef const_iterator<inorder_iterator>   const_inorder_iterator;
+            typedef const_iterator<postorder_iterator> const_postorder_iterator;
+            typedef const_iterator<level_iterator>     const_level_iterator;
+            
         protected:
             // Deep-copy a tree from `src` to `dest`, recursively
             static void copy_subtree(node* &dest, const node *src);
@@ -91,25 +96,26 @@ namespace rubbish{
             
             
             // Iterator functions
-            preorder_iterator preorder_begin() {return preorder_iterator(m_root);}
-            preorder_iterator preorder_end() {return preorder_iterator(nullptr);}
-            inorder_iterator inorder_begin() {return inorder_iterator(m_root);}
-            inorder_iterator inorder_end() {return inorder_iterator(nullptr);}
-            postorder_iterator postorder_begin() {return postorder_iterator(m_root);}
-            postorder_iterator postorder_end() {return postorder_iterator(nullptr);}
-            level_iterator level_begin() {return level_iterator(m_root);}
-            level_iterator level_end() {return level_iterator(nullptr);}
-            const_preorder_iterator preorder_cbegin() const {return const_preorder_iterator(m_root);}
-            const_preorder_iterator preorder_cend() const {return const_preorder_iterator(nullptr);}
-            const_inorder_iterator inorder_cbegin() const {return const_inorder_iterator(m_root);}
-            const_inorder_iterator inorder_cend() const {return const_inorder_iterator(nullptr);}
-            const_postorder_iterator postorder_cbegin() const {return const_postorder_iterator(m_root);}
-            const_postorder_iterator postorder_cend() const {return const_postorder_iterator(nullptr);}
-            const_level_iterator level_cbegin() const {return const_level_iterator(m_root);}
-            const_level_iterator level_cend() const {return const_level_iterator(nullptr);}
+            preorder_iterator preorder_begin();
+            preorder_iterator preorder_end();
+            inorder_iterator inorder_begin();
+            inorder_iterator inorder_end();
+            postorder_iterator postorder_begin();
+            postorder_iterator postorder_end();
+            level_iterator level_begin();
+            level_iterator level_end();
+            const_preorder_iterator preorder_cbegin() const;
+            const_preorder_iterator preorder_cend() const;
+            const_inorder_iterator inorder_cbegin() const;
+            const_inorder_iterator inorder_cend() const;
+            const_postorder_iterator postorder_cbegin() const;
+            const_postorder_iterator postorder_cend() const;
+            const_level_iterator level_cbegin() const;
+            const_level_iterator level_cend() const;
             
-            // Copy assignment operator
+            // Assignment operator to avoid warning [-Weffc++]
             binary_tree_base<T,Node>& operator=(const binary_tree_base<T,Node>&);
+            binary_tree_base<T,Node>& operator=(binary_tree_base<T,Node>&&);
     };
 } // namespace rubbish
 

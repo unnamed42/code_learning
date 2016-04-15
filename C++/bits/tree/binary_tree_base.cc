@@ -1,3 +1,4 @@
+
 // Binary tree base class function implementions
 template <class T,class Node> rubbish::binary_tree_base<T,Node>::binary_tree_base(node *root): m_root(root) {}
 
@@ -140,3 +141,48 @@ template <class T,class Node> void rubbish::binary_tree_base<T,Node>::clear() {
 }
 
 template <class T,class Node> bool rubbish::binary_tree_base<T,Node>::empty() const noexcept {return m_root==nullptr;}
+
+template <class T,class Node> rubbish::binary_tree_base<T,Node>& rubbish::binary_tree_base<T,Node>::operator=(const rubbish::binary_tree_base<T,Node> &o) {
+    this->~binary_tree_base();
+    m_root=nullptr;
+    copy_subtree(m_root,o.m_root);
+    return *this;
+}
+
+template <class T,class Node> rubbish::binary_tree_base<T,Node>& rubbish::binary_tree_base<T,Node>::operator=(rubbish::binary_tree_base<T,Node> &&o) {
+    this->~binary_tree_base();
+    m_root=o.m_root;
+    o.m_root=nullptr;
+}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::preorder_iterator rubbish::binary_tree_base<T,Node>::preorder_begin() {return preorder_iterator(m_root);}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::preorder_iterator rubbish::binary_tree_base<T,Node>::preorder_end() {return preorder_iterator(nullptr);}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::inorder_iterator rubbish::binary_tree_base<T,Node>::inorder_begin() {return (m_root);}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::inorder_iterator rubbish::binary_tree_base<T,Node>::inorder_end() {return (nullptr);}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::postorder_iterator rubbish::binary_tree_base<T,Node>::postorder_begin() {return (m_root);}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::postorder_iterator rubbish::binary_tree_base<T,Node>::postorder_end() {return (nullptr);}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::level_iterator rubbish::binary_tree_base<T,Node>::level_begin() {return level_iterator(m_root);}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::level_iterator rubbish::binary_tree_base<T,Node>::level_end() {return level_iterator(nullptr);}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_preorder_iterator rubbish::binary_tree_base<T,Node>::preorder_cbegin() const {return const_preorder_iterator(const_cast<binary_tree_base<T,Node>*>(this)->preorder_begin());}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_preorder_iterator rubbish::binary_tree_base<T,Node>::preorder_cend() const {return const_preorder_iterator(const_cast<binary_tree_base<T,Node>*>(this)->preorder_end());}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_inorder_iterator rubbish::binary_tree_base<T,Node>::inorder_cbegin() const {return const_inorder_iterator(const_cast<binary_tree_base<T,Node>*>(this)->inorder_begin());}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_inorder_iterator rubbish::binary_tree_base<T,Node>::inorder_cend() const {return const_inorder_iterator(const_cast<binary_tree_base<T,Node>*>(this)->inorder_end());}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_postorder_iterator rubbish::binary_tree_base<T,Node>::postorder_cbegin() const {return const_postorder_iterator(const_cast<binary_tree_base<T,Node>*>(this)->postorder_begin());}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_postorder_iterator rubbish::binary_tree_base<T,Node>::postorder_cend() const {return const_postorder_iterator(const_cast<binary_tree_base<T,Node>*>(this)->postorder_end());}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_level_iterator rubbish::binary_tree_base<T,Node>::level_cbegin() const {return const_level_iterator(const_cast<binary_tree_base<T,Node>*>(this)->level_begin());}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_level_iterator rubbish::binary_tree_base<T,Node>::level_cend() const {return const_level_iterator(const_cast<binary_tree_base<T,Node>*>(this)->level_end());}

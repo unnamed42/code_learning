@@ -17,6 +17,7 @@ namespace rubbish{
             
             typedef typename base_class::iterator iterator;
             typedef typename base_class::reverse_iterator reverse_iterator;
+            typedef typename base_class::const_iterator const_iterator;
             
             // Remove all contents
             void clear();

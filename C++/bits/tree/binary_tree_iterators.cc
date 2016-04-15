@@ -1,18 +1,18 @@
 // This file is included inside a class declaration,
-// so do not need to add namespace or include files here
+// so do not do declarations or include files here
 
-            template <bool not_const> class tree_iterator_base:public iterator<std::forward_iterator_tag,typename condition<not_const,T,const T>::type> {
+            class tree_iterator_base:public iterator<std::forward_iterator_tag,T> {
                 private:
-                    typedef iterator<std::forward_iterator_tag,typename condition<not_const,T,const T>::type> base_class;
+                    typedef iterator<std::forward_iterator_tag,T> base_class;
                 public:
                     typedef typename base_class::reference reference;
                     typedef typename base_class::pointer   pointer;
                     
-                    typedef tree_iterator_base<not_const>                         self_type;
-                    typedef typename condition<not_const,node*,const node*>::type data_type;
+                    typedef tree_iterator_base self_type;
+                    typedef node*              data_type;
                     
                     explicit tree_iterator_base(const data_type &cursor):m_cursor(cursor) {}
-                    template <bool any> tree_iterator_base(const tree_iterator_base<any> &other):m_cursor(const_cast<decltype(m_cursor)>(other.get())) {}
+                    tree_iterator_base(const tree_iterator_base &other):m_cursor(const_cast<decltype(m_cursor)>(other.get())) {}
                     virtual ~tree_iterator_base() {}
                     
                     reference operator*() const {return m_cursor->data;}
@@ -20,21 +20,21 @@
                     data_type get() const {return m_cursor;}
                     bool operator==(const self_type &other) const {return m_cursor==other.m_cursor;}
                     bool operator!=(const self_type &other) const {return !operator==(other);}
-                    template <bool any> self_type& operator=(const tree_iterator_base<any> &other) {m_cursor=const_cast<decltype(m_cursor)>(other.get()); return *this;}
+                    self_type& operator=(const tree_iterator_base &other) {m_cursor=const_cast<decltype(m_cursor)>(other.get()); return *this;}
                 protected:
                     data_type m_cursor;
             };
             
-            template <bool not_const> class pre_order_iterator: public tree_iterator_base<not_const>{
+            class preorder_iterator: public tree_iterator_base{
                 private:
-                    typedef tree_iterator_base<not_const> base_class;
+                    typedef tree_iterator_base base_class;
                 public:
-                    typedef pre_order_iterator<not_const>          self_type;
+                    typedef preorder_iterator          self_type;
                     typedef typename base_class::reference reference;
                     typedef typename base_class::data_type data_type;
                     
-                    explicit pre_order_iterator(const data_type &cursor):base_class(cursor) {}
-                    template <bool any> pre_order_iterator(const pre_order_iterator<any> &other):base_class(other) {}
+                    explicit preorder_iterator(const data_type &cursor):base_class(cursor) {}
+                    preorder_iterator(const preorder_iterator &other):base_class(other) {}
                     
                     self_type& operator++(){
                         if(m_cursor==nullptr)
@@ -69,21 +69,21 @@
                     using base_class::m_cursor;
             };
             
-            template <bool not_const> class in_order_iterator: public tree_iterator_base<not_const>{
+            class inorder_iterator: public tree_iterator_base{
                 private:
-                    typedef tree_iterator_base<not_const> base_class;
+                    typedef tree_iterator_base base_class;
                 public:
-                    typedef in_order_iterator<not_const>   self_type;
+                    typedef inorder_iterator   self_type;
                     typedef typename base_class::reference reference;
                     typedef typename base_class::data_type data_type;
                     
-                    explicit in_order_iterator(const data_type &cursor):base_class(cursor) {
+                    explicit inorder_iterator(const data_type &cursor):base_class(cursor) {
                         if(m_cursor==nullptr)
                             return;
                         while(m_cursor->left!=nullptr)
                             m_cursor=m_cursor->left;
                     }
-                    template <bool any> in_order_iterator(const in_order_iterator<any> &other):base_class(other) {}
+                    inorder_iterator(const inorder_iterator &other):base_class(other) {}
                     self_type& operator++(){
                         if(m_cursor==nullptr)
                             return *this;
@@ -114,15 +114,15 @@
                     using base_class::m_cursor;
             };
             
-            template <bool not_const> class post_order_iterator: public tree_iterator_base<not_const>{
+            class postorder_iterator: public tree_iterator_base{
                 private:
-                    typedef tree_iterator_base<not_const> base_class;
+                    typedef tree_iterator_base base_class;
                 public:
-                    typedef post_order_iterator<not_const>         self_type;
+                    typedef postorder_iterator         self_type;
                     typedef typename base_class::reference reference;
                     typedef typename base_class::data_type data_type;
                     
-                    explicit post_order_iterator(const data_type &cursor):base_class(cursor) {
+                    explicit postorder_iterator(const data_type &cursor):base_class(cursor) {
                         if(m_cursor==nullptr)
                             return;
                         for(;;){
@@ -134,7 +134,7 @@
                                 break;
                         }
                     }
-                    template <bool any> post_order_iterator(const post_order_iterator<any> &other):base_class(other) {}
+                    postorder_iterator(const postorder_iterator &other):base_class(other) {}
                     self_type& operator++(){
                         if(m_cursor==nullptr)
                             return *this;
@@ -168,17 +168,17 @@
             
             // This kind of iterator is totally different from the above three kinds,
             // so do not inherit from tree_iterator_base here
-            template <bool not_const> class level_order_iterator:public iterator<std::forward_iterator_tag,typename condition<not_const,T,const T>::type> {
+            class level_iterator:public iterator<std::forward_iterator_tag,T> {
                 private:
-                    typedef iterator<std::forward_iterator_tag,typename condition<not_const,T,const T>::type> base_class;
+                    typedef iterator<std::forward_iterator_tag,T> base_class;
                 public:
                     typedef typename base_class::reference reference;
                     typedef typename base_class::pointer   pointer;
                     
-                    typedef level_order_iterator<not_const> self_type;
+                    typedef level_iterator self_type;
                     typedef node*                           data_type;
                     
-                    explicit level_order_iterator(const data_type &cursor):m_cursor() {
+                    explicit level_iterator(const data_type &cursor):m_cursor() {
                         if(cursor!=nullptr){
                             m_cursor.push_back(cursor);
                             // Make iteration doable starting at any node
@@ -187,9 +187,9 @@
                                 m_cursor.push_back(parent->right);
                         }
                     }
-                    template <bool any> level_order_iterator(const level_order_iterator<any> &other):m_cursor(const_cast<decltype(m_cursor)&>(other.get())) {}
-                    template <bool any> level_order_iterator(level_order_iterator<any> &&other):m_cursor(std::move(const_cast<decltype(m_cursor)&&>(other.get()))) {}
-                    ~level_order_iterator() = default;
+                    level_iterator(const level_iterator &other):m_cursor(const_cast<decltype(m_cursor)&>(other.get())) {}
+                    level_iterator(level_iterator &&other):m_cursor(std::move(const_cast<decltype(m_cursor)&&>(other.get()))) {}
+                    ~level_iterator() = default;
                     
                     reference operator*() const {return const_cast<reference>(m_cursor.front()->data);}
                     pointer operator->() const { return &operator*(); }
@@ -205,19 +205,10 @@
                         return *this;
                     }
                     self_type operator++(int) {auto i=*this; operator++(); return i;}
-                    template <bool any> bool operator==(const level_order_iterator<any> &other) const {return (m_cursor.empty()&&other.m_cursor.empty()) || (!m_cursor.empty()&&!other.m_cursor.empty() && m_cursor.front()==other.m_cursor.front());}
-                    template <bool any> bool operator!=(const level_order_iterator<any> &other) const {return !operator==(other);}
-                    template <bool any> self_type& operator=(const level_order_iterator<any> &other) {m_cursor=const_cast<decltype(m_cursor)&>(other.get()); return *this;}
-                    template <bool any> self_type& operator=(level_order_iterator<any> &&other) {m_cursor=std::move(const_cast<decltype(m_cursor)&>(other.get())); return *this;}
+                    bool operator==(const level_iterator &other) const {return (m_cursor.empty()&&other.m_cursor.empty()) || (!m_cursor.empty()&&!other.m_cursor.empty() && m_cursor.front()==other.m_cursor.front());}
+                    bool operator!=(const level_iterator &other) const {return !operator==(other);}
+                    self_type& operator=(const level_iterator &other) {m_cursor=const_cast<decltype(m_cursor)&>(other.get()); return *this;}
+                    self_type& operator=(level_iterator &&other) {m_cursor=std::move(const_cast<decltype(m_cursor)&>(other.get())); return *this;}
                 private:
                     std::deque<data_type> m_cursor;
             };
-            
-            typedef pre_order_iterator<true>    preorder_iterator;
-            typedef in_order_iterator<true>     inorder_iterator;
-            typedef post_order_iterator<true>   postorder_iterator;
-            typedef level_order_iterator<true>  level_iterator;
-            typedef pre_order_iterator<false>   const_preorder_iterator;
-            typedef in_order_iterator<false>    const_inorder_iterator;
-            typedef post_order_iterator<false>  const_postorder_iterator;
-            typedef level_order_iterator<false> const_level_iterator;

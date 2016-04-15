@@ -62,7 +62,7 @@ namespace rubbish{
             
             virtual reference operator*() const {return *(m_iter-1);}
             pointer operator->() const {return &operator*();}
-            virtual reference operator[](long n) const {return m_iter[-n-1];}
+            virtual reference operator[](difference_type n) const {return m_iter[-n-1];}
             Iterator base() const {return m_iter;}
             
             self_type& operator++() {--m_iter;return *this;}
@@ -78,16 +78,60 @@ namespace rubbish{
             self_type& operator=(Iterator &&iter) {m_iter=std::move(iter);return *this;}
             self_type& operator=(const self_type &other) {m_iter=other.m_iter;return *this;}
             self_type& operator=(self_type &&other) {m_iter=std::move(other.m_iter);return *this;}
-        private:
+        protected:
             Iterator m_iter;
     };
-    template <class IteratorL,class IteratorR> bool operator<(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return lhs.m_iter<rhs.m_iter;}
+    template <class IteratorL,class IteratorR> bool operator<(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return lhs.base()<rhs.base();}
     template <class IteratorL,class IteratorR> bool operator>(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return rhs<lhs;}
     template <class IteratorL,class IteratorR> bool operator<=(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return !(lhs>rhs);}
     template <class IteratorL,class IteratorR> bool operator>=(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return !(lhs<rhs);}
-    template <class IteratorL,class IteratorR> bool operator==(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return lhs.m_iter==rhs.m_iter;}
+    template <class IteratorL,class IteratorR> bool operator==(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return lhs.base()==rhs.base();}
     template <class IteratorL,class IteratorR> bool operator!=(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return !(lhs==rhs);}
     
+    template <class Iterator> class const_iterator{
+        public:
+            typedef typename iterator_traits<Iterator>::value_type                                        value_type;
+            typedef const typename remove_pointer<typename iterator_traits<Iterator>::pointer>::type*     pointer;
+            typedef const typename remove_reference<typename iterator_traits<Iterator>::reference>::type& reference;
+            typedef typename iterator_traits<Iterator>::difference_type                                   difference_type;
+            typedef typename iterator_traits<Iterator>::iterator_category                                 iterator_category;
+            
+            typedef const_iterator<Iterator> self_type;
+            
+            explicit const_iterator(const Iterator &iter):m_iter(iter) {}
+            explicit const_iterator(Iterator &&iter):m_iter(std::move(iter)) {}
+            const_iterator(const self_type &other):m_iter(other.m_iter) {}
+            const_iterator(self_type &&other):m_iter(std::move(other.m_iter)) {}
+            ~const_iterator() {}
+            
+            reference operator*() const {return static_cast<reference>(*m_iter);}
+            pointer operator->() const {return static_cast<pointer>(&operator*());}
+            reference operator[](difference_type n) const {return static_cast<reference>(m_iter[n]);}
+            Iterator base() const {return m_iter;}
+            
+            self_type& operator++() {++m_iter;return *this;}
+            self_type operator++(int) {auto i=*this;operator++();return i;}
+            self_type& operator--() {--m_iter;return *this;}
+            self_type operator--(int) {auto i=*this;operator--();return i;}
+            self_type& operator+=(const difference_type &diff) {m_iter+=diff;return *this;}
+            self_type operator+(const difference_type &diff) const {return self_type(m_iter+diff);}
+            self_type& operator-=(const difference_type &diff) {m_iter-=diff;return *this;}
+            self_type operator-(const difference_type &diff) const {return self_type(m_iter-diff);}
+            
+            self_type& operator=(const Iterator &iter) {m_iter=iter;return *this;}
+            self_type& operator=(Iterator &&iter) {m_iter=std::move(iter);return *this;}
+            self_type& operator=(const self_type &other) {m_iter=other.m_iter;return *this;}
+            self_type& operator=(self_type &&other) {m_iter=std::move(other.m_iter);return *this;}
+        private:
+            Iterator m_iter;
+    };
+    template <class IteratorL,class IteratorR> bool operator<(const const_iterator<IteratorL> &lhs,const const_iterator<IteratorR> &rhs) {return lhs.base()<rhs.base();}
+    template <class IteratorL,class IteratorR> bool operator>(const const_iterator<IteratorL> &lhs,const const_iterator<IteratorR> &rhs) {return rhs<lhs;}
+    template <class IteratorL,class IteratorR> bool operator<=(const const_iterator<IteratorL> &lhs,const const_iterator<IteratorR> &rhs) {return !(lhs>rhs);}
+    template <class IteratorL,class IteratorR> bool operator>=(const const_iterator<IteratorL> &lhs,const const_iterator<IteratorR> &rhs) {return !(lhs<rhs);}
+    template <class IteratorL,class IteratorR> bool operator==(const const_iterator<IteratorL> &lhs,const const_iterator<IteratorR> &rhs) {return lhs.base()==rhs.base();}
+    template <class IteratorL,class IteratorR> bool operator!=(const const_iterator<IteratorL> &lhs,const const_iterator<IteratorR> &rhs) {return !(lhs==rhs);}
+
 } // namespace rubbish
 
 #endif // __RUBBISH_ITERATOR__

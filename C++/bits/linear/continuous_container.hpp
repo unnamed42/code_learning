@@ -9,15 +9,15 @@ namespace rubbish{
 
     template <class T> class continuous_container{
         public:
-            template <bool not_const> class iterator_base:public iterator<std::random_access_iterator_tag,typename condition<not_const,T,const T>::type>{
+            class iterator_base:public iterator<std::random_access_iterator_tag,T>{
                 private:
-                    typedef iterator<std::random_access_iterator_tag,typename condition<not_const,T,const T>::type> base_class;
+                    typedef iterator<std::random_accessiterator_tag,T> base_class;
                 public:
                     typedef typename base_class::pointer         pointer;
                     typedef typename base_class::reference       reference;
                     typedef typename base_class::difference_type difference_type;
                     
-                    typedef iterator_base<not_const>     self_type;
+                    typedef iterator_base                self_type;
                     typedef typename base_class::pointer data_type;
                     
                     explicit iterator_base(const data_type &cursor):m_cursor(cursor) {}
@@ -27,7 +27,7 @@ namespace rubbish{
                     reference operator*() const {return *m_cursor;}
                     pointer operator->() const {return &operator*();}
                     data_type get() const {return m_cursor;}
-                    reference operator[](long n) const {return m_cursor[n];}
+                    reference operator[](difference_type n) const {return m_cursor[n];}
                     bool operator<(const self_type& other) const {return m_cursor<other.m_cursor;}
                     bool operator>(const self_type& other) const {return m_cursor>other.m_cursor;}
                     bool operator<=(const self_type& other) const {return !operator>(other);}
@@ -41,12 +41,12 @@ namespace rubbish{
                     data_type m_cursor;
             };
             
-            template <bool not_const> class _iterator: public iterator_base<not_const> {
+            class iterator: public iterator_base {
                 private:
-                    typedef iterator_base<not_const> base_class;
+                    typedef iterator_base base_class;
                 public:
-                    typedef _iterator self_type;
-                    typedef typename base_class::data_type data_type;
+                    typedef iterator                             self_type;
+                    typedef typename base_class::data_type       data_type;
                     typedef typename base_class::difference_type difference_type;
                     
                     using base_class::base_class;
@@ -63,24 +63,22 @@ namespace rubbish{
                     using base_class::m_cursor;
             };
             
-            typedef _iterator<true>  iterator;
-            typedef _iterator<false> const_iterator;
-            
+            typedef rubbish::const_iterator<iterator>         const_iterator;
             typedef rubbish::reverse_iterator<iterator>       reverse_iterator;
-            typedef rubbish::reverse_iterator<const_iterator> const_reverse_iterator;
+            typedef rubbish::const_iterator<reverse_iterator> const_reverse_iterator;
             
         protected:
             T *m_base;
             std::size_t m_size;
             std::size_t m_used;
         public:
-            continuous_container();
+            constexpr continuous_container();
             
             continuous_container(continuous_container<T>&&);
             
             continuous_container(const continuous_container<T>&);
             
-            continuous_container(std::size_t count,const T &value=T());
+            continuous_container(std::size_t count,const T &value);
             
             explicit continuous_container(std::initializer_list<T>&&);
             
@@ -100,6 +98,7 @@ namespace rubbish{
             const_reverse_iterator crend() const;
             
             continuous_container<T>& operator=(const continuous_container<T>&);
+            continuous_container<T>& operator=(continuous_container<T>&&);
     };
     
 } // namespace rubbish

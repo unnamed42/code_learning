@@ -54,7 +54,7 @@ namespace rubbish{
             
         public:
             // Construct an empty tree
-            avl_tree();
+            constexpr avl_tree();
             
             // Construct from given list
             explicit avl_tree(std::initializer_list<T>&&);
@@ -66,7 +66,7 @@ namespace rubbish{
             avl_tree(avl_tree<T,Node>&&);
             
             // A destructor
-            virtual ~avl_tree() = default;
+            ~avl_tree() = default;
             
             // Insert a node to this tree, and return its location
             // Cannot use rvalue reference, reason see above

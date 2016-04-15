@@ -19,8 +19,8 @@ namespace rubbish{
             
             iterator begin() {return iterator(m_root);}
             iterator end() {return iterator(nullptr);}
-            const_iterator cbegin() const {return const_iterator(m_root);}
-            const_iterator cend() const {return const_iterator(nullptr);}
+            const_iterator cbegin() const {return const_iterator(const_cast<binary_tree<T,Node>*>(this)->begin());}
+            const_iterator cend() const {return const_iterator(const_cast<binary_tree<T,Node>*>(this)->end());}
         private:
             using base_class::m_root;
     };

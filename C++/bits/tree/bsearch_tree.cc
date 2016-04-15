@@ -52,6 +52,6 @@ template <class T,class Node> typename rubbish::bsearch_tree<T,Node>::iterator r
 
 template <class T,class Node> typename rubbish::bsearch_tree<T,Node>::iterator rubbish::bsearch_tree<T,Node>::end() {return iterator(nullptr);}
 
-template <class T,class Node> typename rubbish::bsearch_tree<T,Node>::const_iterator rubbish::bsearch_tree<T,Node>::cbegin() const {return const_iterator(m_root);}
+template <class T,class Node> typename rubbish::bsearch_tree<T,Node>::const_iterator rubbish::bsearch_tree<T,Node>::cbegin() const {return const_iterator(const_cast<bsearch_tree<T,Node>*>(this)->begin());}
 
-template <class T,class Node> typename rubbish::bsearch_tree<T,Node>::const_iterator rubbish::bsearch_tree<T,Node>::cend() const {return const_iterator(nullptr);}
+template <class T,class Node> typename rubbish::bsearch_tree<T,Node>::const_iterator rubbish::bsearch_tree<T,Node>::cend() const {return const_iterator(const_cast<bsearch_tree<T,Node>*>(this)->end());}

@@ -35,14 +35,33 @@ template <class T> typename rubbish::continuous_container<T>::iterator rubbish::
 
 template <class T> typename rubbish::continuous_container<T>::iterator rubbish::continuous_container<T>::end() {return iterator(m_base+m_used);}
 
-template <class T> typename rubbish::continuous_container<T>::const_iterator rubbish::continuous_container<T>::cbegin() const {return const_iterator(m_base);}
+template <class T> typename rubbish::continuous_container<T>::const_iterator rubbish::continuous_container<T>::cbegin() const {return const_iterator(const_cast<continuous_container<T>*>(this)->begin());}
 
-template <class T> typename rubbish::continuous_container<T>::const_iterator rubbish::continuous_container<T>::cend() const {return const_iterator(m_base+m_used);}
+template <class T> typename rubbish::continuous_container<T>::const_iterator rubbish::continuous_container<T>::cend() const {return const_iterator(const_cast<continuous_container<T>*>(this)->end());}
 
 template <class T> typename rubbish::continuous_container<T>::reverse_iterator rubbish::continuous_container<T>::rbegin() {return reverse_iterator(end());}
 
 template <class T> typename rubbish::continuous_container<T>::reverse_iterator rubbish::continuous_container<T>::rend() {return reverse_iterator(begin());}
 
-template <class T> typename rubbish::continuous_container<T>::const_reverse_iterator rubbish::continuous_container<T>::crbegin() const {return const_reverse_iterator(cend());}
+template <class T> typename rubbish::continuous_container<T>::const_reverse_iterator rubbish::continuous_container<T>::crbegin() const {return const_reverse_iterator(const_cast<continuous_container<T>*>(this)->rbegin());}
 
-template <class T> typename rubbish::continuous_container<T>::const_reverse_iterator rubbish::continuous_container<T>::crend() const {return const_reverse_iterator(cbegin());}
+template <class T> typename rubbish::continuous_container<T>::const_reverse_iterator rubbish::continuous_container<T>::crend() const {return const_reverse_iterator(const_cast<continuous_container<T>*>(this)->rend());}
+
+template <class T> rubbish::continuous_container<T>& rubbish::continuous_container<T>::operator=(const rubbish::continuous_container<T> &o) {
+    this->~continuous_container();
+    m_size=o.m_size;
+    m_base=new T[m_size];
+    for(;m_used<m_size;++m_used)
+        m_base[m_used]=o.m_base[m_used];
+    return *this;
+}
+
+template <class T> rubbish::continuous_container<T>& rubbish::continuous_container<T>::operator=(rubbish::continuous_container<T> &&o) {
+    this->~continuous_container();
+    m_size=o.m_size;
+    m_base=o.m_base;
+    m_used=o.m_used;
+    o.m_base=nullptr;
+    o.m_size=o.m_used=0;
+    return *this;
+}
