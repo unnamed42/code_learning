@@ -12,14 +12,14 @@ namespace rubbish{
     namespace helper{
         template <class T> struct forward_list_node{
             typedef forward_list_base<T> self_type;
-
+            
             T data;
             self_type *next;
             
             constexpr forward_list_node():data(T()),next(nullptr) {}
             explicit forward_list_node(const T &elem):data(elem),next(nullptr) {}
             explicit forward_list_node(T &&elem):data(std::move(elem)),next(nullptr) {}
-
+            
             self_type& operator=(const self_type &o):data(o.data),next(o.next) {}
             self_type& operator=(self_type &&o):data(std::move(o.data)),next(o.next) {}
         };
@@ -73,23 +73,23 @@ namespace rubbish{
                 private:
                     using base_class::m_cursor;
             };
-
+            
             class reverse_iterator:public rubbish::reverse_iterator<iterator> {
                 private:
                     typedef rubbish::reverse_iterator<iterator> base_class;
                 public:
                     typedef typename base_class::reference reference;
-
+                    
                     using base_class::base_class;
-
+                    
                     reference operator*() const override {return *m_iter;}
                 private:
                     using base_class::m_iter;
             };
-
+            
             typedef rubbish::const_iterator<iterator> const_iterator;
-
-
+            
+            typedef forward_list_base<T,Node> self_type;
             
         protected:
             node *m_head;
@@ -103,10 +103,10 @@ namespace rubbish{
             forward_list_base(std::size_t,const T&);
             
             // Move-constructor
-            forward_list_base(forward_list_base<T,Node>&&);
+            forward_list_base(self_type&&);
             
             // Copy-constructor
-            forward_list_base(const forward_list_base<T,Node>&);
+            forward_list_base(const self_type&);
             
             // Construct from the given forward_list_base
             explicit forward_list_base(std::initializer_list<T>&&);
@@ -159,12 +159,13 @@ namespace rubbish{
             
             // Iterator functions
             iterator begin();
-            
             iterator end();
+            const_iterator cbegin() const;
+            const_iterator cend() const;
             
             // Assignment operators to remove warning [-Weffc++]
-            forward_list_base<T,Node>& operator=(const forward_list_base<T,Node>&);
-            forward_list_base<T,Node>& operator=(forward_list_base<T,Node>&&);
+            self_type& operator=(const self_type&);
+            self_type& operator=(self_type&&);
     };
 
 } // namespace rubbish

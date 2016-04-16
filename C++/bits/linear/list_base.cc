@@ -55,7 +55,7 @@ namespace rubbish{
     } // namespace helper
 } // namespace rubbish
 
-template <class T,class Node> rubbish::list_base<T,Node>::list_base():m_head(nullptr),m_end(nullptr),m_length(0){}
+template <class T,class Node> constexpr rubbish::list_base<T,Node>::list_base():m_head(nullptr),m_end(nullptr),m_length(0){}
 
 template <class T,class Node> rubbish::list_base<T,Node>::list_base(std::size_t len,const T &value):m_head(nullptr),m_end(nullptr),m_length(len){
     if(len==0)
@@ -83,7 +83,7 @@ template <class T,class Node> rubbish::list_base<T,Node>::list_base(std::initial
     }
 }
 
-template <class T,class Node> rubbish::list_base<T,Node>::list_base(const rubbish::list_base<T> &o):m_head(nullptr),m_end(nullptr),m_length(o.m_length){
+template <class T,class Node> rubbish::list_base<T,Node>::list_base(const self_type &o):m_head(nullptr),m_end(nullptr),m_length(o.m_length){
     if(o.empty())
         return;
     const node *optr=o.m_head;
@@ -97,7 +97,7 @@ template <class T,class Node> rubbish::list_base<T,Node>::list_base(const rubbis
     }
 }
 
-template <class T,class Node> rubbish::list_base<T,Node>::list_base(rubbish::list_base<T> &&o):m_head(o.m_head),m_end(o.m_end),m_length(o.m_length) {o.m_head=o.m_end=nullptr;o.m_length=0;}
+template <class T,class Node> rubbish::list_base<T,Node>::list_base(self_type &&o):m_head(o.m_head),m_end(o.m_end),m_length(o.m_length) {o.m_head=o.m_end=nullptr;o.m_length=0;}
 
 template <class T,class Node> rubbish::list_base<T,Node>::~list_base(){
     node *save;
@@ -217,15 +217,7 @@ template <class T,class Node> void rubbish::list_base<T,Node>::remove(iterator i
     }
 }
 
-template <class T,class Node> typename rubbish::list_base<T,Node>::iterator rubbish::list_base<T,Node>::begin() {return iterator(m_head);}
-
-template <class T,class Node> typename rubbish::list_base<T,Node>::iterator rubbish::list_base<T,Node>::end() {return iterator(nullptr);}
-
-template <class T,class Node> typename rubbish::list_base<T,Node>::reverse_iterator rubbish::list_base<T,Node>::rbegin() {return reverse_iterator(m_end);}
-
-template <class T,class Node> typename rubbish::list_base<T,Node>::reverse_iterator rubbish::list_base<T,Node>::rend() {return reverse_iterator(nullptr);}
-
-template <class T,class Node> rubbish::list_base<T,Node>& rubbish::list_base<T,Node>::operator=(const rubbish::list_base<T,Node> &o) {
+template <class T,class Node> typename rubbish::list_base<T,Node>::self_type& rubbish::list_base<T,Node>::operator=(const self_type &o) {
     this->~list_base();
     m_length=o.m_length;
     if(o.empty()){
@@ -244,7 +236,7 @@ template <class T,class Node> rubbish::list_base<T,Node>& rubbish::list_base<T,N
     return *this;
 }
 
-template <class T,class Node> rubbish::list_base<T,Node>& rubbish::list_base<T,Node>::operator=(rubbish::list_base<T,Node> &&o) {
+template <class T,class Node> typename rubbish::list_base<T,Node>::self_type& rubbish::list_base<T,Node>::operator=(self_type &&o) {
     this->~list_base();
     m_head=o.m_head;
     m_end=o.m_end;
@@ -253,3 +245,19 @@ template <class T,class Node> rubbish::list_base<T,Node>& rubbish::list_base<T,N
     o.m_length=0;
     return *this;
 }
+
+template <class T,class Node> typename rubbish::list_base<T,Node>::iterator rubbish::list_base<T,Node>::begin() {return iterator(m_head);}
+
+template <class T,class Node> typename rubbish::list_base<T,Node>::iterator rubbish::list_base<T,Node>::end() {return iterator(nullptr);}
+
+template <class T,class Node> typename rubbish::list_base<T,Node>::const_iterator rubbish::list_base<T,Node>::cbegin() const {return const_iterator(const_cast<list_base<T,Node>*>(this)->begin());}
+
+template <class T,class Node> typename rubbish::list_base<T,Node>::const_iterator rubbish::list_base<T,Node>::cend() const {return const_iterator(const_cast<list_base<T,Node>*>(this)->end());}
+
+template <class T,class Node> typename rubbish::list_base<T,Node>::reverse_iterator rubbish::list_base<T,Node>::rbegin() {return reverse_iterator(iterator(m_end));}
+
+template <class T,class Node> typename rubbish::list_base<T,Node>::reverse_iterator rubbish::list_base<T,Node>::rend() {return reverse_iterator(end());}
+
+template <class T,class Node> typename rubbish::list_base<T,Node>::const_reverse_iterator rubbish::list_base<T,Node>::crbegin() const {return const_reverse_iterator(const_cast<list_base<T,Node>*>(this)->rbegin());}
+
+template <class T,class Node> typename rubbish::list_base<T,Node>::const_reverse_iterator rubbish::list_base<T,Node>::crend() const {return const_reverse_iterator(const_cast<list_base<T,Node>*>(this)->rend());}

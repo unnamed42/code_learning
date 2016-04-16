@@ -25,6 +25,7 @@ template <class T> typename rubbish::deque<T>::self_type& rubbish::deque<T>::ope
         for(auto j=0U;j<__deque_block;++j)
             m_map[i][j]=o.m_map[i][j];
     }
+    return *this;
 }
 
 template <class T> typename rubbish::deque<T>::self_type& rubbish::deque<T>::operator=(self_type &&o) {
@@ -34,6 +35,7 @@ template <class T> typename rubbish::deque<T>::self_type& rubbish::deque<T>::ope
     m_end=std::move(o.m_end);
     m_msize=o.m_msize;
     o.m_map=nullptr;
+    return *this;
 }
 
 template <class T> typename rubbish::deque<T>::const_iterator rubbish::deque<T>::cbegin() const {return const_iterator(const_cast<deque<T>*>(this)->begin());}

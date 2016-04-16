@@ -67,6 +67,8 @@ namespace rubbish{
             typedef rubbish::reverse_iterator<iterator>       reverse_iterator;
             typedef rubbish::const_iterator<reverse_iterator> const_reverse_iterator;
             
+            typedef continuous_container<T> self_type;
+            
         protected:
             T *m_base;
             std::size_t m_size;
@@ -74,9 +76,9 @@ namespace rubbish{
         public:
             constexpr continuous_container();
             
-            continuous_container(continuous_container<T>&&);
+            continuous_container(self_type&&);
             
-            continuous_container(const continuous_container<T>&);
+            continuous_container(const self_type&);
             
             continuous_container(std::size_t count,const T &value);
             
@@ -97,8 +99,8 @@ namespace rubbish{
             const_reverse_iterator crbegin() const;
             const_reverse_iterator crend() const;
             
-            continuous_container<T>& operator=(const continuous_container<T>&);
-            continuous_container<T>& operator=(continuous_container<T>&&);
+            self_type& operator=(const self_type&);
+            self_type& operator=(self_type&&);
     };
     
 } // namespace rubbish

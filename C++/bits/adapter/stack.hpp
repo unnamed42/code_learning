@@ -20,14 +20,16 @@ namespace rubbish{
             typedef typename Container::reverse_iterator reverse_iterator;
             typedef typename Container::const_reverse_iterator const_reverse_iterator;
             
+            typedef stack<T,Container> self_type;
+            
             // Default constructor
             stack();
             
             // Copy constructor
-            stack(const stack<T,Container>&);
+            stack(const self_type&);
             
             // Move constructor
-            stack(stack<T,Container>&&);
+            stack(self_type&&);
             
             ~stack() = default;
             
@@ -59,6 +61,8 @@ namespace rubbish{
             const_reverse_iterator crbegin() const;
             const_reverse_iterator crend() const;
             
+            self_type& operator=(const self_type &);
+            self_type& operator=(self_type&&);
         private:
             Container m_base;
     };

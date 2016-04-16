@@ -1,8 +1,8 @@
 template <class T,class Container> rubbish::stack<T,Container>::stack():m_base() {}
 
-template <class T,class Container> rubbish::stack<T,Container>::stack(const stack<T,Container> &o):m_base(o.m_base) {}
+template <class T,class Container> rubbish::stack<T,Container>::stack(const self_type &o):m_base(o.m_base) {}
 
-template <class T,class Container> rubbish::stack<T,Container>::stack(stack<T,Container> &&o):m_base(std::move(o.m_base)) {}
+template <class T,class Container> rubbish::stack<T,Container>::stack(self_type &&o):m_base(std::move(o.m_base)) {}
 
 template <class T,class Container> std::size_t rubbish::stack<T,Container>::size() const noexcept {return m_base.size();}
 
@@ -15,6 +15,10 @@ template <class T,class Container> void rubbish::stack<T,Container>::push(T &&el
 template <class T,class Container> T rubbish::stack<T,Container>::top() const {return m_base.back();}
 
 template <class T,class Container> void rubbish::stack<T,Container>::pop() {m_base.pop_back();}
+
+template <class T,class Container> typename rubbish::stack<T,Container>::self_type& rubbish::stack<T,Container>::operator=(const self_type &o) {m_base=o.m_base;return *this;}
+
+template <class T,class Container> typename rubbish::stack<T,Container>::self_type& rubbish::stack<T,Container>::operator=(self_type &&o) {m_base=std::move(o.m_base);return *this;}
 
 template <class T,class Container> typename rubbish::stack<T,Container>::iterator rubbish::stack<T,Container>::begin() {return m_base.begin();}
 

@@ -24,6 +24,8 @@ namespace rubbish{
             typedef typename Container::reverse_iterator reverse_iterator;
             typedef typename Container::const_reverse_iterator const_reverse_iterator;
             
+            typedef queue<T,Container> self_type;
+            
             // Initialize an empty queue
             queue();
             
@@ -63,6 +65,9 @@ namespace rubbish{
             reverse_iterator rend();
             const_reverse_iterator crbegin() const;
             const_reverse_iterator crend() const;
+            
+            self_type& operator=(const self_type &);
+            self_type& operator=(self_type&&);
     };
     
 } // namespace rubbish

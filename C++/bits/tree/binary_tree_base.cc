@@ -2,9 +2,9 @@
 // Binary tree base class function implementions
 template <class T,class Node> rubbish::binary_tree_base<T,Node>::binary_tree_base(node *root): m_root(root) {}
 
-template <class T,class Node> rubbish::binary_tree_base<T,Node>::binary_tree_base(const binary_tree_base<T,Node> &tree) {copy_subtree(m_root,tree.m_root);}
+template <class T,class Node> rubbish::binary_tree_base<T,Node>::binary_tree_base(const self_type &tree) {copy_subtree(m_root,tree.m_root);}
 
-template <class T,class Node> rubbish::binary_tree_base<T,Node>::binary_tree_base(binary_tree_base<T,Node> &&tree):m_root(tree.m_root) {tree.m_root = nullptr;}
+template <class T,class Node> rubbish::binary_tree_base<T,Node>::binary_tree_base(self_type &&tree):m_root(tree.m_root) {tree.m_root = nullptr;}
 
 template <class T,class Node> rubbish::binary_tree_base<T,Node>::binary_tree_base(std::initializer_list<T> &&pre,std::initializer_list<T> &&in):m_root(nullptr) {
     // Algorithm from https://leetcode.com/discuss/28271/my-o-n-19ms-solution-without-recusion-hope-help-you
@@ -142,14 +142,14 @@ template <class T,class Node> void rubbish::binary_tree_base<T,Node>::clear() {
 
 template <class T,class Node> bool rubbish::binary_tree_base<T,Node>::empty() const noexcept {return m_root==nullptr;}
 
-template <class T,class Node> rubbish::binary_tree_base<T,Node>& rubbish::binary_tree_base<T,Node>::operator=(const rubbish::binary_tree_base<T,Node> &o) {
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::self_type& rubbish::binary_tree_base<T,Node>::operator=(const self_type &o) {
     this->~binary_tree_base();
     m_root=nullptr;
     copy_subtree(m_root,o.m_root);
     return *this;
 }
 
-template <class T,class Node> rubbish::binary_tree_base<T,Node>& rubbish::binary_tree_base<T,Node>::operator=(rubbish::binary_tree_base<T,Node> &&o) {
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::self_type& rubbish::binary_tree_base<T,Node>::operator=(self_type &&o) {
     this->~binary_tree_base();
     m_root=o.m_root;
     o.m_root=nullptr;

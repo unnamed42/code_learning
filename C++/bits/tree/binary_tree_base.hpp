@@ -48,6 +48,8 @@ namespace rubbish{
             typedef const_iterator<postorder_iterator> const_postorder_iterator;
             typedef const_iterator<level_iterator>     const_level_iterator;
             
+            typedef binary_tree_base<T,Node> self_type;
+            
         protected:
             // Deep-copy a tree from `src` to `dest`, recursively
             static void copy_subtree(node* &dest, const node *src);
@@ -71,10 +73,10 @@ namespace rubbish{
             binary_tree_base(std::initializer_list<T> &&pre,std::initializer_list<T> &&in);
             
             // Copy-construtor
-            binary_tree_base(const binary_tree_base<T,Node>&);
+            binary_tree_base(const self_type&);
             
             // Move-construtor
-            binary_tree_base(binary_tree_base<T,Node>&&);
+            binary_tree_base(self_type&&);
             
             // Destructor
             virtual ~binary_tree_base();
@@ -114,8 +116,8 @@ namespace rubbish{
             const_level_iterator level_cend() const;
             
             // Assignment operator to avoid warning [-Weffc++]
-            binary_tree_base<T,Node>& operator=(const binary_tree_base<T,Node>&);
-            binary_tree_base<T,Node>& operator=(binary_tree_base<T,Node>&&);
+            self_type& operator=(const self_type&);
+            self_type& operator=(self_type&&);
     };
 } // namespace rubbish
 

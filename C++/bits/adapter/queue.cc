@@ -16,6 +16,10 @@ template <class T,class Container> void rubbish::queue<T,Container>::pop() {m_ba
 
 template <class T,class Container> T rubbish::queue<T,Container>::front() const {return m_base.front();}
 
+template <class T,class Container> typename rubbish::queue<T,Container>::self_type& rubbish::queue<T,Container>::operator=(const self_type &o) {m_base=o.m_base;return *this;}
+
+template <class T,class Container> typename rubbish::queue<T,Container>::self_type& rubbish::queue<T,Container>::operator=(self_type &&o) {m_base=std::move(o.m_base);return *this;}
+
 template <class T,class Container> typename rubbish::queue<T,Container>::iterator rubbish::queue<T,Container>::begin() {return m_base.begin();}
 
 template <class T,class Container> typename rubbish::queue<T,Container>::iterator rubbish::queue<T,Container>::end() {return m_base.end();}

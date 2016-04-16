@@ -42,7 +42,9 @@ namespace rubbish{
             typedef typename base_class::node node;
             typedef typename base_class::inorder_iterator iterator;
             typedef typename base_class::const_inorder_iterator const_iterator;
-
+            
+            typedef avl_tree<T,Node> self_type;
+            
         protected:
             // Insert node to a tree whose root is `root`, and return its new root
             // The inserted node is returned by the third parameter
@@ -60,10 +62,10 @@ namespace rubbish{
             explicit avl_tree(std::initializer_list<T>&&);
             
             // Copy constructor
-            avl_tree(const avl_tree<T,Node>&);
+            avl_tree(const self_type&);
             
             // Move constructor
-            avl_tree(avl_tree<T,Node>&&);
+            avl_tree(self_type&);
             
             // A destructor
             ~avl_tree() = default;

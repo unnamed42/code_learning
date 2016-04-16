@@ -212,7 +212,7 @@ template <class T,class Node> template <class U> typename rubbish::avl_tree<T,No
     return root;
 }
 
-template <class T,class Node> rubbish::avl_tree<T,Node>::avl_tree():base_class() {}
+template <class T,class Node> constexpr rubbish::avl_tree<T,Node>::avl_tree():base_class() {}
 
 template <class T,class Node> rubbish::avl_tree<T,Node>::avl_tree(std::initializer_list<T> &&l):base_class() {
     node *dummy;
@@ -220,9 +220,9 @@ template <class T,class Node> rubbish::avl_tree<T,Node>::avl_tree(std::initializ
         m_root=insert(m_root,std::move(i),dummy);
 }
 
-template <class T,class Node> rubbish::avl_tree<T,Node>::avl_tree(const rubbish::avl_tree<T,Node> &other):base_class(other) {}
+template <class T,class Node> rubbish::avl_tree<T,Node>::avl_tree(const rubbish::self_type &other):base_class(other) {}
 
-template <class T,class Node> rubbish::avl_tree<T,Node>::avl_tree(rubbish::avl_tree<T,Node> &&other):base_class(std::move(other)) {}
+template <class T,class Node> rubbish::avl_tree<T,Node>::avl_tree(rubbish::self_type &&other):base_class(std::move(other)) {}
 
 template <class T,class Node> template <class U> typename rubbish::avl_tree<T,Node>::const_iterator rubbish::avl_tree<T,Node>::find(U &&value) const {
     node *ptr=m_root;

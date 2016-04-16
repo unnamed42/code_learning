@@ -31,20 +31,19 @@ namespace rubbish{
         public:
             typedef Node node;
             
-            class iterator_base{
+            class iterator_base:public iterator<std::bidirectional_iterator_tag,T>{
+                private:
+                    typedef iterator<std::bidirectional_iterator_tag,T> base_class;
                 public:
-                    typedef T                                value_type;
-                    typedef T&                               reference;
-                    typedef T*                               pointer;
-                    typedef std::bidirectional_iterator_tag  iterator_category;
-                    typedef std::ptrdiff_t                   difference_type;
+                    typedef typename base_class::reference reference;
+                    typedef typename base_class::pointer   pointer;
                     
-                    typedef iterator_base                 self_type;
-                    typedef typename list_base<T,Node>::node*  data_type;
+                    typedef iterator_base                     self_type;
+                    typedef typename list_base<T,Node>::node* data_type;
                     
                     explicit iterator_base(const data_type &cursor):m_cursor(cursor) {}
                     iterator_base(const self_type &other):m_cursor(other.m_cursor) {}
-                    virtual ~iterator_base() =default;
+                    virtual ~iterator_base() {}
                     
                     reference operator*() const {return m_cursor->data;}
                     pointer operator->() const {return &operator*();}
@@ -63,8 +62,7 @@ namespace rubbish{
                     typedef iterator self_type;
                     typedef typename base_class::data_type data_type;
                     
-                    explicit iterator(const data_type &cursor):base_class(cursor) {}
-                    iterator(const self_type &other):base_class(other.m_cursor) {}
+                    using base_class::base_class;
                     
                     self_type& operator++() {m_cursor=(m_cursor==nullptr?nullptr:m_cursor->next);return *this;}
                     self_type operator++(int) {auto i=*this;operator++();return i;}
@@ -74,22 +72,23 @@ namespace rubbish{
                     using base_class::m_cursor;
             };
             
-            class reverse_iterator: public iterator_base{
+            class reverse_iterator:public rubbish::reverse_iterator<iterator>{
                 private:
-                    typedef iterator_base base_class;
+                    typedef rubbish::reverse_iterator<iterator> base_class;
                 public:
-                    typedef reverse_iterator self_type;
-                    typedef typename base_class::data_type data_type;
+                    typedef typename base_class::reference reference;
                     
-                    explicit reverse_iterator(const data_type &cursor):base_class(cursor) {}
-                    reverse_iterator(const self_type &other):base_class(other.m_cursor) {}
-                    self_type& operator--() {m_cursor=(m_cursor==nullptr?nullptr:m_cursor->next);return *this;}
-                    self_type operator--(int) {auto i=*this;operator--();return i;}
-                    self_type& operator++() {m_cursor=(m_cursor==nullptr?nullptr:m_cursor->prev);return *this;}
-                    self_type operator++(int) {auto i=*this;operator++();return i;}
+                    using base_class::base_class;
+                    
+                    reference operator*() const {return *m_iter;}
                 protected:
-                    using base_class::m_cursor;
+                    using base_class::m_iter;
             };
+            
+            typedef rubbish::const_iterator<iterator>         const_iterator;
+            typedef rubbish::const_iterator<reverse_iterator> const_reverse_iterator;
+            
+            typedef list_base<T,Node> self_type;
             
         protected:
             node *m_head;
@@ -103,10 +102,10 @@ namespace rubbish{
             list_base(std::size_t,const T&);
             
             // Move-constructor
-            list_base(list_base<T,Node>&&);
+            list_base(self_type&&);
             
             // Copy-constructor
-            list_base(const list_base<T,Node>&);
+            list_base(const self_type&);
             
             // Construct from the given list_base
             list_base(std::initializer_list<T>&&);
@@ -146,10 +145,14 @@ namespace rubbish{
             iterator end();
             reverse_iterator rbegin();
             reverse_iterator rend();
+            const_iterator cbegin() const;
+            const_iterator cend() const;
+            const_reverse_iterator crbegin() const;
+            const_reverse_iterator crend() const;
             
             // Assignment operator to avoid warning [-Weffc++]
-            list_base<T,Node>& operator=(const list_base<T,Node>&);
-            list_base<T,Node>& operator=(list_base<T,Node>&&);
+            self_type& operator=(const self_type&);
+            self_type& operator=(self_type&&);
     };
 } // namespace rubbish
 

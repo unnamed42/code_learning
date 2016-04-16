@@ -202,9 +202,32 @@ template <class T,class Node> T& rubbish::forward_list_base<T,Node>::front() con
 
 template <class T,class Node> T& rubbish::forward_list_base<T,Node>::back() const {return m_end->data;}
 
-template <class T,class Node> typename rubbish::forward_list_base<T,Node>::iterator rubbish::forward_list_base<T,Node>::begin(){ return iterator(m_head); }
+template <class T,class Node> typename rubbish::forward_list_base<T,Node>::self_type& rubbish::forward_list_base<T,Node>::operator=(const self_type &other) {
+    this->~forward_list_base();
+    m_length=other.m_length;
+    if(other.empty()){
+        m_head=m_end=nullptr;
+        return *this;
+    }
+    node **ptr=&m_head;const node *optr=other.m_head;
+    *ptr=new node(*optr); optr=optr->next;
+    while(optr!=nullptr){
+        (*ptr)->next=new node(*optr);
+        ptr=&(*ptr)->next;
+    }
+    m_end=*ptr;
+    return *this;
+}
 
-template <class T,class Node> typename rubbish::forward_list_base<T,Node>::iterator rubbish::forward_list_base<T,Node>::end(){ return iterator(nullptr); }
+template <class T,class Node> rubbish::forward_list_base<T,Node>& rubbish::forward_list_base<T,Node>::operator=(self_type &&other) {
+    this->~forward_list_base();
+    m_head=other.m_head;
+    m_end=other.m_end;
+    m_length=other.m_length;
+    other.m_head=other.m_end=nullptr;
+    other.m_length=0;
+    return *this;
+}
 
 template <class T,class Node> void rubbish::forward_list_base<T,Node>::reverse(){
     if(m_head==nullptr||m_head->next==nullptr)
@@ -230,29 +253,10 @@ template <class T,class Node> void rubbish::forward_list_base<T,Node>::remove_af
     m_length--;
 }
 
-template <class T,class Node> rubbish::forward_list_base<T,Node>& rubbish::forward_list_base<T,Node>::operator=(const rubbish::forward_list_base<T,Node> &other) {
-    this->~forward_list_base();
-    m_length=other.m_length;
-    if(other.empty()){
-        m_head=m_end=nullptr;
-        return *this;
-    }
-    node **ptr=&m_head;const node *optr=other.m_head;
-    *ptr=new node(*optr); optr=optr->next;
-    while(optr!=nullptr){
-        (*ptr)->next=new node(*optr);
-        ptr=&(*ptr)->next;
-    }
-    m_end=*ptr;
-    return *this;
-}
+template <class T,class Node> typename rubbish::forward_list_base<T,Node>::iterator rubbish::forward_list_base<T,Node>::begin() {return iterator(m_head);}
 
-template <class T,class Node> rubbish::forward_list_base<T,Node>& rubbish::forward_list_base<T,Node>::operator=(rubbish::forward_list_base<T,Node> &&other) {
-    this->~forward_list_base();
-    m_head=other.m_head;
-    m_end=other.m_end;
-    m_length=other.m_length;
-    other.m_head=other.m_end=nullptr;
-    other.m_length=0;
-    return *this;
-}
+template <class T,class Node> typename rubbish::forward_list_base<T,Node>::iterator rubbish::forward_list_base<T,Node>::end() {return iterator(nullptr);}
+
+template <class T,class Node> typename rubbish::forward_list_base<T,Node>::const_iterator rubbish::forward_list_base<T,Node>::cbegin() const {return const_iterator(const_cast<forward_list_base<T,Node>*>(this)->begin());}
+
+template <class T,class Node> typename rubbish::forward_list_base<T,Node>::const_iterator rubbish::forward_list_base<T,Node>::cend() const {return const_iterator(const_cast<forward_list_base<T,Node>*>(this)->end());}

@@ -60,9 +60,9 @@ namespace rubbish{
             reverse_iterator(self_type &&other):m_iter(std::move(other.m_iter)) {}
             virtual ~reverse_iterator() {}
             
-            virtual reference operator*() const {return *(m_iter-1);}
+            reference operator*() const {return *(m_iter-1);}
             pointer operator->() const {return &operator*();}
-            virtual reference operator[](difference_type n) const {return m_iter[-n-1];}
+            reference operator[](difference_type n) const {return m_iter[-n-1];}
             Iterator base() const {return m_iter;}
             
             self_type& operator++() {--m_iter;return *this;}
