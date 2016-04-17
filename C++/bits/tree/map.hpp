@@ -20,7 +20,7 @@ namespace rubbish{
             typedef typename base_class::const_inorder_iterator const_iterator;
             
             // Default constructor
-            map();
+            constexpr map();
             
             // Copy constructor
             map(const map<T1,T2>&);

@@ -1,5 +1,6 @@
-
 // Binary tree base class function implementions
+template <class T,class Node> constexpr rubbish::binary_tree_base<T,Node>::binary_tree_base():m_root(nullptr) {}
+
 template <class T,class Node> rubbish::binary_tree_base<T,Node>::binary_tree_base(node *root): m_root(root) {}
 
 template <class T,class Node> rubbish::binary_tree_base<T,Node>::binary_tree_base(const self_type &tree) {copy_subtree(m_root,tree.m_root);}
@@ -159,13 +160,13 @@ template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::preord
 
 template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::preorder_iterator rubbish::binary_tree_base<T,Node>::preorder_end() {return preorder_iterator(nullptr);}
 
-template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::inorder_iterator rubbish::binary_tree_base<T,Node>::inorder_begin() {return (m_root);}
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::inorder_iterator rubbish::binary_tree_base<T,Node>::inorder_begin() {return inorder_iterator(m_root);}
 
-template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::inorder_iterator rubbish::binary_tree_base<T,Node>::inorder_end() {return (nullptr);}
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::inorder_iterator rubbish::binary_tree_base<T,Node>::inorder_end() {return inorder_iterator(nullptr);}
 
-template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::postorder_iterator rubbish::binary_tree_base<T,Node>::postorder_begin() {return (m_root);}
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::postorder_iterator rubbish::binary_tree_base<T,Node>::postorder_begin() {return postorder_iterator(m_root);}
 
-template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::postorder_iterator rubbish::binary_tree_base<T,Node>::postorder_end() {return (nullptr);}
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::postorder_iterator rubbish::binary_tree_base<T,Node>::postorder_end() {return postorder_iterator(nullptr);}
 
 template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::level_iterator rubbish::binary_tree_base<T,Node>::level_begin() {return level_iterator(m_root);}
 

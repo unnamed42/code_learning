@@ -15,7 +15,7 @@ namespace rubbish{
             self_type *left,*right,*parent;
             int height;
             
-            avl_tree_node():data(),left(nullptr),right(nullptr),parent(nullptr),height(1) {}
+            constexpr avl_tree_node():data(),left(nullptr),right(nullptr),parent(nullptr),height(1) {}
             explicit avl_tree_node(const T &elem):data(elem),left(nullptr),right(nullptr),parent(nullptr),height(1) {}
             explicit avl_tree_node(T &&elem):data(std::move(elem)),left(nullptr),right(nullptr),parent(nullptr),height(1) {}
             // Should I copy all information from `o`?
@@ -65,7 +65,7 @@ namespace rubbish{
             avl_tree(const self_type&);
             
             // Move constructor
-            avl_tree(self_type&);
+            avl_tree(self_type&&);
             
             // A destructor
             ~avl_tree() = default;

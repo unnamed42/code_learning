@@ -220,9 +220,9 @@ template <class T,class Node> rubbish::avl_tree<T,Node>::avl_tree(std::initializ
         m_root=insert(m_root,std::move(i),dummy);
 }
 
-template <class T,class Node> rubbish::avl_tree<T,Node>::avl_tree(const rubbish::self_type &other):base_class(other) {}
+template <class T,class Node> rubbish::avl_tree<T,Node>::avl_tree(const self_type &other):base_class(other) {}
 
-template <class T,class Node> rubbish::avl_tree<T,Node>::avl_tree(rubbish::self_type &&other):base_class(std::move(other)) {}
+template <class T,class Node> rubbish::avl_tree<T,Node>::avl_tree(self_type &&other):base_class(std::move(other)) {}
 
 template <class T,class Node> template <class U> typename rubbish::avl_tree<T,Node>::const_iterator rubbish::avl_tree<T,Node>::find(U &&value) const {
     node *ptr=m_root;
@@ -258,10 +258,10 @@ template <class T,class Node> typename rubbish::avl_tree<T,Node>::iterator rubbi
 
 template <class T,class Node> template <class U> void rubbish::avl_tree<T,Node>::erase(U &&value) { m_root=erase(m_root,std::forward<U>(value)); }
 
-template <class T,class Node> typename rubbish::avl_tree<T,Node>::iterator rubbish::avl_tree<T,Node>::begin() { return iterator(m_root);}
+template <class T,class Node> typename rubbish::avl_tree<T,Node>::iterator rubbish::avl_tree<T,Node>::begin() { return base_class::inorder_begin();}
 
-template <class T,class Node> typename rubbish::avl_tree<T,Node>::iterator rubbish::avl_tree<T,Node>::end() { return iterator(nullptr);}
+template <class T,class Node> typename rubbish::avl_tree<T,Node>::iterator rubbish::avl_tree<T,Node>::end() { return base_class::inorder_end();}
 
-template <class T,class Node> typename rubbish::avl_tree<T,Node>::const_iterator rubbish::avl_tree<T,Node>::cbegin() const { return const_iterator(m_root);}
+template <class T,class Node> typename rubbish::avl_tree<T,Node>::const_iterator rubbish::avl_tree<T,Node>::cbegin() const { return base_class::inorder_cbegin();}
 
-template <class T,class Node> typename rubbish::avl_tree<T,Node>::const_iterator rubbish::avl_tree<T,Node>::cend() const { return const_iterator(nullptr);}
+template <class T,class Node> typename rubbish::avl_tree<T,Node>::const_iterator rubbish::avl_tree<T,Node>::cend() const { return base_class::inorder_cend();}

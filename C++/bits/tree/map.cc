@@ -1,4 +1,4 @@
-template <class T1,class T2> rubbish::map<T1,T2>::map():m_base() {}
+template <class T1,class T2> constexpr rubbish::map<T1,T2>::map():m_base() {}
 
 template <class T1,class T2> rubbish::map<T1,T2>::map(const map<T1,T2> &o):m_base(o.m_base) {}
 

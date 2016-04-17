@@ -19,7 +19,7 @@ namespace rubbish{
             self_type *left,*right;
             self_type *parent;
             
-            binary_tree_node():data(T()),left(nullptr),right(nullptr),parent(nullptr) {}
+            constexpr binary_tree_node():data(T()),left(nullptr),right(nullptr),parent(nullptr) {}
             explicit binary_tree_node(const T &_data):data(_data),left(nullptr),right(nullptr),parent(nullptr) {}
             explicit binary_tree_node(T &&_data):data(std::move(_data)),left(nullptr),right(nullptr),parent(nullptr) {}
             // Should I copy full information from `o`?
@@ -63,8 +63,11 @@ namespace rubbish{
             // Data member, root of tree
             node *m_root;
         public:
-            // Construct a binary tree with given root(a raw pointer, by default it is nullptr).
-            explicit binary_tree_base(node * = nullptr);
+            // Default initialization
+            constexpr binary_tree_base();
+            
+            // Construct a binary tree with given root(a raw pointer).
+            explicit binary_tree_base(node*);
             
             // Construct a binary tree with given level-order serialization, `null` means "this node is NULL"
             binary_tree_base(std::initializer_list<T> &&v, const T &null);
