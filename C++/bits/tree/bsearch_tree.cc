@@ -5,22 +5,28 @@ template <class T,class Node> rubbish::bsearch_tree<T,Node>::bsearch_tree(std::i
         insert(m_root,i);
 }
 
-template <class T,class Node> void rubbish::bsearch_tree<T,Node>::insert(node* &root,const T &data){
+template <class T,class Node> typename rubbish::bsearch_tree<T,Node>::node* rubbish::bsearch_tree<T,Node>::insert(node* &root,const T &data){
     if(root==nullptr){
         root=new node(data);
-        return;
+        return root;
     }
-    if(root->data > data)
-        insert(root->left,data);
+    if(root->data > data){
+        auto ret=insert(root->left,data);
+        root->left->parent=root;
+        return ret;
+    }
     else if(root->data == data)
-        return;
-    else
-        insert(root->right,data);
+        return root;
+    else{
+        auto ret=insert(root->right,data);
+        root->right->parent=root;
+        return ret;
+    }
 }
 
-template <class T,class Node> void rubbish::bsearch_tree<T,Node>::insert(const T &data) {insert(m_root,data);}
+template <class T,class Node> typename rubbish::bsearch_tree<T,Node>::iterator rubbish::bsearch_tree<T,Node>::insert(const T &data) {return iterator(insert(m_root,data));}
 
-template <class T,class Node> void rubbish::bsearch_tree<T,Node>::insert(T &&data) {insert(m_root,std::move(data));}
+template <class T,class Node> typename rubbish::bsearch_tree<T,Node>::iterator rubbish::bsearch_tree<T,Node>::insert(T &&data) {return iterator(insert(m_root,std::move(data)));}
 
 template <class T,class Node> typename rubbish::bsearch_tree<T,Node>::const_iterator rubbish::bsearch_tree<T,Node>::find(const T &data) const {
     auto ptr=m_root;

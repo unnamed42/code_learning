@@ -21,7 +21,7 @@ namespace rubbish{
             using base_class::m_root;
             
             // Insert any data to any tree
-            void insert(node*&,const T&);
+            node* insert(node*&,const T&);
             
         public:
             explicit bsearch_tree(node *root=nullptr);
@@ -29,8 +29,8 @@ namespace rubbish{
             bsearch_tree(const bsearch_tree<T>&);
             
             // Insert data to this tree
-            void insert(const T&);
-            void insert(T &&);
+            iterator insert(const T&);
+            iterator insert(T &&);
             
             // Find an element and return its location
             iterator find(const T&);
