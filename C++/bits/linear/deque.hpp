@@ -16,47 +16,25 @@ namespace rubbish{
     
     template <class T> class deque{
         public:
-            class iterator_base:public iterator<std::random_access_iterator_tag,T> {
+            class iterator:public rubbish::iterator<std::random_access_iterator_tag,T> {
                 private:
-                    typedef iterator<std::random_access_iterator_tag,T> base_class;
+                    typedef rubbish::iterator<std::random_access_iterator_tag,T> base_class;
                 public:
                     typedef typename base_class::reference       reference;
                     typedef typename base_class::pointer         pointer;
                     typedef typename base_class::difference_type difference_type;
                     
-                    typedef iterator_base self_type;
-                    typedef T*            data_type;
+                    typedef iterator self_type;
+                    typedef T*       data_type;
                     
-                    explicit iterator_base(const data_type &cursor):m_cursor(cursor) {}
-                    iterator_base(const self_type &o):m_cursor(o.m_cursor) {}
-                    virtual ~iterator_base() {}
+                    explicit iterator(const data_type &cursor):m_cursor(cursor) {}
+                    iterator(const self_type &o):m_cursor(o.m_cursor) {}
+                    ~iterator() {}
                     
                     reference operator*() const {return *m_cursor;}
                     pointer operator->() const {return &operator*();}
                     data_type get() const {return m_cursor;}
-                    reference operator[](difference_type n) const {return m_cursor[n];}
-                    
-                    bool operator<(const self_type &o) const {return m_cursor<o.m_cursor;}
-                    bool operator>(const self_type &o) const {return m_cursor>o.m_cursor;}
-                    bool operator<=(const self_type &o) const {return !operator>(o);}
-                    bool operator>=(const self_type &o) const {return !operator<(o);}
-                    bool operator==(const self_type &o) const {return m_cursor==o.m_cursor;}
-                    bool operator!=(const self_type &o) const {return !operator==(o);}
-                    
-                    self_type& operator=(const self_type &o) {m_cursor=o.m_cursor;return *this;}
-                protected:
-                    data_type m_cursor;
-            };
-            
-            class iterator:public iterator_base{
-                private:
-                    typedef iterator_base base_class;
-                public:
-                    typedef typename base_class::difference_type difference_type;
-                    
-                    typedef iterator self_type;
-                    
-                    using base_class::base_class;
+                    reference operator[](difference_type n) const {return m_cursor[n];}   
                     
                     self_type& operator++() {++m_cursor;return *this;}
                     self_type operator++(int) {auto i=*this;operator++();return i;}
@@ -67,15 +45,22 @@ namespace rubbish{
                     self_type& operator-=(const difference_type &diff) {m_cursor-=diff;return *this;}
                     self_type operator-(const difference_type &diff) const {return self_type(m_cursor-diff);}
                     
-                    self_type& operator=(const self_type &other) {m_cursor=other.m_cursor;return *this;}
+                    bool operator<(const self_type &o) const {return m_cursor<o.m_cursor;}
+                    bool operator>(const self_type &o) const {return m_cursor>o.m_cursor;}
+                    bool operator<=(const self_type &o) const {return !operator>(o);}
+                    bool operator>=(const self_type &o) const {return !operator<(o);}
+                    bool operator==(const self_type &o) const {return m_cursor==o.m_cursor;}
+                    bool operator!=(const self_type &o) const {return !operator==(o);}
+                    
+                    self_type& operator=(const self_type &o) {m_cursor=o.m_cursor;return *this;}
                 private:
-                    using base_class::m_cursor;
+                    data_type m_cursor;
             };
             
             typedef rubbish::const_iterator<iterator>         const_iterator;
             typedef rubbish::reverse_iterator<iterator>       reverse_iterator;
             typedef rubbish::const_iterator<reverse_iterator> const_reverse_iterator;
-
+            
             typedef deque<T> self_type;
             
         private:

@@ -1,4 +1,4 @@
-template <class T> rubbish::continuous_container<T>::continuous_container():m_base(nullptr),m_size(0),m_used(0) {}
+template <class T> constexpr rubbish::continuous_container<T>::continuous_container():m_base(nullptr),m_size(0),m_used(0) {}
 
 template <class T> rubbish::continuous_container<T>::continuous_container(std::initializer_list<T> &&l):m_base(nullptr),m_size(0),m_used(0) {
     auto size=l.size();

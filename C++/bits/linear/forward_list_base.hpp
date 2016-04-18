@@ -11,7 +11,7 @@ namespace rubbish{
     
     namespace helper{
         template <class T> struct forward_list_node{
-            typedef forward_list_base<T> self_type;
+            typedef forward_list_node<T> self_type;
             
             T data;
             self_type *next;
@@ -20,8 +20,8 @@ namespace rubbish{
             explicit forward_list_node(const T &elem):data(elem),next(nullptr) {}
             explicit forward_list_node(T &&elem):data(std::move(elem)),next(nullptr) {}
             
-            self_type& operator=(const self_type &o):data(o.data),next(o.next) {}
-            self_type& operator=(self_type &&o):data(std::move(o.data)),next(o.next) {}
+            self_type& operator=(const self_type &o) {data=o.data;next=o.next;return *this;}
+            self_type& operator=(self_type &&o) {data=std::move(o.data);next=o.next;return *this;}
         };
     } // namespace helper
     
@@ -32,46 +32,36 @@ namespace rubbish{
     
     template <class T,class Node = rubbish::helper::forward_list_node<T> > class forward_list_base{
         public:
+            typedef forward_list_base<T,Node> self_type;
+            
             typedef Node node;
             
-            class iterator_base:public iterator<std::forward_iterator_tag,T>{
+            class iterator:public rubbish::iterator<std::forward_iterator_tag,T>{
                 private:
-                    typedef iterator<std::forward_iterator_tag,T> base_class;
+                    typedef rubbish::iterator<std::forward_iterator_tag,T> base_class;
                 public:
                     typedef typename base_class::reference reference;
                     typedef typename base_class::pointer   pointer;
                     
-                    typedef iterator_base                             self_type;
+                    typedef iterator                                  self_type;
                     typedef typename forward_list_base<T,Node>::node* data_type;
                     
-                    explicit iterator_base(const data_type &cursor):m_cursor(cursor) {}
-                    iterator_base(const self_type &other):m_cursor(other.m_cursor) {}
-                    virtual ~iterator_base() {}
+                    explicit iterator(const data_type &cursor):m_cursor(cursor) {}
+                    iterator(const self_type &other):m_cursor(other.m_cursor) {}
+                    ~iterator() {}
                     
                     reference operator*() const {return m_cursor->data;}
                     pointer operator->() const {return &operator*();}
-                    data_type get() const noexcept {return m_cursor;}
-                    bool operator==(const self_type &other) const {return m_cursor==other.m_cursor;}
-                    bool operator!=(const self_type &other) const {return !operator==(other);}
-                    self_type& operator=(const self_type &other) {m_cursor=other.m_cursor;}
-                protected:
-                    data_type m_cursor;
-            };
-            
-            class iterator: public iterator_base{
-                private:
-                    typedef iterator_base base_class;
-                public:
-                    typedef iterator self_type;
-                    typedef typename iterator_base::data_type data_type;
-                    
-                    explicit iterator(const data_type &cursor):base_class(cursor) {}
-                    iterator(const self_type &other):base_class(other.m_cursor) {}
+                    data_type get() const {return m_cursor;}
                     
                     self_type& operator++() {m_cursor=(m_cursor==nullptr?nullptr:m_cursor->next);return *this;}
                     self_type operator++(int) {auto i=*this;operator++();return i;}
+                    
+                    bool operator==(const self_type &other) const {return m_cursor==other.m_cursor;}
+                    bool operator!=(const self_type &other) const {return !operator==(other);}
+                    self_type& operator=(const self_type &other) {m_cursor=other.m_cursor;}
                 private:
-                    using base_class::m_cursor;
+                    data_type m_cursor;
             };
             
             class reverse_iterator:public rubbish::reverse_iterator<iterator> {
@@ -88,8 +78,6 @@ namespace rubbish{
             };
             
             typedef rubbish::const_iterator<iterator> const_iterator;
-            
-            typedef forward_list_base<T,Node> self_type;
             
         protected:
             node *m_head;

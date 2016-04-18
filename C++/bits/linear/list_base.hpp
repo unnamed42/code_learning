@@ -31,45 +31,34 @@ namespace rubbish{
         public:
             typedef Node node;
             
-            class iterator_base:public iterator<std::bidirectional_iterator_tag,T>{
+            class iterator:public rubbish::iterator<std::bidirectional_iterator_tag,T>{
                 private:
-                    typedef iterator<std::bidirectional_iterator_tag,T> base_class;
+                    typedef rubbish::iterator<std::bidirectional_iterator_tag,T> base_class;
                 public:
                     typedef typename base_class::reference reference;
                     typedef typename base_class::pointer   pointer;
                     
-                    typedef iterator_base                     self_type;
+                    typedef iterator                          self_type;
                     typedef typename list_base<T,Node>::node* data_type;
                     
-                    explicit iterator_base(const data_type &cursor):m_cursor(cursor) {}
-                    iterator_base(const self_type &other):m_cursor(other.m_cursor) {}
-                    virtual ~iterator_base() {}
+                    explicit iterator(const data_type &cursor):m_cursor(cursor) {}
+                    iterator(const self_type &other):m_cursor(other.m_cursor) {}
+                    ~iterator() {}
                     
                     reference operator*() const {return m_cursor->data;}
                     pointer operator->() const {return &operator*();}
-                    data_type get() const noexcept {return m_cursor;}
-                    bool operator==(const self_type &other) const {return m_cursor==other.m_cursor;}
-                    bool operator!=(const self_type &other) const {return !operator==(other);}
-                    self_type& operator=(const self_type &other) {m_cursor=other.m_cursor;}
-                protected:
-                    data_type m_cursor;
-            };
-            
-            class iterator: public iterator_base{
-                private:
-                    typedef iterator_base base_class;
-                public:
-                    typedef iterator self_type;
-                    typedef typename base_class::data_type data_type;
-                    
-                    using base_class::base_class;
+                    data_type get() const {return m_cursor;}
                     
                     self_type& operator++() {m_cursor=(m_cursor==nullptr?nullptr:m_cursor->next);return *this;}
                     self_type operator++(int) {auto i=*this;operator++();return i;}
                     self_type& operator--() {m_cursor=(m_cursor==nullptr?nullptr:m_cursor->prev);return *this;}
                     self_type operator--(int) {auto i=*this;operator--();return i;}
-                protected:
-                    using base_class::m_cursor;
+                    
+                    bool operator==(const self_type &other) const {return m_cursor==other.m_cursor;}
+                    bool operator!=(const self_type &other) const {return !operator==(other);}
+                    self_type& operator=(const self_type &other) {m_cursor=other.m_cursor;}
+                private:
+                    data_type m_cursor;
             };
             
             class reverse_iterator:public rubbish::reverse_iterator<iterator>{

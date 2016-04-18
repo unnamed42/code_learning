@@ -37,15 +37,23 @@ namespace rubbish{
             typedef node<T> vex_node;
             typedef node<index_t> arc_node;
             
-            template <bool not_const> class iterator_base:public iterator<std::forward_iterator_tag,typename condition<not_const,T,const T>::type>{
+            class iterator_base:public iterator<std::forward_iterator_tag,T>{
+                private:
+                    typedef iterator<std::forward_iterator_tag,T> base_class;
                 public:
-                    typedef iterator_base               self_type;
-                    typedef vex_node*                   data_type;
+                    typedef typename base_class::reference reference;
+                    typedef typename base_class::pointer   pointer;
+                    
+                    typedef iterator_base self_type;
+                    typedef vex_node*     data_type;
                     
                     iterator_base(_index_t _index,std::vector<vex_node*>* =nullptr);
+                    virtual ~iterator_base() {}
+                    
                     reference operator*() const;
                     pointer operator->() const {return &operator*();}
                     _index_t get() const;
+                    
                     bool operator==(const self_type &other) const;
                     bool operator!=(const self_type &other) const;
                 protected:
@@ -55,9 +63,11 @@ namespace rubbish{
             
             class dfs_iterator: public iterator_base{
                 public:
-                    typedef dfs_iterator self_type;
+                    typedef dfs_iterator                      self_type;
                     typedef typename iterator_base::data_type data_type;
+                    
                     explicit dfs_iterator(_index_t _index,std::vector<data_type>* =nullptr,std::deque<_index_t>* =nullptr);
+                    
                     self_type& operator++();
                     self_type operator++(int);
                     self_type& operator=(const self_type &other);
@@ -71,9 +81,11 @@ namespace rubbish{
             
             class bfs_iterator: public iterator_base{
                 public:
-                    typedef bfs_iterator self_type;
+                    typedef bfs_iterator                      self_type;
                     typedef typename iterator_base::data_type data_type;
+                    
                     explicit bfs_iterator(_index_t _index,std::vector<data_type>* =nullptr,std::deque<_index_t>* =nullptr);
+                    
                     self_type& operator++();
                     self_type operator++(int);
                     self_type& operator=(const self_type &other);
@@ -87,9 +99,11 @@ namespace rubbish{
             
             class topo_iterator: public iterator_base{
                 public:
-                    typedef topo_iterator self_type;
+                    typedef topo_iterator                     self_type;
                     typedef typename iterator_base::data_type data_type;
+                    
                     explicit topo_iterator(_index_t _index,std::vector<data_type>* =nullptr,std::size_t count=0,long stack=-1,long *indegree=nullptr);
+                    
                     self_type& operator++();
                     self_type operator++(int);
                     self_type& operator=(const self_type &other);
@@ -149,6 +163,6 @@ namespace rubbish{
     };
 } // namespace rubbish
 
-#include "bits/graph.cc"
+#include "graph.cc"
 
 #endif // __RUBBISH_GRAPH__

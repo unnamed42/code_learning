@@ -16,9 +16,6 @@ namespace rubbish{
         typedef Reference                      reference;
         typedef Distance                       difference_type;
         typedef Category                       iterator_category;
-        
-        // Trival one to remove warning [-Wnon-virtual-dtor]
-        virtual ~iterator() {}
     };
     
     template <class Iterator> struct iterator_traits{
@@ -81,12 +78,12 @@ namespace rubbish{
         protected:
             Iterator m_iter;
     };
-    template <class IteratorL,class IteratorR> bool operator<(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return lhs.base()<rhs.base();}
-    template <class IteratorL,class IteratorR> bool operator>(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return rhs<lhs;}
-    template <class IteratorL,class IteratorR> bool operator<=(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return !(lhs>rhs);}
-    template <class IteratorL,class IteratorR> bool operator>=(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return !(lhs<rhs);}
-    template <class IteratorL,class IteratorR> bool operator==(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return lhs.base()==rhs.base();}
-    template <class IteratorL,class IteratorR> bool operator!=(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return !(lhs==rhs);}
+    template <class IteratorL,class IteratorR> inline bool operator<(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return lhs.base()<rhs.base();}
+    template <class IteratorL,class IteratorR> inline bool operator>(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return rhs<lhs;}
+    template <class IteratorL,class IteratorR> inline bool operator<=(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return !(lhs>rhs);}
+    template <class IteratorL,class IteratorR> inline bool operator>=(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return !(lhs<rhs);}
+    template <class IteratorL,class IteratorR> inline bool operator==(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return lhs.base()==rhs.base();}
+    template <class IteratorL,class IteratorR> inline bool operator!=(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return !(lhs==rhs);}
     
     template <class Iterator> class const_iterator{
         public:
@@ -125,12 +122,25 @@ namespace rubbish{
         private:
             Iterator m_iter;
     };
-    template <class IteratorL,class IteratorR> bool operator<(const const_iterator<IteratorL> &lhs,const const_iterator<IteratorR> &rhs) {return lhs.base()<rhs.base();}
-    template <class IteratorL,class IteratorR> bool operator>(const const_iterator<IteratorL> &lhs,const const_iterator<IteratorR> &rhs) {return rhs<lhs;}
-    template <class IteratorL,class IteratorR> bool operator<=(const const_iterator<IteratorL> &lhs,const const_iterator<IteratorR> &rhs) {return !(lhs>rhs);}
-    template <class IteratorL,class IteratorR> bool operator>=(const const_iterator<IteratorL> &lhs,const const_iterator<IteratorR> &rhs) {return !(lhs<rhs);}
-    template <class IteratorL,class IteratorR> bool operator==(const const_iterator<IteratorL> &lhs,const const_iterator<IteratorR> &rhs) {return lhs.base()==rhs.base();}
-    template <class IteratorL,class IteratorR> bool operator!=(const const_iterator<IteratorL> &lhs,const const_iterator<IteratorR> &rhs) {return !(lhs==rhs);}
+    template <class IteratorL,class IteratorR> inline bool operator<(const const_iterator<IteratorL> &lhs,const const_iterator<IteratorR> &rhs) {return lhs.base()<rhs.base();}
+    template <class IteratorL,class IteratorR> inline bool operator>(const const_iterator<IteratorL> &lhs,const const_iterator<IteratorR> &rhs) {return rhs<lhs;}
+    template <class IteratorL,class IteratorR> inline bool operator<=(const const_iterator<IteratorL> &lhs,const const_iterator<IteratorR> &rhs) {return !(lhs>rhs);}
+    template <class IteratorL,class IteratorR> inline bool operator>=(const const_iterator<IteratorL> &lhs,const const_iterator<IteratorR> &rhs) {return !(lhs<rhs);}
+    template <class IteratorL,class IteratorR> inline bool operator==(const const_iterator<IteratorL> &lhs,const const_iterator<IteratorR> &rhs) {return lhs.base()==rhs.base();}
+    template <class IteratorL,class IteratorR> inline bool operator!=(const const_iterator<IteratorL> &lhs,const const_iterator<IteratorR> &rhs) {return !(lhs==rhs);}
+    // Make const_iterator and Iterator co-operable
+    template <class Iterator> inline bool operator<(const Iterator &lhs,const const_iterator<Iterator> &rhs) {return lhs<rhs.base();}
+    template <class Iterator> inline bool operator>(const Iterator &lhs,const const_iterator<Iterator> &rhs) {return lhs>rhs.base();}
+    template <class Iterator> inline bool operator<=(const Iterator &lhs,const const_iterator<Iterator> &rhs) {return !(lhs>rhs);}
+    template <class Iterator> inline bool operator>=(const Iterator &lhs,const const_iterator<Iterator> &rhs) {return !(lhs<rhs);}
+    template <class Iterator> inline bool operator==(const Iterator &lhs,const const_iterator<Iterator> &rhs) {return lhs==rhs.base();}
+    template <class Iterator> inline bool operator!=(const Iterator &lhs,const const_iterator<Iterator> &rhs) {return !(lhs==rhs);}
+    template <class Iterator> inline bool operator<(const const_iterator<Iterator> &lhs,const Iterator &rhs) {return rhs>lhs;}
+    template <class Iterator> inline bool operator>(const const_iterator<Iterator> &lhs,const Iterator &rhs) {return rhs<lhs;}
+    template <class Iterator> inline bool operator<=(const const_iterator<Iterator> &lhs,const Iterator &rhs) {return rhs>=lhs;}
+    template <class Iterator> inline bool operator>=(const const_iterator<Iterator> &lhs,const Iterator &rhs) {return rhs<=lhs;}
+    template <class Iterator> inline bool operator==(const const_iterator<Iterator> &lhs,const Iterator &rhs) {return rhs==lhs;}
+    template <class Iterator> inline bool operator!=(const const_iterator<Iterator> &lhs,const Iterator &rhs) {return rhs!=lhs;}
 
 } // namespace rubbish
 
