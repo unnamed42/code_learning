@@ -42,12 +42,14 @@ namespace rubbish{
     
     // `Iterator` must at least satisfies BidirectionalIterator
     template <class Iterator> class reverse_iterator{
+        private:
+            typedef iterator_traits<Iterator> traits_type;
         public:
-            typedef typename iterator_traits<Iterator>::value_type        value_type;
-            typedef typename iterator_traits<Iterator>::pointer           pointer;
-            typedef typename iterator_traits<Iterator>::reference         reference;
-            typedef typename iterator_traits<Iterator>::difference_type   difference_type;
-            typedef typename iterator_traits<Iterator>::iterator_category iterator_category;
+            typedef typename traits_type::value_type        value_type;
+            typedef typename traits_type::pointer           pointer;
+            typedef typename traits_type::reference         reference;
+            typedef typename traits_type::difference_type   difference_type;
+            typedef typename traits_type::iterator_category iterator_category;
             
             typedef reverse_iterator<Iterator> self_type;
             
@@ -86,12 +88,14 @@ namespace rubbish{
     template <class IteratorL,class IteratorR> inline bool operator!=(const reverse_iterator<IteratorL> &lhs,const reverse_iterator<IteratorR> &rhs) {return !(lhs==rhs);}
     
     template <class Iterator> class const_iterator{
+        private:
+            typedef iterator_traits<Iterator> traits_type;
         public:
-            typedef typename iterator_traits<Iterator>::value_type                                        value_type;
-            typedef const typename remove_pointer<typename iterator_traits<Iterator>::pointer>::type*     pointer;
-            typedef const typename remove_reference<typename iterator_traits<Iterator>::reference>::type& reference;
-            typedef typename iterator_traits<Iterator>::difference_type                                   difference_type;
-            typedef typename iterator_traits<Iterator>::iterator_category                                 iterator_category;
+            typedef typename traits_type::value_type                                        value_type;
+            typedef const typename remove_pointer<typename traits_type::pointer>::type*     pointer;
+            typedef const typename remove_reference<typename traits_type::reference>::type& reference;
+            typedef typename traits_type::difference_type                                   difference_type;
+            typedef typename traits_type::iterator_category                                 iterator_category;
             
             typedef const_iterator<Iterator> self_type;
             
