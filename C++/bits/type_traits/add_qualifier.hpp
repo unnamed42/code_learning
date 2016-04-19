@@ -2,6 +2,7 @@
 #define __RUBBISH_ADD_QUALIFIER__
 
 #include "basic_traits.hpp"
+#include "is_checkers.hpp"
 #include "remove_qualifier.hpp"
 
 namespace rubbish{
