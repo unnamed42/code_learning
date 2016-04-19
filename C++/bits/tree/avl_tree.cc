@@ -4,22 +4,6 @@
 namespace rubbish{
     namespace helper{
         // helper function
-        template <class T> static inline T max(const T &lhs,const T &rhs) { return lhs>rhs?lhs:rhs; }
-        
-        template <class Node> static inline int avl_height(const Node *p) { return p==nullptr?0:p->height; }
-        
-        template <class Node> static inline int avl_balance(const Node *p) { return p==nullptr?0:avl_height<Node>(p->left)-avl_height<Node>(p->right); }
-        
-        // return the node with minimum value found in a tree
-        template <class Node> static inline Node* min_node(Node *root){
-            auto current = root;
-            /* loop down to find the leftmost leaf */
-            while (current->left != nullptr)
-                current = current->left;
-        
-            return current;
-        }
-        
         // T1, T2 and T3 are subtrees of the tree rooted with y (on left side) 
         // or x (on right side)
         //              y                          x
@@ -224,18 +208,7 @@ template <class T,class Node> rubbish::avl_tree<T,Node>::avl_tree(const self_typ
 
 template <class T,class Node> rubbish::avl_tree<T,Node>::avl_tree(self_type &&other):base_class(std::move(other)) {}
 
-template <class T,class Node> template <class U> typename rubbish::avl_tree<T,Node>::const_iterator rubbish::avl_tree<T,Node>::find(U &&value) const {
-    node *ptr=m_root;
-    while(ptr!=nullptr){
-        if(value==ptr->data)
-            break;
-        else if(value<ptr->data)
-            ptr=ptr->left;
-        else
-            ptr=ptr->right;
-    }
-    return const_iterator(ptr);
-}
+template <class T,class Node> template <class U> typename rubbish::avl_tree<T,Node>::const_iterator rubbish::avl_tree<T,Node>::find(U &&value) const {return const_iterator(const_cast<self_type*>(this)->find(std::move(value)));}
 
 template <class T,class Node> template <class U> typename rubbish::avl_tree<T,Node>::iterator rubbish::avl_tree<T,Node>::find(U &&value){
     node *ptr=m_root;

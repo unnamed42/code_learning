@@ -23,9 +23,30 @@ namespace rubbish{
             avl_tree_node(self_type &&o):data(std::move(o.data)),left(o.left),right(o.right),parent(o.parent),height(o.height) {}
             
             // Assignment operators to avoid warning [-Weffc++]
-            self_type& operator=(const self_type &o) {data=o.data; left=o.left; right=o.right; parent=o.parent; height=o.height;}
-            self_type& operator=(self_type &&o) {data=std::move(o.data); left=o.left; right=o.right; parent=o.parent; height=o.height;}
+            self_type& operator=(const self_type &o) {data=o.data; left=o.left; right=o.right; parent=o.parent; height=o.height;return *this;}
+            self_type& operator=(self_type &&o) {data=std::move(o.data); left=o.left; right=o.right; parent=o.parent; height=o.height;return *this;}
         };
+        
+        // Some other helper functions
+        template <class T> static inline T max(const T &lhs,const T &rhs) { return lhs>rhs?lhs:rhs; }
+        
+        template <class Node> static inline int avl_height(const Node *p) { return p==nullptr?0:p->height; }
+        
+        template <class Node> static inline int avl_balance(const Node *p) { return p==nullptr?0:avl_height<Node>(p->left)-avl_height<Node>(p->right); }
+        
+        // return the node with minimum value found in a tree
+        template <class Node> static inline Node* min_node(Node *root){
+            auto current = root;
+            /* loop down to find the leftmost leaf */
+            while (current->left != nullptr)
+                current = current->left;
+            return current;
+        }
+        
+        // Functions used to rotate, defined in avl_tree.cc
+        template <class Node> Node* avl_left_rotate(Node *root);
+        template <class Node> Node* avl_right_rotate(Node *root);
+        
     } // namespace helper
     
     // Minimum requirements of type `Node`:
