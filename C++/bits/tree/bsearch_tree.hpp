@@ -13,33 +13,49 @@ namespace rubbish{
         private:
             typedef binary_tree_base<T,Node> base_class;
         public:
+            typedef bsearch_tree<T,Node> self_type;
+            
             typedef typename base_class::node node;
             typedef typename base_class::inorder_iterator iterator;
             typedef typename base_class::const_inorder_iterator const_iterator;
-
+            
         private:
             using base_class::m_root;
             
-            // Insert any data to any tree
-            node* insert(node*&,const T&);
+            // Insert a node to a tree(represented as a raw pointer), and return its position
+            template <class U> node* insert(node*&,U&&);
             
         public:
-            explicit bsearch_tree(node *root=nullptr);
-            explicit bsearch_tree(std::initializer_list<T>&&);
-            bsearch_tree(const bsearch_tree<T>&);
+            // Default initialization
+            constexpr bsearch_tree();
             
-            // Insert data to this tree
-            iterator insert(const T&);
-            iterator insert(T &&);
+            // Wrap a raw pointer into a class
+            explicit bsearch_tree(node *root);
+            
+            // Initialize with a given list
+            explicit bsearch_tree(std::initializer_list<T>&&);
+            
+            // Copy constructor
+            bsearch_tree(const self_type&);
+            
+            // Move constructor
+            bsearch_tree(self_type&&);
+            
+            // Insert a node to this tree
+            template <class U> iterator insert(U&&);
             
             // Find an element and return its location
-            iterator find(const T&);
-            const_iterator find(const T&) const;
+            template <class U> iterator find(U&&);
+            template <class U> const_iterator find(U&&) const;
             
             iterator begin();
             iterator end();
             const_iterator cbegin() const;
             const_iterator cend() const;
+            
+            // Assignment operators to avoid warning [-Weffc++]
+            self_type& operator=(const self_type&);
+            self_type& operator=(self_type&&);
     };
 
 } // namespace rubbish
