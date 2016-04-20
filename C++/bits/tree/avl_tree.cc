@@ -59,24 +59,26 @@ namespace rubbish{
     } // namespace helper
 } // namespace rubbish
 
-template <class T,class Node> typename rubbish::avl_tree<T,Node>::node* rubbish::avl_tree<T,Node>::insert(node *root,const T &value,node* &return_val){
+template <class T,class Node> template <class U> typename rubbish::avl_tree<T,Node>::node* rubbish::avl_tree<T,Node>::insert(node *root,U &&value,node* &return_val){
     // Perform the normal BST rotation
     if(root==nullptr){
-        return_val=root=new node(value);
+        return_val=root=new node(std::forward<U>(value));
         return root;
     }
     
-    if (value < root->data){
-        root->left=insert(root->left, value,return_val);
+    if (std::forward<U>(value) < root->data){
+        root->left=insert(root->left, std::forward<U>(value),return_val);
         root->left->parent=root;
     }
-    else if(value == root->data){
+    else if(std::forward<U>(value) == root->data){
         return_val = root;
         return root;
     } else{
-        root->right=insert(root->right, value,return_val);
+        root->right=insert(root->right, std::forward<U>(value),return_val);
         root->right->parent=root;
     }
+    
+    auto &&_value = return_val->data;
     
     // Update root height
     root->height = helper::max(helper::avl_height<Node>(root->left), helper::avl_height<Node>(root->right)) + 1;
@@ -86,21 +88,21 @@ template <class T,class Node> typename rubbish::avl_tree<T,Node>::node* rubbish:
     
     // When unbalanced, do some rotations
     // 1. Left Left Case
-    if (factor > 1 && value < root->left->data)
+    if (factor > 1 && _value < root->left->data)
         return helper::avl_right_rotate(root);
     
     // 2. Right Right Case
-    if (factor < -1 && value > root->right->data)
+    if (factor < -1 && _value > root->right->data)
         return helper::avl_left_rotate(root);
     
     // 3. Left Right Case
-    if (factor > 1 && value > root->left->data){
+    if (factor > 1 && _value > root->left->data){
         root->left=helper::avl_left_rotate(root->left);
         return helper::avl_right_rotate(root);
     }
     
     // 4. Right Left Case
-    if (factor < -1 && value < root->right->data){
+    if (factor < -1 && _value < root->right->data){
         root->right=helper::avl_right_rotate(root->right);
         return helper::avl_left_rotate(root);
     }
@@ -166,7 +168,7 @@ template <class T,class Node> template <class U> typename rubbish::avl_tree<T,No
     
     // UPDATE HEIGHT OF THE CURRENT NODE
     root->height = helper::max(helper::avl_height<Node>(root->left), helper::avl_height<Node>(root->right)) + 1;
- 
+    
     // STEP 3: GET THE BALANCE FACTOR OF THIS NODE (to check whether
     //  this node became unbalanced)
     auto factor = helper::avl_balance<Node>(root);
@@ -223,13 +225,27 @@ template <class T,class Node> template <class U> typename rubbish::avl_tree<T,No
     return iterator(ptr);
 }
 
-template <class T,class Node> typename rubbish::avl_tree<T,Node>::iterator rubbish::avl_tree<T,Node>::insert(const T& value) {
+template <class T,class Node> template <class U> typename rubbish::avl_tree<T,Node>::iterator rubbish::avl_tree<T,Node>::insert(U &&value) {
     node *inserted=nullptr;
-    m_root=insert(m_root,value,inserted);
+    m_root=insert(m_root,std::forward<U>(value),inserted);
     return iterator(inserted);
 }
 
 template <class T,class Node> template <class U> void rubbish::avl_tree<T,Node>::erase(U &&value) { m_root=erase(m_root,std::forward<U>(value)); }
+
+template <class T,class Node> typename rubbish::avl_tree<T,Node>::self_type& rubbish::avl_tree<T,Node>::operator=(const self_type &o) {
+    this->~avl_tree();
+    m_root=nullptr;
+    base_class::copy_subtree(m_root,o.m_root);
+    return *this;
+}
+
+template <class T,class Node> typename rubbish::avl_tree<T,Node>::self_type& rubbish::avl_tree<T,Node>::operator=(self_type &&o) {
+    this->~avl_tree();
+    m_root=o.m_root;
+    o.m_root=nullptr;
+    return *this;
+}
 
 template <class T,class Node> typename rubbish::avl_tree<T,Node>::iterator rubbish::avl_tree<T,Node>::begin() { return base_class::inorder_begin();}
 

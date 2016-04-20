@@ -90,7 +90,12 @@ template <class T,class Node> void rubbish::binary_tree_base<T,Node>::copy_subtr
     }
     if(dest != nullptr)
         delete_subtree(dest);
+    
+    // This new is shallow copy
     dest = new node(*src);
+    // So need to assign nullptr to avoid double free
+    dest->left = dest->right = dest->parent = nullptr;
+    
     copy_subtree(dest->left, src->left);
     copy_subtree(dest->right, src->right);
     if(dest->left!=nullptr)
@@ -154,6 +159,7 @@ template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::self_t
     this->~binary_tree_base();
     m_root=o.m_root;
     o.m_root=nullptr;
+    return *this;
 }
 
 template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::preorder_iterator rubbish::binary_tree_base<T,Node>::preorder_begin() {return preorder_iterator(m_root);}

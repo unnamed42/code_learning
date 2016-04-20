@@ -69,8 +69,7 @@ namespace rubbish{
         protected:
             // Insert node to a tree whose root is `root`, and return its new root
             // The inserted node is returned by the third parameter
-            // Cannot use rvalue reference, because this value needs to be compared
-            node* insert(node* root,const T&,node*&);
+            template <class U> node* insert(node* root,U&&,node*&);
             
             // Delete nodes in given tree
             template <class U> node* erase(node*,U&&);
@@ -92,8 +91,7 @@ namespace rubbish{
             ~avl_tree() = default;
             
             // Insert a node to this tree, and return its location
-            // Cannot use rvalue reference, reason see above
-            iterator insert(const T&);
+            template <class U> iterator insert(U&&);
             
             // Find a node and return location, if not found return end iterator
             template <class U> const_iterator find(U&&) const;
@@ -108,6 +106,9 @@ namespace rubbish{
             const_iterator cbegin() const;
             const_iterator cend() const;
             
+            // Assignment operators to avoid warning [-Weffc++]
+            self_type& operator=(const self_type&);
+            self_type& operator=(self_type&&);
         private:
             using base_class::m_root;
     };
