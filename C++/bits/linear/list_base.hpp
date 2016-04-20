@@ -66,10 +66,12 @@ namespace rubbish{
                     typedef rubbish::reverse_iterator<iterator> base_class;
                 public:
                     typedef typename base_class::reference reference;
+                    typedef typename base_class::pointer   pointer;
                     
                     using base_class::base_class;
                     
                     reference operator*() const {return *m_iter;}
+                    pointer operator->() const {return &operator*();}
                 protected:
                     using base_class::m_iter;
             };
