@@ -1,3 +1,46 @@
+// Iterator helper functions
+template <class Node> inline Node* rubbish::helper::inorder_first(Node *root){
+    if(root==nullptr)
+        return nullptr;
+    while(root->left!=nullptr)
+        root=root->left;
+    return root;
+}
+
+template <class Node> inline Node* rubbish::helper::postorder_first(Node *root){
+    if(root==nullptr)
+        return nullptr;
+    for(;;) {
+        if(root->left!=nullptr)
+            root=root->left;
+        else if(root->right!=nullptr)
+            root=root->right;
+        else
+            return root;
+    }
+}
+
+template <class Node> inline Node* rubbish::helper::preorder_final(Node *root){
+    if(root==nullptr)
+        return nullptr;
+    for(;;){
+        if(root->right!=nullptr)
+            root=root->right;
+        else if(root->left!=nullptr)
+            root=root->left;
+        else
+            return root;
+    }
+}
+
+template <class Node> inline Node* rubbish::helper::inorder_final(Node *root){
+    if(root==nullptr)
+        return nullptr;
+    while(root->right!=nullptr)
+        root=root->right;
+    return root;
+}
+
 // Binary tree base class function implementions
 template <class T,class Node> constexpr rubbish::binary_tree_base<T,Node>::binary_tree_base():m_root(nullptr) {}
 
@@ -104,9 +147,9 @@ template <class T,class Node> void rubbish::binary_tree_base<T,Node>::copy_subtr
         dest->right->parent=dest;
 }
 
-template <class T,class Node> void rubbish::binary_tree_base<T,Node>::insert_parent(const T &_data, CHILD LR) {
+template <class T,class Node> void rubbish::binary_tree_base<T,Node>::insert_parent(const T &_data, bool LR) {
     node *parent = new node(_data);
-    if(LR == LEFT)
+    if(LR == _left_child)
         parent->left = m_root;
     else
         parent->right = m_root;
@@ -114,14 +157,14 @@ template <class T,class Node> void rubbish::binary_tree_base<T,Node>::insert_par
     m_root = parent;
 }
 
-template <class T,class Node> void rubbish::binary_tree_base<T,Node>::insert_child(const T &_data, CHILD LR) {
+template <class T,class Node> void rubbish::binary_tree_base<T,Node>::insert_child(const T &_data, bool LR) {
     node *child = new node(_data);
     if(m_root == nullptr) {
         m_root = child;
         return;
     }
     child->parent=m_root;
-    if(LR == LEFT) {
+    if(LR == _left_child) {
         if(m_root->left != nullptr)
             delete_subtree(m_root->left);
         m_root->left = child;
@@ -166,30 +209,203 @@ template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::preord
 
 template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::preorder_iterator rubbish::binary_tree_base<T,Node>::preorder_end() {return preorder_iterator(nullptr);}
 
-template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::inorder_iterator rubbish::binary_tree_base<T,Node>::inorder_begin() {return inorder_iterator(m_root);}
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::inorder_iterator rubbish::binary_tree_base<T,Node>::inorder_begin() {return inorder_iterator(helper::inorder_first(m_root));}
 
 template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::inorder_iterator rubbish::binary_tree_base<T,Node>::inorder_end() {return inorder_iterator(nullptr);}
 
-template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::postorder_iterator rubbish::binary_tree_base<T,Node>::postorder_begin() {return postorder_iterator(m_root);}
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::postorder_iterator rubbish::binary_tree_base<T,Node>::postorder_begin() {return postorder_iterator(helper::postorder_first(m_root));}
 
 template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::postorder_iterator rubbish::binary_tree_base<T,Node>::postorder_end() {return postorder_iterator(nullptr);}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::reverse_preorder_iterator rubbish::binary_tree_base<T,Node>::preorder_rbegin() {return reverse_preorder_iterator(preorder_iterator(helper::preorder_final(m_root)));}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::reverse_preorder_iterator rubbish::binary_tree_base<T,Node>::preorder_rend() {return reverse_preorder_iterator(preorder_end());}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::reverse_inorder_iterator rubbish::binary_tree_base<T,Node>::inorder_rbegin() {return reverse_inorder_iterator(inorder_iterator(helper::inorder_final(m_root)));}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::reverse_inorder_iterator rubbish::binary_tree_base<T,Node>::inorder_rend() {return reverse_inorder_iterator(inorder_end());}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::reverse_postorder_iterator rubbish::binary_tree_base<T,Node>::postorder_rbegin() {return reverse_postorder_iterator(postorder_iterator(m_root));}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::reverse_postorder_iterator rubbish::binary_tree_base<T,Node>::postorder_rend() {return reverse_postorder_iterator(postorder_end());}
 
 template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::level_iterator rubbish::binary_tree_base<T,Node>::level_begin() {return level_iterator(m_root);}
 
 template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::level_iterator rubbish::binary_tree_base<T,Node>::level_end() {return level_iterator(nullptr);}
 
-template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_preorder_iterator rubbish::binary_tree_base<T,Node>::preorder_cbegin() const {return const_preorder_iterator(const_cast<binary_tree_base<T,Node>*>(this)->preorder_begin());}
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_preorder_iterator rubbish::binary_tree_base<T,Node>::preorder_cbegin() const {return const_preorder_iterator(const_cast<self_type*>(this)->preorder_begin());}
 
-template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_preorder_iterator rubbish::binary_tree_base<T,Node>::preorder_cend() const {return const_preorder_iterator(const_cast<binary_tree_base<T,Node>*>(this)->preorder_end());}
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_preorder_iterator rubbish::binary_tree_base<T,Node>::preorder_cend() const {return const_preorder_iterator(const_cast<self_type*>(this)->preorder_end());}
 
-template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_inorder_iterator rubbish::binary_tree_base<T,Node>::inorder_cbegin() const {return const_inorder_iterator(const_cast<binary_tree_base<T,Node>*>(this)->inorder_begin());}
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_inorder_iterator rubbish::binary_tree_base<T,Node>::inorder_cbegin() const {return const_inorder_iterator(const_cast<self_type*>(this)->inorder_begin());}
 
-template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_inorder_iterator rubbish::binary_tree_base<T,Node>::inorder_cend() const {return const_inorder_iterator(const_cast<binary_tree_base<T,Node>*>(this)->inorder_end());}
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_inorder_iterator rubbish::binary_tree_base<T,Node>::inorder_cend() const {return const_inorder_iterator(const_cast<self_type*>(this)->inorder_end());}
 
-template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_postorder_iterator rubbish::binary_tree_base<T,Node>::postorder_cbegin() const {return const_postorder_iterator(const_cast<binary_tree_base<T,Node>*>(this)->postorder_begin());}
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_postorder_iterator rubbish::binary_tree_base<T,Node>::postorder_cbegin() const {return const_postorder_iterator(const_cast<self_type*>(this)->postorder_begin());}
 
-template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_postorder_iterator rubbish::binary_tree_base<T,Node>::postorder_cend() const {return const_postorder_iterator(const_cast<binary_tree_base<T,Node>*>(this)->postorder_end());}
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_postorder_iterator rubbish::binary_tree_base<T,Node>::postorder_cend() const {return const_postorder_iterator(const_cast<self_type*>(this)->postorder_end());}
 
-template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_level_iterator rubbish::binary_tree_base<T,Node>::level_cbegin() const {return const_level_iterator(const_cast<binary_tree_base<T,Node>*>(this)->level_begin());}
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_level_iterator rubbish::binary_tree_base<T,Node>::level_cbegin() const {return const_level_iterator(const_cast<self_type*>(this)->level_begin());}
 
-template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_level_iterator rubbish::binary_tree_base<T,Node>::level_cend() const {return const_level_iterator(const_cast<binary_tree_base<T,Node>*>(this)->level_end());}
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_level_iterator rubbish::binary_tree_base<T,Node>::level_cend() const {return const_level_iterator(const_cast<self_type*>(this)->level_end());}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_reverse_preorder_iterator rubbish::binary_tree_base<T,Node>::preorder_crbegin() const {return const_reverse_preorder_iterator(const_cast<self_type*>(this)->preorder_rbegin());}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_reverse_preorder_iterator rubbish::binary_tree_base<T,Node>::preorder_crend() const {return const_reverse_preorder_iterator(const_cast<self_type*>(this)->preorder_rend());}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_reverse_inorder_iterator rubbish::binary_tree_base<T,Node>::inorder_crbegin() const {return const_reverse_inorder_iterator(const_cast<self_type*>(this)->inorder_rbegin());}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_reverse_inorder_iterator rubbish::binary_tree_base<T,Node>::inorder_crend() const {return const_reverse_inorder_iterator(const_cast<self_type*>(this)->inorder_rend());}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_reverse_postorder_iterator rubbish::binary_tree_base<T,Node>::postorder_crbegin() const {return const_reverse_postorder_iterator(const_cast<self_type*>(this)->postorder_rbegin());}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::const_reverse_postorder_iterator rubbish::binary_tree_base<T,Node>::postorder_crend() const {return const_reverse_postorder_iterator(const_cast<self_type*>(this)->postorder_rend());}
+
+
+// Iterator increment and decrement functions
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::preorder_iterator::self_type& rubbish::binary_tree_base<T,Node>::preorder_iterator::operator++(){
+    if(m_cursor==nullptr)
+        return *this;
+    if(m_cursor->left!=nullptr)
+        m_cursor=m_cursor->left;
+    else if(m_cursor->right!=nullptr)
+        m_cursor=m_cursor->right;
+    else {
+        auto parent=m_cursor->parent;
+        while(parent!=nullptr) {
+            // If right-subtree is done or empty, then the whole tree is done, traceback.
+            if(parent->right==nullptr || m_cursor==parent->right) {
+                m_cursor=parent;
+                parent=parent->parent;
+                continue;
+            }
+            // If left-subtree is done, the next will be right-subtree.
+            if(m_cursor==parent->left) {
+                m_cursor=parent->right;
+                return *this;
+            }
+        }
+        // Whole tree is done.
+        m_cursor=nullptr;
+    }
+    return *this;
+}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::preorder_iterator::self_type& rubbish::binary_tree_base<T,Node>::preorder_iterator::operator--(){
+    // When implementing this, just keep in mind that this serialization
+    // should be the serialization of "right-left-self" traversal
+    if(m_cursor==nullptr)
+        return *this;
+    auto parent=m_cursor->parent;
+    if(parent!=nullptr){
+        if(parent->right==m_cursor && parent->left!=nullptr)
+            m_cursor=helper::preorder_final(parent->left);
+        else
+            m_cursor=parent;
+    } else 
+        m_cursor=nullptr;
+    return *this;
+}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::inorder_iterator::self_type& rubbish::binary_tree_base<T,Node>::inorder_iterator::operator++(){
+    if(m_cursor==nullptr)
+        return *this;
+    // When we take a tree root, we can believe that its left-subtree is done.
+    if(m_cursor->right!=nullptr)
+        m_cursor=helper::inorder_first(m_cursor->right);
+    else {
+        // If one tree's right-subtree is also done,
+        // then traceback until it's "come from left".
+        auto parent=m_cursor->parent;
+        while(parent!=nullptr) {
+            if(m_cursor==parent->left) {
+                m_cursor=parent;
+                return *this;
+            }
+            m_cursor=parent;
+            parent=parent->parent;
+        }
+        m_cursor=nullptr;
+    }
+    return *this;
+}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::inorder_iterator::self_type& rubbish::binary_tree_base<T,Node>::inorder_iterator::operator--(){
+    // When implementing this, just keep in mind that this serialization
+    // should be serialization of "right-self-left" traversal.
+    if(m_cursor==nullptr)
+        return *this;
+    if(m_cursor->left!=nullptr)
+        m_cursor=helper::inorder_final(m_cursor->left);
+    else {
+        auto parent=m_cursor->parent;
+        while(parent!=nullptr){
+            if(m_cursor==parent->right) {
+                m_cursor=parent;
+                return *this;
+            }
+            m_cursor=parent;
+            parent=parent->parent;
+        }
+        m_cursor=nullptr;
+    }
+    return *this;
+}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::postorder_iterator::self_type& rubbish::binary_tree_base<T,Node>::postorder_iterator::operator++(){
+    if(m_cursor==nullptr)
+        return *this;
+    // When we take a node, we can believe that all of its subtrees are done
+    auto parent=m_cursor->parent;
+    if(parent!=nullptr) {
+        // If parent's left-subtree is done and right-subtree is undone, go to right
+        if(m_cursor==parent->left && parent->right!=nullptr)
+            m_cursor=helper::postorder_first(parent->right);
+        else
+            // Else, all done, traceback
+            // In this branch, m_cursor==parent->right
+            m_cursor=parent;
+    } else
+        // Whole tree is done
+        m_cursor=nullptr;
+    return *this;
+}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::postorder_iterator::self_type& rubbish::binary_tree_base<T,Node>::postorder_iterator::operator--(){
+    // When implementing this, just keep in mind that this serialization
+    // should be the serialization of "self-right-left" traversal.
+    if(m_cursor==nullptr)
+        return *this;
+    if(m_cursor->right!=nullptr)
+        m_cursor=m_cursor->right;
+    else if(m_cursor->left!=nullptr)
+        m_cursor=m_cursor->left;
+    else {
+        auto parent=m_cursor->parent;
+        while(parent!=nullptr) {
+            if(parent->left==nullptr || m_cursor==parent->left) {
+                m_cursor=parent;
+                parent=parent->parent;
+                continue;
+            }
+            if(m_cursor==parent->right) {
+                m_cursor=parent->left;
+                return *this;
+            }
+        }
+        m_cursor=nullptr;
+    }
+    return *this;
+}
+
+template <class T,class Node> typename rubbish::binary_tree_base<T,Node>::level_iterator::self_type& rubbish::binary_tree_base<T,Node>::level_iterator::operator++() {
+    if(m_cursor.empty())
+        return *this;
+    auto ptr=m_cursor.front();
+    m_cursor.pop_front();
+    if(ptr->left != nullptr)
+        m_cursor.push_back(ptr->left);
+    if(ptr->right != nullptr)
+        m_cursor.push_back(ptr->right);
+    return *this;
+}

@@ -9,7 +9,8 @@
 
 namespace rubbish{
 
-    typedef enum {LEFT = 0, RIGHT} CHILD;
+    constexpr bool _left_child = true;
+    constexpr bool _right_child = false;
 
     namespace helper{
         template <class T> struct binary_tree_node{
@@ -30,6 +31,13 @@ namespace rubbish{
             self_type& operator=(const self_type &o) {data=o.data; left=o.left; right=o.right; parent=o.parent; return *this;}
             self_type& operator=(self_type &&o) {data=std::move(o.data); left=o.left; right=o.right; parent=o.parent; return *this;}
         };
+        
+        // template <class Node> inline Node* preorder_first(Node *root); // This is trival, just return root
+        template <class Node> inline Node* inorder_first(Node*);
+        template <class Node> inline Node* postorder_first(Node*);
+        template <class Node> inline Node* preorder_final(Node*);
+        template <class Node> inline Node* inorder_final(Node*);
+        // template <class Node> inline Node* postorder_final(Node *root); // This is trival, just return root
     } // namespace helper
     
     // Minimum requirements of type `Node`:
@@ -41,12 +49,173 @@ namespace rubbish{
         public:
             typedef Node node;
             
-            #include "binary_tree_iterators.cc"
+            class tree_iterator_base:public rubbish::iterator<std::bidirectional_iterator_tag,T> {
+                private:
+                    typedef rubbish::iterator<std::bidirectional_iterator_tag,T> base_class;
+                public:
+                    typedef typename base_class::reference reference;
+                    typedef typename base_class::pointer   pointer;
+                    
+                    typedef tree_iterator_base self_type;
+                    typedef node*              data_type;
+                    
+                    explicit tree_iterator_base(const data_type &cursor):m_cursor(cursor) {}
+                    tree_iterator_base(const tree_iterator_base &other):m_cursor(other.m_cursor) {}
+                    virtual ~tree_iterator_base() {}
+                    
+                    reference operator*() const {return m_cursor->data;}
+                    pointer operator->() const { return &operator*(); }
+                    data_type get() const {return m_cursor;}
+                    bool operator==(const self_type &other) const {return m_cursor==other.m_cursor;}
+                    bool operator!=(const self_type &other) const {return !operator==(other);}
+                    self_type& operator=(const tree_iterator_base &other) {m_cursor=other.m_cursor; return *this;}
+                protected:
+                    data_type m_cursor;
+            };
             
-            typedef const_iterator<preorder_iterator>  const_preorder_iterator;
-            typedef const_iterator<inorder_iterator>   const_inorder_iterator;
-            typedef const_iterator<postorder_iterator> const_postorder_iterator;
-            typedef const_iterator<level_iterator>     const_level_iterator;
+            class preorder_iterator: public tree_iterator_base{
+                private:
+                    typedef tree_iterator_base base_class;
+                public:
+                    typedef preorder_iterator self_type;
+                    
+                    typedef typename base_class::reference reference;
+                    typedef typename base_class::data_type data_type;
+                    
+                    using base_class::base_class;
+                    
+                    self_type& operator++();
+                    self_type operator++(int) {auto i=*this; operator++(); return i;}
+                    self_type& operator--();
+                    self_type operator--(int) {auto i=*this;operator--();return i;}
+                private:
+                    using base_class::m_cursor;
+            };
+            
+            class inorder_iterator: public tree_iterator_base{
+                private:
+                    typedef tree_iterator_base base_class;
+                public:
+                    typedef inorder_iterator self_type;
+                    
+                    typedef typename base_class::reference reference;
+                    typedef typename base_class::data_type data_type;
+                    
+                    using base_class::base_class;
+                    
+                    self_type& operator++();
+                    self_type operator++(int) {auto i=*this; operator++(); return i;}
+                    self_type& operator--();
+                    self_type operator--(int) {auto i=*this;operator--();return i;}
+                private:
+                    using base_class::m_cursor;
+            };
+            
+            class postorder_iterator: public tree_iterator_base{
+                private:
+                    typedef tree_iterator_base base_class;
+                public:
+                    typedef postorder_iterator self_type;
+                    
+                    typedef typename base_class::reference reference;
+                    typedef typename base_class::data_type data_type;
+                    
+                    using base_class::base_class;
+                    
+                    self_type& operator++();
+                    self_type operator++(int) {auto i=*this; operator++(); return i;}
+                    self_type& operator--();
+                    self_type operator--(int) {auto i=*this;operator--();return i;}
+                private:
+                    using base_class::m_cursor;
+            };
+            
+            class reverse_preorder_iterator:public rubbish::reverse_iterator<preorder_iterator>{
+                private:
+                    typedef rubbish::reverse_iterator<preorder_iterator> base_class;
+                public:
+                    typedef typename base_class::reference reference;
+                    typedef typename base_class::pointer   pointer;
+                    
+                    using base_class::base_class;
+                    
+                    reference operator*() const {return *m_iter;}
+                    pointer operator->() const {return &operator*();}
+                private:
+                    using base_class::m_iter;
+            };
+            
+            class reverse_inorder_iterator:public rubbish::reverse_iterator<inorder_iterator>{
+                private:
+                    typedef rubbish::reverse_iterator<inorder_iterator> base_class;
+                public:
+                    typedef typename base_class::reference reference;
+                    typedef typename base_class::pointer   pointer;
+                    
+                    using base_class::base_class;
+                    
+                    reference operator*() const {return *m_iter;}
+                    pointer operator->() const {return &operator*();}
+                private:
+                    using base_class::m_iter;
+            };
+            
+            class reverse_postorder_iterator:public rubbish::reverse_iterator<postorder_iterator>{
+                private:
+                    typedef rubbish::reverse_iterator<postorder_iterator> base_class;
+                public:
+                    typedef typename base_class::reference reference;
+                    typedef typename base_class::pointer   pointer;
+                    
+                    using base_class::base_class;
+                    
+                    reference operator*() const {return *m_iter;}
+                    pointer operator->() const {return &operator*();}
+                private:
+                    using base_class::m_iter;
+            };
+            
+            // This kind of iterator is totally different from the above three kinds,
+            // so do not inherit from tree_iterator_base here
+            class level_iterator:public rubbish::iterator<std::forward_iterator_tag,T> {
+                private:
+                    typedef rubbish::iterator<std::forward_iterator_tag,T> base_class;
+                public:
+                    typedef typename base_class::reference reference;
+                    typedef typename base_class::pointer   pointer;
+                    
+                    typedef level_iterator self_type;
+                    typedef node*          data_type;
+                    
+                    explicit level_iterator(const data_type &cursor):m_cursor() {
+                        if(cursor!=nullptr)
+                            m_cursor.push_back(cursor);
+                    }
+                    level_iterator(const level_iterator &other):m_cursor(other.m_cursor) {}
+                    level_iterator(level_iterator &&other):m_cursor(std::move(other.m_cursor)) {}
+                    
+                    reference operator*() const {return const_cast<reference>(m_cursor.front()->data);}
+                    pointer operator->() const { return &operator*(); }
+                    const std::deque<data_type>& get() const {return m_cursor;}
+                    self_type& operator++();
+                    self_type operator++(int) {auto i=*this; operator++(); return i;}
+                    
+                    bool operator==(const level_iterator &other) const {return (m_cursor.empty()&&other.m_cursor.empty()) || (!m_cursor.empty()&&!other.m_cursor.empty() && m_cursor.front()==other.m_cursor.front());}
+                    bool operator!=(const level_iterator &other) const {return !operator==(other);}
+                    
+                    self_type& operator=(const level_iterator &other) {m_cursor=const_cast<decltype(m_cursor)&>(other.get()); return *this;}
+                    self_type& operator=(level_iterator &&other) {m_cursor=std::move(const_cast<decltype(m_cursor)&>(other.get())); return *this;}
+                private:
+                    std::deque<data_type> m_cursor;
+            };
+            
+            typedef rubbish::const_iterator<preorder_iterator>  const_preorder_iterator;
+            typedef rubbish::const_iterator<inorder_iterator>   const_inorder_iterator;
+            typedef rubbish::const_iterator<postorder_iterator> const_postorder_iterator;
+            typedef rubbish::const_iterator<level_iterator>     const_level_iterator;
+            typedef rubbish::const_iterator<reverse_preorder_iterator> const_reverse_preorder_iterator;
+            typedef rubbish::const_iterator<reverse_inorder_iterator> const_reverse_inorder_iterator;
+            typedef rubbish::const_iterator<reverse_postorder_iterator> const_reverse_postorder_iterator;
             
             typedef binary_tree_base<T,Node> self_type;
             
@@ -94,11 +263,10 @@ namespace rubbish{
             bool empty() const noexcept;
             
             // Insert `root` to a new node as `LR` child
-            void insert_parent(const T &_data, CHILD LR);
+            void insert_parent(const T &_data, bool LR);
             
             // Insert a new node to `root` as `LR` child
-            void insert_child(const T &_data, CHILD LR);
-            
+            void insert_child(const T &_data, bool LR);
             
             // Iterator functions
             preorder_iterator preorder_begin();
@@ -109,12 +277,24 @@ namespace rubbish{
             postorder_iterator postorder_end();
             level_iterator level_begin();
             level_iterator level_end();
+            reverse_preorder_iterator preorder_rbegin();
+            reverse_preorder_iterator preorder_rend();
+            reverse_inorder_iterator inorder_rbegin();
+            reverse_inorder_iterator inorder_rend();
+            reverse_postorder_iterator postorder_rbegin();
+            reverse_postorder_iterator postorder_rend();
             const_preorder_iterator preorder_cbegin() const;
             const_preorder_iterator preorder_cend() const;
             const_inorder_iterator inorder_cbegin() const;
             const_inorder_iterator inorder_cend() const;
             const_postorder_iterator postorder_cbegin() const;
             const_postorder_iterator postorder_cend() const;
+            const_reverse_preorder_iterator preorder_crbegin() const;
+            const_reverse_preorder_iterator preorder_crend() const;
+            const_reverse_inorder_iterator inorder_crbegin() const;
+            const_reverse_inorder_iterator inorder_crend() const;
+            const_reverse_postorder_iterator postorder_crbegin() const;
+            const_reverse_postorder_iterator postorder_crend() const;
             const_level_iterator level_cbegin() const;
             const_level_iterator level_cend() const;
             
@@ -125,8 +305,5 @@ namespace rubbish{
 } // namespace rubbish
 
 #include "binary_tree_base.cc"
-
-using rubbish::CHILD::LEFT;
-using rubbish::CHILD::RIGHT;
 
 #endif // __RUBBISH_BINARY_TREE_BASE__
