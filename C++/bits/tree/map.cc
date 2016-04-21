@@ -18,18 +18,25 @@ template <class T1,class T2> void rubbish::map<T1,T2>::clear() {m_base.clear();}
 
 template <class T1,class T2> bool rubbish::map<T1,T2>::empty() const noexcept {return m_base.empty();}
 
-template <class T1,class T2> typename rubbish::map<T1,T2>::iterator rubbish::map<T1,T2>::begin() { return base_class::begin();}
+template <class T1,class T2> template <class key> T2& rubbish::map<T1,T2>::operator[](key &&val) {
+    auto res=find(std::forward<key>(val));
+    if(res!=end())
+        return res->second;
+    return insert({std::forward<key>(val),T2()})->second;
+}
 
-template <class T1,class T2> typename rubbish::map<T1,T2>::iterator rubbish::map<T1,T2>::end() { return base_class::end();}
+template <class T1,class T2> typename rubbish::map<T1,T2>::iterator rubbish::map<T1,T2>::begin() { return m_base.begin();}
 
-template <class T1,class T2> typename rubbish::map<T1,T2>::const_iterator rubbish::map<T1,T2>::cbegin() const { return base_class::cbegin();}
+template <class T1,class T2> typename rubbish::map<T1,T2>::iterator rubbish::map<T1,T2>::end() { return m_base.end();}
 
-template <class T1,class T2> typename rubbish::map<T1,T2>::const_iterator rubbish::map<T1,T2>::cend() const { return base_class::cend();}
+template <class T1,class T2> typename rubbish::map<T1,T2>::const_iterator rubbish::map<T1,T2>::cbegin() const { return m_base.cbegin();}
 
-template <class T1,class T2> typename rubbish::map<T1,T2>::reverse_iterator rubbish::map<T1,T2>::rbegin() { return base_class::rbegin();}
+template <class T1,class T2> typename rubbish::map<T1,T2>::const_iterator rubbish::map<T1,T2>::cend() const { return m_base.cend();}
 
-template <class T1,class T2> typename rubbish::map<T1,T2>::reverse_iterator rubbish::map<T1,T2>::rend() { return base_class::rend();}
+template <class T1,class T2> typename rubbish::map<T1,T2>::reverse_iterator rubbish::map<T1,T2>::rbegin() { return m_base.rbegin();}
 
-template <class T1,class T2> typename rubbish::map<T1,T2>::const_reverse_iterator rubbish::map<T1,T2>::crbegin() const { return base_class::crbegin();}
+template <class T1,class T2> typename rubbish::map<T1,T2>::reverse_iterator rubbish::map<T1,T2>::rend() { return m_base.rend();}
 
-template <class T1,class T2> typename rubbish::map<T1,T2>::const_reverse_iterator rubbish::map<T1,T2>::crend() const { return base_class::crend();}
+template <class T1,class T2> typename rubbish::map<T1,T2>::const_reverse_iterator rubbish::map<T1,T2>::crbegin() const { return m_base.crbegin();}
+
+template <class T1,class T2> typename rubbish::map<T1,T2>::const_reverse_iterator rubbish::map<T1,T2>::crend() const { return m_base.crend();}

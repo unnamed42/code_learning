@@ -61,6 +61,8 @@ namespace rubbish{
             const_reverse_iterator crbegin() const;
             const_reverse_iterator crend() const;
             
+            // Return the associated value if found. If not found, insert first
+            template <class key> T2& operator[](key&&);
         private:
             base_class m_base;
     };
