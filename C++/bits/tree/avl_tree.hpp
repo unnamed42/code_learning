@@ -62,7 +62,9 @@ namespace rubbish{
         public:
             typedef typename base_class::node node;
             typedef typename base_class::inorder_iterator iterator;
+            typedef typename base_class::reverse_inorder_iterator reverse_iterator;
             typedef typename base_class::const_inorder_iterator const_iterator;
+            typedef typename base_class::const_reverse_inorder_iterator const_reverse_iterator;
             
             typedef avl_tree<T,Node> self_type;
             
@@ -103,8 +105,12 @@ namespace rubbish{
             // Iterator functions
             iterator begin();
             iterator end();
+            reverse_iterator rbegin();
+            reverse_iterator rend();
             const_iterator cbegin() const;
             const_iterator cend() const;
+            const_reverse_iterator crbegin() const;
+            const_reverse_iterator crend() const;
             
             // Assignment operators to avoid warning [-Weffc++]
             self_type& operator=(const self_type&);

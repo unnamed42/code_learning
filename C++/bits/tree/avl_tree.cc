@@ -254,3 +254,11 @@ template <class T,class Node> typename rubbish::avl_tree<T,Node>::iterator rubbi
 template <class T,class Node> typename rubbish::avl_tree<T,Node>::const_iterator rubbish::avl_tree<T,Node>::cbegin() const { return base_class::inorder_cbegin();}
 
 template <class T,class Node> typename rubbish::avl_tree<T,Node>::const_iterator rubbish::avl_tree<T,Node>::cend() const { return base_class::inorder_cend();}
+
+template <class T,class Node> typename rubbish::avl_tree<T,Node>::reverse_iterator rubbish::avl_tree<T,Node>::rbegin() { return base_class::inorder_rbegin();}
+
+template <class T,class Node> typename rubbish::avl_tree<T,Node>::reverse_iterator rubbish::avl_tree<T,Node>::rend() { return base_class::inorder_rend();}
+
+template <class T,class Node> typename rubbish::avl_tree<T,Node>::const_reverse_iterator rubbish::avl_tree<T,Node>::crbegin() const { return base_class::inorder_crbegin();}
+
+template <class T,class Node> typename rubbish::avl_tree<T,Node>::const_reverse_iterator rubbish::avl_tree<T,Node>::crend() const { return base_class::inorder_crend();}
