@@ -16,14 +16,14 @@ namespace rubbish{
             self_type *prev;
             self_type *next;
             
-            list_node():data(T()),prev(nullptr),next(nullptr) {}
+            list_node():data(),prev(nullptr),next(nullptr) {}
             explicit list_node(const T &elem):data(elem),prev(nullptr),next(nullptr) {}
             explicit list_node(T &&elem):data(std::move(elem)),prev(nullptr),next(nullptr) {}
-            list_node(const self_type &o):data(o.data),next(o.next),prev(o.prev) {}
-            list_node(self_type &&o):data(std::move(data)),next(o.next),prev(o.prev) {}
+            list_node(const self_type &o):data(o.data),prev(nullptr),next(nullptr) {}
+            list_node(self_type &&o):data(std::move(data)),prev(nullptr),next(nullptr) {}
             
-            self_type& operator=(const self_type &o) {data=o.data;next=o.next;prev=o.prev;return *this;}
-            self_type& operator=(self_type &&o) {data=std::move(o.data);next=o.next;prev=o.prev;return *this;}
+            self_type& operator=(const self_type &o) {data=o.data;next=prev=nullptr;return *this;}
+            self_type& operator=(self_type &&o) {data=std::move(o.data);next=prev=nullptr;return *this;}
         };
     } // namespace helper
     

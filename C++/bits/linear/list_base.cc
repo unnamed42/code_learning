@@ -87,6 +87,7 @@ template <class T,class Node> rubbish::list_base<T,Node>::list_base(const self_t
     if(o.empty())
         return;
     const node *optr=o.m_head;
+    // Pointers in the newed node must all be nullptr, otherwise assign manually
     m_head=m_end=new node(*optr);
     optr=optr->next;
     while(optr!=nullptr){

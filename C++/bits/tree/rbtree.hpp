@@ -21,12 +21,12 @@ namespace rubbish {
             constexpr rbtree_node():data(),left(nullptr),right(nullptr),parent(nullptr),color(_rb_red) {}
             explicit rbtree_node(const T &e):data(e),left(nullptr),right(nullptr),parent(nullptr),color(_rb_red) {}
             explicit rbtree_node(T &&e):data(std::move(e)),left(nullptr),right(nullptr),parent(nullptr),color(_rb_red) {}
-            rbtree_node(const self_type &o):data(o.data),left(o.left),right(o.right),parent(o.parent),color(o.color) {}
-            rbtree_node(self_type &&o):data(std::move(o.data)),left(o.left),right(o.right),parent(o.parent),color(o.color) {}
+            rbtree_node(const self_type &o):data(o.data),left(nullptr),right(nullptr),parent(nullptr),color(o.color) {}
+            rbtree_node(self_type &&o):data(std::move(o.data)),left(nullptr),right(nullptr),parent(nullptr),color(o.color) {}
             
             // Assignment operators to avoid warning [-Weffc++]
-            self_type& operator=(const self_type &o) {data=o.data; left=o.left; right=o.right; parent=o.parent; color=o.color;return *this;}
-            self_type& operator=(self_type &&o) {data=std::move(o.data); left=o.left; right=o.right; parent=o.parent;color=o.color;return *this;}
+            self_type& operator=(const self_type &o) {data=o.data; left=right=parent=nullptr; color=o.color;return *this;}
+            self_type& operator=(self_type &&o) {data=std::move(o.data); left=right=parent=nullptr;color=o.color;return *this;}
         };
         
         // Algorithms from http://www.geeksforgeeks.org/

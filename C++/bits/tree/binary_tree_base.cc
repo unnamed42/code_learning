@@ -134,10 +134,9 @@ template <class T,class Node> void rubbish::binary_tree_base<T,Node>::copy_subtr
     if(dest != nullptr)
         delete_subtree(dest);
     
-    // This new is shallow copy
     dest = new node(*src);
-    // So need to assign nullptr to avoid double free
-    dest->left = dest->right = dest->parent = nullptr;
+    // The pointers in newed node must all be nullptr, otherwise you should assign manually
+    //dest->left = dest->right = dest->parent = nullptr;
     
     copy_subtree(dest->left, src->left);
     copy_subtree(dest->right, src->right);

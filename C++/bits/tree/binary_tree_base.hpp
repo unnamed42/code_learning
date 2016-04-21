@@ -20,16 +20,15 @@ namespace rubbish{
             self_type *left,*right;
             self_type *parent;
             
-            constexpr binary_tree_node():data(T()),left(nullptr),right(nullptr),parent(nullptr) {}
+            constexpr binary_tree_node():data(),left(nullptr),right(nullptr),parent(nullptr) {}
             explicit binary_tree_node(const T &_data):data(_data),left(nullptr),right(nullptr),parent(nullptr) {}
             explicit binary_tree_node(T &&_data):data(std::move(_data)),left(nullptr),right(nullptr),parent(nullptr) {}
-            // Should I copy full information from `o`?
-            binary_tree_node(const self_type &o):data(o.data),left(o.left),right(o.right),parent(o.parent) {}
-            binary_tree_node(self_type &&o):data(std::move(o.data)),left(o.left),right(o.right),parent(o.parent) {}
+            binary_tree_node(const self_type &o):data(o.data),left(nullptr),right(nullptr),parent(nullptr) {}
+            binary_tree_node(self_type &&o):data(std::move(o.data)),left(nullptr),right(nullptr),parent(nullptr) {}
             
             // Assignment operators to avoid warning [-Weffc++]
-            self_type& operator=(const self_type &o) {data=o.data; left=o.left; right=o.right; parent=o.parent; return *this;}
-            self_type& operator=(self_type &&o) {data=std::move(o.data); left=o.left; right=o.right; parent=o.parent; return *this;}
+            self_type& operator=(const self_type &o) {data=o.data; left=right=parent=nullptr; return *this;}
+            self_type& operator=(self_type &&o) {data=std::move(o.data); left=right=parent=nullptr; return *this;}
         };
         
         // template <class Node> inline Node* preorder_first(Node *root); // This is trival, just return root

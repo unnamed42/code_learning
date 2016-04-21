@@ -18,13 +18,12 @@ namespace rubbish{
             constexpr avl_tree_node():data(),left(nullptr),right(nullptr),parent(nullptr),height(1) {}
             explicit avl_tree_node(const T &elem):data(elem),left(nullptr),right(nullptr),parent(nullptr),height(1) {}
             explicit avl_tree_node(T &&elem):data(std::move(elem)),left(nullptr),right(nullptr),parent(nullptr),height(1) {}
-            // Should I copy all information from `o`?
-            avl_tree_node(const self_type &o):data(o.data),left(o.left),right(o.right),parent(o.parent),height(o.height) {}
-            avl_tree_node(self_type &&o):data(std::move(o.data)),left(o.left),right(o.right),parent(o.parent),height(o.height) {}
+            avl_tree_node(const self_type &o):data(o.data),left(nullptr),right(nullptr),parent(nullptr),height(o.height) {}
+            avl_tree_node(self_type &&o):data(std::move(o.data)),left(nullptr),right(nullptr),parent(nullptr),height(o.height) {}
             
             // Assignment operators to avoid warning [-Weffc++]
-            self_type& operator=(const self_type &o) {data=o.data; left=o.left; right=o.right; parent=o.parent; height=o.height;return *this;}
-            self_type& operator=(self_type &&o) {data=std::move(o.data); left=o.left; right=o.right; parent=o.parent; height=o.height;return *this;}
+            self_type& operator=(const self_type &o) {data=o.data; left=right=parent=nullptr; height=o.height;return *this;}
+            self_type& operator=(self_type &&o) {data=std::move(o.data); left=right=parent=nullptr; height=o.height;return *this;}
         };
         
         // Some other helper functions
