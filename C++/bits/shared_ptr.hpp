@@ -6,7 +6,7 @@
 #include "type_traits/remove_qualifier.hpp" // type helpers
 
 namespace rubbish{
-        
+    
     template <class T> struct deleter{
         constexpr deleter() noexcept =default;
         
@@ -18,121 +18,65 @@ namespace rubbish{
         
         void operator() (T *ptr) {delete[] ptr;}
     };
-
-
-
-    template <class T,class Deleter = rubbish::deleter<raw_type<T> > >
-    class shared_ptr{
-        protected:
-            // type aliases
-            typedef shared_ptr<T,Deleter> self_type;
-            // type definitions
-            struct data{
-                typename remove_reference<T>::type* ptr;
+    
+    
+    template <class T,class Deleter = rubbish::deleter<typename rubbish::remove_reference<T>::type>> class shared_ptr{
+        public:
+            // memory block definition
+            struct block_type{
+                typedef typename remove_reference<T>::type* pointer;
+                
+                pointer ptr;
                 std::size_t count;
+                
+                constexpr block_type():ptr(nullptr),count(0U) {}
+                block_type(pointer p):ptr(p),count(1U) {}
             };
             
+            typedef shared_ptr<T,Deleter> self_type;
+            
         public:
-            explicit shared_ptr(T *ptr) { _data=new data; _data->ptr=ptr; _data->count=1; }
+            constexpr explicit shared_ptr(std::nullptr_t);
             
-            constexpr explicit shared_ptr(std::nullptr_t):_data(nullptr) {}
+            explicit shared_ptr(T *ptr=nullptr);
             
-            shared_ptr(const self_type &other){
-                _data=other._data;
-                if(_data!=nullptr)
-                    ++_data->count;
-            }
+            // No const here, for we need to modify other.m_manager->count
+            shared_ptr(self_type &other);
             
-            ~shared_ptr() { reset(); }
+            ~shared_ptr();
             
             // Reset this pointer to nullptr
-            void reset(){
-                if(_data==nullptr)
-                    return;
-                if(--_data->count <= 0){
-                    auto &&deleter=Deleter();
-                    deleter(_data->ptr);
-                    delete _data;
-                    _data=nullptr;
-                }
-            }
+            void reset();
             
-            T& operator*(){
-                if(_data==nullptr)
-                    throw nullptr;
-                return *(_data->ptr);
-            }
+            T& operator*() const;
             
-            T* operator->(){
-                if(_data==nullptr)
-                    throw nullptr;
-                return _data->ptr;
-            }
+            T* operator->() const;
             
-            T& operator[](std::size_t n){
-                if(_data==nullptr)
-                    throw nullptr;
-                return (_data->ptr)[n];
-            }
+            T& operator[](long n) const;
             
-            T* get() {return _data==nullptr?nullptr:_data->ptr;}
+            T* get() const;
             
-            Deleter get_deleter() {return Deleter();}
+            Deleter get_deleter() const noexcept;
             
-            std::size_t use_count() {return _data==nullptr?0:_data->count;}
+            std::size_t use_count() const;
             
-            self_type& operator=(const self_type &other) {
-                if(operator==(other))
-                    return *this;
-                reset();
-                _data=other._data;
-                ++_data->count;
-                return *this;
-            }
+            bool unique() const;
             
-            bool operator==(T *ptr) const { return _data==nullptr?false:(_data->ptr==ptr); }
+            self_type& operator=(self_type &other);
             
-            bool operator==(std::nullptr_t) const {return _data==nullptr;}
-            
-            bool operator==(const self_type &other) const {return _data==other._data;}
-            
-            bool operator!=(T *ptr) const {return !operator==(ptr);}
-            
-            bool operator!=(std::nullptr_t) const {return _data!=nullptr;}
-            
-            bool operator!=(const self_type &other) const {return !operator==(other);}
-            
-            bool operator<(T *ptr) const {return _data==nullptr?false:(_data->ptr < ptr);}
-            
-            bool operator<(const self_type &other) const {return get()<other.get();}
-            
-            bool operator>(T *ptr) const {return _data==nullptr?false:(_data->ptr > ptr);}
-            
-            bool operator>(const self_type &other) const {return get()>other.get();}
-            
-            bool operator<=(T *ptr) const {return !operator>(ptr);}
-            
-            bool operator<=(const self_type &other) const {return !operator>(other);}
-            
-            bool operator>=(T *ptr) const {return !operator<(ptr);}
-            
-            bool operator>=(const self_type &other) const {return !operator<(other);}
-            
-        protected:
-            data *_data;
+            operator bool() const;
+        private:
+            block_type *m_manager;
     };
-
-    template <class T,class Deleter = deleter<raw_type<T> > >
-    inline shared_ptr<rm_ref<T>,Deleter> make_shared(T &&data){
-        auto ptr=new raw_type<T>(std::forward<T>(data));
-        return shared_ptr<rm_ref<T>,Deleter>(ptr);
+    
+    template <class T,class ...Args>
+    inline shared_ptr<T> make_shared(Args&& ...args){
+        auto ptr=new raw_type<T>(std::forward<Args>(args)...);
+        return shared_ptr<T>(ptr);
     }
-
-    template <class T,class Deleter = deleter<raw_type<T> > >
-    inline shared_ptr<rm_ref<T>,Deleter> make_shared(T *data){
-        return shared_ptr<rm_ref<T>,Deleter>(data);
-    }
-
+    
 }  // namespace rubbish
+
+#include "shared_ptr.cc"
 
 #endif // __RUBBISH_SHARED_PTR__
