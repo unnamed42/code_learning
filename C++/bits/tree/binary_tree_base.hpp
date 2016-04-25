@@ -211,10 +211,11 @@ namespace rubbish{
             typedef rubbish::const_iterator<preorder_iterator>  const_preorder_iterator;
             typedef rubbish::const_iterator<inorder_iterator>   const_inorder_iterator;
             typedef rubbish::const_iterator<postorder_iterator> const_postorder_iterator;
-            typedef rubbish::const_iterator<level_iterator>     const_level_iterator;
-            typedef rubbish::const_iterator<reverse_preorder_iterator> const_reverse_preorder_iterator;
-            typedef rubbish::const_iterator<reverse_inorder_iterator> const_reverse_inorder_iterator;
+            typedef rubbish::const_iterator<reverse_preorder_iterator>  const_reverse_preorder_iterator;
+            typedef rubbish::const_iterator<reverse_inorder_iterator>   const_reverse_inorder_iterator;
             typedef rubbish::const_iterator<reverse_postorder_iterator> const_reverse_postorder_iterator;
+            
+            typedef rubbish::const_iterator<level_iterator>     const_level_iterator;
             
             typedef binary_tree_base<T,Node> self_type;
             
@@ -262,10 +263,10 @@ namespace rubbish{
             bool empty() const noexcept;
             
             // Insert `root` to a new node as `LR` child
-            void insert_parent(const T &_data, bool LR);
+            template <class U> void insert_parent(U &&, bool LR);
             
             // Insert a new node to `root` as `LR` child
-            void insert_child(const T &_data, bool LR);
+            template <class U> void insert_child(U&&, bool LR);
             
             // Iterator functions
             preorder_iterator preorder_begin();

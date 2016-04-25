@@ -43,6 +43,8 @@ namespace rubbish{
             // No const here, for we need to modify other.m_manager->count
             shared_ptr(self_type &other);
             
+            shared_ptr(self_type &&other);
+            
             ~shared_ptr();
             
             // Reset this pointer to nullptr
@@ -63,6 +65,7 @@ namespace rubbish{
             bool unique() const;
             
             self_type& operator=(self_type &other);
+            self_type& operator=(self_type &&other);
             
             operator bool() const;
         private:

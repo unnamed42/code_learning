@@ -28,20 +28,12 @@ template <class T> void rubbish::vector<T>::resize() {
     m_base=tmp;
 }
 
-template <class T> rubbish::vector<T>& rubbish::vector<T>::operator=(const rubbish::vector<T> &other){
-    delete[] m_base;
-    m_size=other.m_size;
-    m_used=other.m_used;
-    m_base=new T[other.m_size];
-    for(auto i=0UL;i<m_used;++i)
-        m_base[i]=other[i];
+template <class T> typename rubbish::vector<T>::self_type& rubbish::vector<T>::operator=(const self_type &other){
+    base_class::operator=(other);
     return *this;
 }
 
-template <class T> rubbish::vector<T>& rubbish::vector<T>::operator=(rubbish::vector<T> &&other){
-    delete[] m_base;
-    m_size=other.m_size;
-    m_used=other.m_used;
-    m_base=other.m_base;
-    other.m_base=nullptr;
+template <class T> typename rubbish::vector<T>::self_type& rubbish::vector<T>::operator=(self_type &&other){
+    base_class::operator=(std::move(other));
+    return *this;
 }

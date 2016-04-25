@@ -69,8 +69,6 @@ namespace rubbish{
     
 } // namespace rubbish
 
-
-
 #include "map.cc"
 
 #endif // __RUBBISH_MAP__

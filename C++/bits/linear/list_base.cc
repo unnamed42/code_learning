@@ -142,6 +142,12 @@ template <class T,class Node> void rubbish::list_base<T,Node>::sort() {
     m_end=prev;
 }
 
+template <class T,class Node> void rubbish::list_base<T,Node>::clear() {
+    this->~list_base();
+    m_head=m_end=nullptr;
+    m_length=0;
+}
+
 template <class T,class Node> void rubbish::list_base<T,Node>::push_back(const T &elem){
     ++m_length;
     if(m_head==nullptr){
@@ -194,6 +200,10 @@ template <class T,class Node> void rubbish::list_base<T,Node>::push_front(const 
     m_head->prev=tmp;
     m_head=tmp;
 }
+
+template <class T,class Node> T& rubbish::list_base<T,Node>::front() const {return m_head->data;}
+
+template <class T,class Node> T& rubbish::list_base<T,Node>::back() const {return m_end->data;}
 
 template <class T,class Node> void rubbish::list_base<T,Node>::remove(iterator it){
     node *ptr=it.get();

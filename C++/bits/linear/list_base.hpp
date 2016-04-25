@@ -116,6 +116,9 @@ namespace rubbish{
             // Merge sort in acsending order
             void sort();
             
+            // Remove all contents
+            void clear();
+            
             // Add an element to the end of this list
             void push_back(const T&);
             
@@ -127,6 +130,12 @@ namespace rubbish{
             
             // Remove the element at the head of this list
             void pop_front();
+            
+            // Get the element at the front
+            T& front() const;
+            
+            // Get the element at the back
+            T& back() const;
             
             // Remove the node `it`
             void remove(iterator it);

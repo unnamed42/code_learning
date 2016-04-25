@@ -117,6 +117,9 @@ namespace rubbish{
             // Sort this list in ascending order, using merge sort method
             void sort();
             
+            // Remove all contents
+            void clear();
+            
             // Add an element to the end of this list
             void push_back(const T&);
             

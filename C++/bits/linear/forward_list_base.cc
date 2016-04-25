@@ -139,6 +139,12 @@ template <class T,class Node> void rubbish::forward_list_base<T,Node>::sort() {
     m_end=ptr;
 }
 
+template <class T,class Node> void rubbish::forward_list_base<T,Node>::clear() {
+    this->~forward_list_base();
+    m_head=m_end=nullptr;
+    m_length=0;
+}
+
 template <class T,class Node> typename rubbish::forward_list_base<T,Node>::iterator rubbish::forward_list_base<T,Node>::search(const T &elem) const{
     node *p=m_head;
     while(p!=nullptr){

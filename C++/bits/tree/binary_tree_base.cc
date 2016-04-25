@@ -146,8 +146,8 @@ template <class T,class Node> void rubbish::binary_tree_base<T,Node>::copy_subtr
         dest->right->parent=dest;
 }
 
-template <class T,class Node> void rubbish::binary_tree_base<T,Node>::insert_parent(const T &_data, bool LR) {
-    node *parent = new node(_data);
+template <class T,class Node> template <class U> void rubbish::binary_tree_base<T,Node>::insert_parent(U &&data, bool LR) {
+    node *parent = new node(std::forward<U>(data));
     if(LR == _left_child)
         parent->left = m_root;
     else
@@ -156,8 +156,8 @@ template <class T,class Node> void rubbish::binary_tree_base<T,Node>::insert_par
     m_root = parent;
 }
 
-template <class T,class Node> void rubbish::binary_tree_base<T,Node>::insert_child(const T &_data, bool LR) {
-    node *child = new node(_data);
+template <class T,class Node> template <class U> void rubbish::binary_tree_base<T,Node>::insert_child(U &&data, bool LR) {
+    node *child = new node(std::forward<U>(data));
     if(m_root == nullptr) {
         m_root = child;
         return;

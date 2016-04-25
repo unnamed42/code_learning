@@ -12,6 +12,8 @@ namespace rubbish{
         private:
             typedef continuous_container<T> base_class;
         public:
+            typedef vector<T> self_type;
+            
             // Inherit all constructors
             using base_class::base_class;
             
@@ -32,10 +34,10 @@ namespace rubbish{
             void resize();
             
             // Copy assignment
-            vector<T>& operator=(const vector<T>&);
+            self_type& operator=(const self_type&);
             
             // Move assignment
-            vector<T>& operator=(vector<T>&&);
+            self_type& operator=(self_type&&);
             
             // Subscript dereference
             T& operator[](const std::size_t);

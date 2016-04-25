@@ -7,6 +7,8 @@ template <class T,class Deleter> rubbish::shared_ptr<T,Deleter>::shared_ptr(self
         ++m_manager->count;
 }
 
+template <class T,class Deleter> rubbish::shared_ptr<T,Deleter>::shared_ptr(self_type &&o):m_manager(o.m_manager) {o.m_manager=nullptr;}
+
 template <class T,class Deleter> rubbish::shared_ptr<T,Deleter>::~shared_ptr() {reset();}
 
 template <class T,class Deleter> void rubbish::shared_ptr<T,Deleter>::reset() {
@@ -43,6 +45,11 @@ template <class T,class Deleter> typename rubbish::shared_ptr<T,Deleter>::self_t
     return *this;
 }
 
+template <class T,class Deleter> typename rubbish::shared_ptr<T,Deleter>::self_type& rubbish::shared_ptr<T,Deleter>::operator=(self_type &&o) {
+    m_manager=o.m_manager;
+    o.m_manager=nullptr;
+    return *this;
+}
 
 template <class T,class Deleter> bool operator<(const rubbish::shared_ptr<T,Deleter> &lhs,const T *rhs) {return lhs.get()<rhs;}
 template <class T,class Deleter> bool operator>(const rubbish::shared_ptr<T,Deleter> &lhs,const T *rhs) {return lhs.get()>rhs;}
