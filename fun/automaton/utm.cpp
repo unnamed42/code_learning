@@ -1,4 +1,6 @@
 #include "utm.hpp"
+#include <fstream> // std::file
+#include <bits/move.h> // std::move
 
 // Encoding into '1'-string
 static string lookup(const string &content,unsigned int &count,state_map &map){
@@ -16,34 +18,31 @@ static string lookup(const string &content,unsigned int &count,char_map &map){
     return str;
 }
 
-// Decoding to origin
+// Decoding to origin, this function may get optimized
 static char lookup(const string &content,char_map &map){
     for(auto &i:map){
         if(content==i.second)
             return i.first;
     }
-    return '\0'; // not found
+    return '\0';
 }
 
 static inline string split(const string &str,const char delim,string::size_type pos=0){
     return str.substr(pos,str.find_first_of(delim,pos)-pos);
 }
 
-// "L"-move left, "R"-move right, "S"-stay
 const state_map universal_tm::directions{{"L","1"},{"R","11"},{"S","111"}};
 
 universal_tm::universal_tm():m_function(),m_chars{{'B',"1"}},m_states(),m_halt() {}
 
 // The given quintuple must follow the order below:
-// (current m_state,current char,next m_state,new char,direction)
+// (current state,current char,next state,new char,direction)
 // The encoded quintuples are in this order:
-// (current m_state,current char,new char,direction,next m_state) + separator
+// separator + (current state,current char,new char,direction,next state)
 // 
-// This requires the first call begin with the initial state
+// This requires the argument of the first call begins with the initial state
 void universal_tm::add_action(const array &list) {
-    enum:int {CURRENT_STATE=0,CURRENT_CHAR,NEXT_STATE,NEW_CHAR,DIRECTION};
-    
-    unsigned int char_count=1,state_count=0; // the blank character already exists
+    unsigned int char_count=m_chars.size(),state_count=m_states.size(); // the blank character already exists
     
     string tmp("00"); // separator between actions
     tmp += lookup(list[CURRENT_STATE], state_count, m_states);
@@ -63,12 +62,26 @@ void universal_tm::mark_halt(const string &state) {m_halt.insert(m_states.at(sta
 
 void universal_tm::import(const string &func) {m_function=func;}
 
+void universal_tm::readfile(const string &file_loc){
+    std::fstream file(file_loc,std::ios::in);
+    string current_state,current_char,next_state,new_char,direction;
+    while(!file.eof()){
+        file>>current_state>>current_char>>next_state>>new_char>>direction;
+        if(direction.empty()) // file will read an empty line, all 5 strings are empty
+            break;
+        array &&arr={{std::move(current_state),std::move(current_char),std::move(next_state),std::move(new_char),std::move(direction)}};
+        add_action(arr);
+    }
+    file.close();
+}
+
 void universal_tm::clear() {
-    //m_buffer.clear();
     m_function.clear();
     m_chars.clear();
     m_states.clear();
     m_halt.clear();
+    
+    m_chars['B']="1";
 }
 
 bool universal_tm::halt(const string &state) const {return m_halt.find(state)!=m_halt.cend();}
@@ -80,9 +93,9 @@ bool universal_tm::check(string &&str) {return check(str);}
 bool universal_tm::check(string &str){
     int str_cursor=0;
     constexpr unsigned int start=2; // `m_function` begins with "00"
+    
     // get initial state
     string current_state=split(m_function,'0',start);
-    
     string current_char("");
     
     for(;;){
@@ -93,16 +106,21 @@ bool universal_tm::check(string &str){
             current_char=m_chars.at(str[str_cursor]);
         
         // find the corresponding quintuple
-        auto &&tmp="00"+current_state+'0'+current_char;
+        auto &&tmp="00"+current_state+'0'+std::move(current_char); // `current_char` is never used
         auto pos=m_function.find(tmp); // possible bug caused by encoding
         
-        if(m_function[pos+tmp.size()]!='0' || pos==string::npos) // not a full match(resolve bug above) or not found
-            return halt(current_state); // check if the automaton halts
-        pos+=tmp.size();
+        while(pos!=string::npos){
+            if(m_function[pos+tmp.size()]=='0')
+                break;
+            pos=m_function.find(tmp,pos+tmp.size()); // find until meet a full match
+        }
+        
+        if(pos==string::npos) // if not found or no full match
+            return halt(current_state);
         
         // modify current_char to new_char
-        auto new_char=lookup(split(m_function,'0',++pos),m_chars); // `pos` jumps over a separator
-        if(new_char=='\0') // not exists in automaton's alphabet (how can it be possible?)
+        auto new_char=lookup(split(m_function,'0',pos+=tmp.size()+1),m_chars); // `pos` jumps over separators and current state section and current char section
+        if(new_char=='\0')
             return false;
         if(str_cursor<0 && new_char!='B')
             str=new_char+str;
@@ -117,10 +135,10 @@ bool universal_tm::check(string &str){
             --str_cursor;
         else if(direction=="11") // "R"
             ++str_cursor;
-        // else ; // "S"
+        // else ;
         
         // set next state
-        current_state=split(m_function,'0',pos+=direction.size()+1); // `pos` jumps over a separator and direction section
+        current_state=split(m_function,'0',pos+=direction.size()+1);
     }
     return true; // dummy return to avoid warning
 }
