@@ -1,5 +1,5 @@
 #include "utm.hpp"
-#include <fstream> // std::file
+#include <fstream> // std::fstream
 #include <bits/move.h> // std::move
 
 // Encoding into '1'-string
@@ -106,20 +106,20 @@ bool universal_tm::check(string &str){
             current_char=m_chars.at(str[str_cursor]);
         
         // find the corresponding quintuple
-        auto &&tmp="00"+current_state+'0'+std::move(current_char); // `current_char` is never used
-        auto pos=m_function.find(tmp); // possible bug caused by encoding
+        auto &&buffer="00"+current_state+'0'+std::move(current_char); // `current_char` is never used
+        auto pos=m_function.find(buffer); // possible bug caused by encoding
         
         while(pos!=string::npos){
-            if(m_function[pos+tmp.size()]=='0')
+            if(m_function[pos+buffer.size()]=='0')
                 break;
-            pos=m_function.find(tmp,pos+tmp.size()); // find until meet a full match
+            pos=m_function.find(buffer,pos+buffer.size()); // find until meet a full match
         }
         
         if(pos==string::npos) // if not found or no full match
             return halt(current_state);
         
         // modify current_char to new_char
-        auto new_char=lookup(split(m_function,'0',pos+=tmp.size()+1),m_chars); // `pos` jumps over separators and current state section and current char section
+        auto new_char=lookup(split(m_function,'0',pos+=buffer.size()+1),m_chars); // `pos` jumps over separators and current state section and current char section
         if(new_char=='\0')
             return false;
         if(str_cursor<0 && new_char!='B')
@@ -135,7 +135,7 @@ bool universal_tm::check(string &str){
             --str_cursor;
         else if(direction=="11") // "R"
             ++str_cursor;
-        // else ;
+        // else ; // "S"
         
         // set next state
         current_state=split(m_function,'0',pos+=direction.size()+1);

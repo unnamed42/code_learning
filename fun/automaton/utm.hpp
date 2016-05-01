@@ -11,13 +11,12 @@ typedef std::array<string,5> array;
 
 class universal_tm{
     private:
-        //string m_buffer;
         string    m_function;
         char_map  m_chars;
         state_map m_states;
         halt_map  m_halt;
     public:
-        enum quintuple:int {CURRENT_STATE=0,CURRENT_CHAR,NEXT_STATE,NEW_CHAR,DIRECTION};
+        enum quintuple:unsigned int {CURRENT_STATE=0,CURRENT_CHAR,NEXT_STATE,NEW_CHAR,DIRECTION};
         
         static const state_map directions;
     public:
