@@ -1,18 +1,11 @@
 #include "utm.hpp"
 #include <fstream> // std::fstream
 #include <bits/move.h> // std::move
+#include <stdexcept> // std::runtime_error
 
 // Encoding into '1'-string
-static string lookup(const string &content,unsigned int &count,state_map &map){
+template <class Key,class Val> static string encode(const Key &content,unsigned int &count,std::unordered_map<Key,Val> &map){
     auto &&str=map[content];
-    if(str.empty())
-        str=string(++count,'1');
-    return str;
-}
-
-// Encoding into '1'-string
-static string lookup(const string &content,unsigned int &count,char_map &map){
-    auto &&str=map[content[0]];
     if(str.empty())
         str=string(++count,'1');
     return str;
@@ -42,18 +35,18 @@ universal_tm::universal_tm():m_function(),m_chars{{'B',"1"}},m_states(),m_halt()
 // 
 // This requires the argument of the first call begins with the initial state
 void universal_tm::add_action(const array &list) {
-    unsigned int char_count=m_chars.size(),state_count=m_states.size(); // the blank character already exists
+    unsigned int char_count=m_chars.size(),state_count=m_states.size();
     
     string tmp("00"); // separator between actions
-    tmp += lookup(list[CURRENT_STATE], state_count, m_states);
+    tmp += encode(list[CURRENT_STATE], state_count, m_states);
     tmp += '0';
-    tmp += lookup(list[CURRENT_CHAR], char_count, m_chars);
+    tmp += encode(list[CURRENT_CHAR][0], char_count, m_chars); // characters are string whose length is 1
     tmp += '0';
-    tmp += lookup(list[NEW_CHAR], char_count, m_chars);
+    tmp += encode(list[NEW_CHAR][0], char_count, m_chars); // characters are string whose length is 1
     tmp += '0';
     tmp += directions.at(list[DIRECTION]);
     tmp += '0';
-    tmp += lookup(list[NEXT_STATE], state_count, m_states);
+    tmp += encode(list[NEXT_STATE], state_count, m_states);
     m_function += tmp;
 }
 
@@ -65,6 +58,8 @@ void universal_tm::import(const string &func) {m_function=func;}
 void universal_tm::readfile(const string &file_loc){
     std::fstream file(file_loc,std::ios::in);
     string current_state,current_char,next_state,new_char,direction;
+    if(!file.is_open())
+        throw std::runtime_error("Invalid file");
     while(!file.eof()){
         file>>current_state>>current_char>>next_state>>new_char>>direction;
         if(direction.empty()) // file will read an empty line, all 5 strings are empty
@@ -130,7 +125,7 @@ bool universal_tm::check(string &str){
             str[str_cursor]=new_char;
         
         // move read position
-        auto direction=split(m_function,'0',pos+=m_chars[new_char].size()+1); // `pos` jumps over a separator and character section
+        auto &&direction=split(m_function,'0',pos+=m_chars[new_char].size()+1); // `pos` jumps over a separator and character section
         if(direction=="1") // "L"
             --str_cursor;
         else if(direction=="11") // "R"
@@ -142,4 +137,3 @@ bool universal_tm::check(string &str){
     }
     return true; // dummy return to avoid warning
 }
-
