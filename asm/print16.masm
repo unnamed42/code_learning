@@ -1,0 +1,74 @@
+public print16,printu16,print_newline
+
+; to use these functions, a stack must be prepared.
+
+print segment
+; argument is passed by ax.
+print16 proc far
+    and ax,ax
+    js negative
+p16_continue:
+    call printu16
+    ret
+negative:
+    push ax
+    push dx
+    mov ah,02h
+    mov dl,'-'
+    int 21h
+    pop dx
+    pop ax
+    neg ax
+    jmp p16_continue
+print16 endp
+
+printu16 proc far
+    push dx
+    push cx
+    mov cx,10
+    and ax,ax
+    jz print0
+    call pu16_helper
+pu16_exit:
+    pop cx
+    pop dx
+    ret
+print0:
+    mov ah,02h
+    mov dl,'0'
+    int 21h
+    jmp pu16_exit
+printu16 endp
+
+pu16_helper proc near
+    and ax,ax
+    jz helper_exit
+    xor dx,dx
+    div cx            ; demical radix 10, prepared in printu16
+    add dl,'0'
+    push dx
+    call pu16_helper
+    pop dx
+    
+    mov ah,02h
+    int 21h
+helper_exit:
+    ret
+pu16_helper endp
+
+print_newline proc far
+    push ax
+    push dx
+    
+    mov ah,02h
+    mov dl,0ah        ;'\r'
+    int 21h
+    mov dl,0dh        ;'\n'
+    int 21h
+    
+    pop dx
+    pop ax
+    ret
+print_newline endp
+
+print ends
