@@ -74,8 +74,7 @@ template <class T,class Node> rubbish::binary_tree_base<T,Node>::binary_tree_bas
                 tmp=stack.back(); stack.pop_back(); 
                 ++iin; 
             }
-            // TODO: change the result of difference to some unsigned type
-            if((iin-in.begin())< in.size()) {
+            if((iin-in.begin())< long(in.size())) {
                 tmp->right = new node(*ipre);
                 tmp->right->parent=tmp;
                 stack.push_back(tmp->right);

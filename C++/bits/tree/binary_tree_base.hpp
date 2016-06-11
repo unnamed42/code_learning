@@ -1,11 +1,9 @@
 #ifndef __RUBBISH_BINARY_TREE_BASE__
 #define __RUBBISH_BINARY_TREE_BASE__
 
-#include <deque> // stack, queue 
-#include <memory> // std::shared_ptr
+#include <deque> // used as queue in level order iterator
 #include <initializer_list> // std::initializer_list
-#include "../iterator.hpp"
-#include "../type_traits/basic_traits.hpp" // rubbish::condition, used in iterators
+#include "../iterator.hpp" // base class of iterators
 
 namespace rubbish{
 
@@ -72,107 +70,52 @@ namespace rubbish{
                     data_type m_cursor;
             };
             
-            class preorder_iterator: public tree_iterator_base{
-                private:
-                    typedef tree_iterator_base base_class;
-                public:
-                    typedef preorder_iterator self_type;
-                    
-                    typedef typename base_class::reference reference;
-                    typedef typename base_class::data_type data_type;
-                    
-                    using base_class::base_class;
-                    
-                    self_type& operator++();
-                    self_type operator++(int) {auto i=*this; operator++(); return i;}
-                    self_type& operator--();
-                    self_type operator--(int) {auto i=*this;operator--();return i;}
-                private:
-                    using base_class::m_cursor;
-            };
+            #define BTREE_ITERATOR_EXPANSION(kind) class kind##_iterator: public tree_iterator_base{\
+                private:\
+                    typedef tree_iterator_base base_class;\
+                public:\
+                    typedef kind##_iterator self_type;\
+                    \
+                    typedef typename base_class::reference reference;\
+                    typedef typename base_class::data_type data_type;\
+                    \
+                    using base_class::base_class;\
+                    \
+                    self_type& operator++();\
+                    self_type operator++(int) {auto i=*this; operator++(); return i;}\
+                    self_type& operator--();\
+                    self_type operator--(int) {auto i=*this;operator--();return i;}\
+                private:\
+                    using base_class::m_cursor;\
+            }
             
-            class inorder_iterator: public tree_iterator_base{
-                private:
-                    typedef tree_iterator_base base_class;
-                public:
-                    typedef inorder_iterator self_type;
-                    
-                    typedef typename base_class::reference reference;
-                    typedef typename base_class::data_type data_type;
-                    
-                    using base_class::base_class;
-                    
-                    self_type& operator++();
-                    self_type operator++(int) {auto i=*this; operator++(); return i;}
-                    self_type& operator--();
-                    self_type operator--(int) {auto i=*this;operator--();return i;}
-                private:
-                    using base_class::m_cursor;
-            };
+            BTREE_ITERATOR_EXPANSION(preorder);
+            BTREE_ITERATOR_EXPANSION(inorder);
+            BTREE_ITERATOR_EXPANSION(postorder);
             
-            class postorder_iterator: public tree_iterator_base{
-                private:
-                    typedef tree_iterator_base base_class;
-                public:
-                    typedef postorder_iterator self_type;
-                    
-                    typedef typename base_class::reference reference;
-                    typedef typename base_class::data_type data_type;
-                    
-                    using base_class::base_class;
-                    
-                    self_type& operator++();
-                    self_type operator++(int) {auto i=*this; operator++(); return i;}
-                    self_type& operator--();
-                    self_type operator--(int) {auto i=*this;operator--();return i;}
-                private:
-                    using base_class::m_cursor;
-            };
+            #undef BTREE_ITERATOR_EXPANSION
             
-            class reverse_preorder_iterator:public rubbish::reverse_iterator<preorder_iterator>{
-                private:
-                    typedef rubbish::reverse_iterator<preorder_iterator> base_class;
-                public:
-                    typedef typename base_class::reference reference;
-                    typedef typename base_class::pointer   pointer;
-                    
-                    using base_class::base_class;
-                    
-                    reference operator*() const {return *m_iter;}
-                    pointer operator->() const {return &operator*();}
-                private:
-                    using base_class::m_iter;
-            };
             
-            class reverse_inorder_iterator:public rubbish::reverse_iterator<inorder_iterator>{
-                private:
-                    typedef rubbish::reverse_iterator<inorder_iterator> base_class;
-                public:
-                    typedef typename base_class::reference reference;
-                    typedef typename base_class::pointer   pointer;
-                    
-                    using base_class::base_class;
-                    
-                    reference operator*() const {return *m_iter;}
-                    pointer operator->() const {return &operator*();}
-                private:
-                    using base_class::m_iter;
-            };
+            #define BTREE_RITERATOR_EXPANSION(kind) class reverse_##kind##_iterator:public rubbish::reverse_iterator<kind##_iterator>{\
+                private:\
+                    typedef rubbish::reverse_iterator<kind##_iterator> base_class;\
+                public:\
+                    typedef typename base_class::reference reference;\
+                    typedef typename base_class::pointer   pointer;\
+                    \
+                    using base_class::base_class;\
+                    \
+                    reference operator*() const {return *m_iter;}\
+                    pointer operator->() const {return &operator*();}\
+                private:\
+                    using base_class::m_iter;\
+            }
             
-            class reverse_postorder_iterator:public rubbish::reverse_iterator<postorder_iterator>{
-                private:
-                    typedef rubbish::reverse_iterator<postorder_iterator> base_class;
-                public:
-                    typedef typename base_class::reference reference;
-                    typedef typename base_class::pointer   pointer;
-                    
-                    using base_class::base_class;
-                    
-                    reference operator*() const {return *m_iter;}
-                    pointer operator->() const {return &operator*();}
-                private:
-                    using base_class::m_iter;
-            };
+            BTREE_RITERATOR_EXPANSION(preorder);
+            BTREE_RITERATOR_EXPANSION(inorder);
+            BTREE_RITERATOR_EXPANSION(postorder);
+            
+            #undef BTREE_RITERATOR_EXPANSION
             
             // This kind of iterator is totally different from the above three kinds,
             // so do not inherit from tree_iterator_base here
@@ -223,7 +166,7 @@ namespace rubbish{
             // Deep-copy a tree from `src` to `dest`, recursively
             static void copy_subtree(node* &dest, const node *src);
             
-            // Return the depth of a binary tree whose root is `root`, recursively
+            // Return the depth of a binary tree whose root is `root`, recursive solution
             static unsigned int depth(const node *root);
             
             // Destroy a tree whose root is `root`, recursively
