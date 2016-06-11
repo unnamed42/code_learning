@@ -24,7 +24,7 @@ namespace rubbish{
     namespace helper{
         
         HAS_DETECTOR(sort);
-        template <class T,bool=has_sort<T,void>::value> struct sort_w{
+        template <class T,bool=has_sort<typename remove_reference<T>::type,void>::value> struct sort_w{
             static void sort(T &obj) { obj.sort(); }
         };
         template <class T> struct sort_w<T,false>{
@@ -32,11 +32,20 @@ namespace rubbish{
         };
         
         HAS_DETECTOR(empty);
-        template <class T,bool=has_empty<T,bool>::value> struct empty_w{
+        template <class T,bool=has_empty<typename remove_reference<T>::type,bool>::value> struct empty_w{
             static bool empty(T &obj) {return obj.empty();}
         };
         template <class T> struct empty_w<T,false>{
             static bool empty(T &obj) {return obj==T();}
+        };
+        
+        HAS_DETECTOR(address_of);
+        template <class T,bool=has_address_of<T,typename remove_reference<T>::type>::value> struct address_w{
+            static typename remove_reference<T>::type* address(T &obj) {return obj.address_of();}
+        };
+        template <class T> struct address_w<T,false>{
+            typedef typename remove_reference<T>::type type;
+            static type* address(T &obj) {return reinterpret_cast<type*>(&reinterpret_cast<char&>(obj));}
         };
         
         
@@ -44,7 +53,7 @@ namespace rubbish{
     
     template <class T> void sort(T &obj) { helper::sort_w<T>::sort(obj); }
     
-    template <class T> bool empty(T &obj) {return helper::empty_w<T>::empty();}
+    template <class T> bool empty(T &obj) {return helper::empty_w<T>::empty(obj);}
     
 } // namespace rubbish
 
