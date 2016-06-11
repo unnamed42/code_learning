@@ -28,12 +28,13 @@ namespace rubbish {
             self_type& operator=(const self_type &o) {data=o.data; left=right=parent=nullptr; color=o.color;return *this;}
             self_type& operator=(self_type &&o) {data=std::move(o.data); left=right=parent=nullptr;color=o.color;return *this;}
         };
-        
         // Algorithms from http://www.geeksforgeeks.org/
+        // Functions used for rotations
         template <class Node> void rbtree_left_rotate(Node *&root, Node *&ptr);
         template <class Node> void rbtree_right_rotate(Node *&root, Node *&ptr);
-        // This function fixes violations caused by BST insertion
+        // This function fixes violations caused by BST(Binary Search Tree) insertion
         template <class Node> void rbtree_insertion_fix(Node *&root, Node *&ptr);
+        template <class Node> void rbtree_deletion_fix(Node *&root,Node *ptr);
         
     } // namespace helper
     
@@ -44,6 +45,8 @@ namespace rubbish {
             typedef rbtree<T,Node> self_type;
             typedef Node node;
         protected:
+            void rbtree_delete(Node *&root,Node *ptr);
+            
             // Insert a node with given value, return the inserted position
             template <class U> node* insert(node* &root,U&&);
         public:
@@ -64,6 +67,9 @@ namespace rubbish {
             
             // Insert a node with given value, a wrapper of protected version of insert()
             template <class U> iterator insert(U&&);
+            
+            // Delete nodes with given value
+            template <class U> void erase(U&&);
             
             // Find the given value, and return its position
             template <class U> iterator find(U&&);
