@@ -1,3 +1,6 @@
+#ifndef __UNIVERSAL_TURING_MACHINE__
+#define __UNIVERSAL_TURING_MACHINE__
+
 #include <array>
 #include <string>
 #include <unordered_set>
@@ -50,3 +53,5 @@ class universal_tm{
         
         const string& function() {return m_function;} // debug function
 };
+
+#endif // __UNIVERSAL_TURING_MACHINE__
