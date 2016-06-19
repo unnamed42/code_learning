@@ -31,19 +31,7 @@ static int kbhit() {
     return bytesWaiting;
 }
 
-// Check if one move causes an overflow
-static bool invalid_move(const coordinate &crd,direction direct,unsigned int max_x,unsigned int max_y){
-    bool res=false;
-    switch(direct){
-        case LEFT:res=(crd.y==0);break;
-        case RIGHT:res=(crd.y==max_y);break;
-        case UP:res=(crd.x==0);break;
-        case DOWN:res=(crd.x==max_x);break;
-    }
-    return res;
-}
-
-// Move a point
+// Take a move
 static coordinate forward(const coordinate &crd,direction direct){
     coordinate res=crd;
     switch(direct){
@@ -54,6 +42,7 @@ static coordinate forward(const coordinate &crd,direction direct){
     }
     return res;
 }
+
 
 snake_game::snake::snake(const coordinate &crd):m_body(1,crd),m_direct(LEFT) {}
 
@@ -72,6 +61,15 @@ void snake_game::generate_food(){
     m_map.set(m_food);
 }
 
+bool snake_game::invalid_move(const coordinate &crd,direction direct){
+    switch(direct){
+        case LEFT:return crd.y==0;
+        case RIGHT:return crd.y==m_map.row()-1;
+        case UP:return crd.x==0;
+        case DOWN:return crd.x==m_map.column()-1;
+    }
+}
+
 void snake_game::update(){
     // Snake fills the map, you win
     if(m_snake.m_body.size()==m_map.row()*m_map.column()){
@@ -80,7 +78,7 @@ void snake_game::update(){
     }
     // Get out of map or eat yourself, you lose
     auto &&head=m_snake.m_body.front();
-    if(invalid_move(head,m_snake.m_direct,m_map.column()-1,m_map.row()-1)){
+    if(invalid_move(head,m_snake.m_direct)){
         m_end=true;
         return;
     }
@@ -114,15 +112,20 @@ void snake_game::restart(){
 void snake_game::run(){
     while(!is_end()){
         std::system("clear");
-        m_map.draw(' ','#');
+        m_map.draw('0','#');
         if(kbhit()){
+            unsigned int tmp=0;
             switch(getchar()){
-                case 'w':m_snake.m_direct=UP;break;
-                case 'a':m_snake.m_direct=LEFT;break;
-                case 's':m_snake.m_direct=DOWN;break;
-                case 'd':m_snake.m_direct=RIGHT;
+                case 'w':tmp=UP;break;
+                case 'a':tmp=LEFT;break;
+                case 's':tmp=DOWN;break;
+                case 'd':tmp=RIGHT;
                 default:break;
             }
+            if(m_snake.m_body.size()>1 && tmp==3-m_snake.m_direct)
+                ; // You cannot go backwards when bigger-than-1-block long. In this case, the input is ignored.
+            else
+                m_snake.m_direct=static_cast<direction>(tmp);
         }
         update();
         sleep(1);
