@@ -3,6 +3,7 @@
 
 #include "map.hpp"
 #include <deque>
+#include <vector>
 
 // Let `x` be a direction variable, then (3-x) is the opposite direction
 enum direction:unsigned int {UP=0,LEFT,RIGHT,DOWN};
@@ -21,6 +22,8 @@ class snake_game{
         snake m_snake;
         coordinate m_food;
         bool m_end;
+        
+        const static std::vector<char> material;
     public:
         snake_game(unsigned int,unsigned int);
     protected:

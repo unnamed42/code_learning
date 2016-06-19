@@ -12,36 +12,34 @@ struct coordinate{
 };
 
 class map{
-    // A coordinate set whose origin is at the left-up most corner
-    private:
-        std::vector<std::vector<bool>> m_map;
     public:
-        // An empty map
+        // One point can represent as many as 255 types, that should be enough for everyone.
+        typedef unsigned char content_type;
+    private:
+        // A coordinate system whose origin is at the top-left corner
+        // The initial value of every point is 0
+        std::vector<std::vector<content_type>> m_map;
+    public:
+        // An 0*0 map
         map();
         
-        // An row*column map
+        // A row*column map
         map(unsigned int,unsigned int);
         
         // Move constructor
         map(map&&);
         
-        // Draw the map, if one block is set then print `nblank`, not set then `blank`.
-        void draw(char blank,char nblank) const;
+        // Draw the map, displays every point according to the given list. 
+        void draw(const std::vector<char>&) const;
         
         // Clear the map, reset to 0*0 map
         void clear();
         
-        // Set coordinate is occupied
-        void set(const coordinate&);
+        // Set coordinate to value
+        void set(const coordinate&,content_type);
         
-        // Set coordinate is not occupied
-        void unset(const coordinate&);
-        
-        // Apply logical not to coordinate
-        void reverse(const coordinate&);
-        
-        // Check if coordinate is set
-        bool is_set(const coordinate&) const;
+        // Return the value of coordinate
+        content_type value(const coordinate&) const;
         
         // Return row
         unsigned int row() const;
@@ -49,7 +47,7 @@ class map{
         // Return column
         unsigned int column() const;
         
-        std::vector<bool>& operator[](unsigned int);
+        std::vector<content_type>& operator[](unsigned int);
         map& operator=(map&&);
 };
 

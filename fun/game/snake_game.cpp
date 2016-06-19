@@ -43,11 +43,21 @@ static coordinate forward(const coordinate &crd,direction direct){
     return res;
 }
 
+// Empty, wall, snake, food
+enum _material:unsigned char {EMPTY=0,WALL,SNAKE,FOOD};
+const std::vector<char> snake_game::material{' ','*','#','@'};
 
 snake_game::snake::snake(const coordinate &crd):m_body(1,crd),m_direct(LEFT) {}
 
 snake_game::snake_game(unsigned int row,unsigned int column):m_map(row,column),m_snake({row/2,column/2}),m_food({0,0}),m_end(false) {
-    m_map.set(m_snake.m_body.front());
+    // build walls
+    for(auto i=0U;i<row;++i){
+        m_map[i][0]=WALL;
+        m_map[0][i]=WALL;
+        m_map[i][column-1]=WALL;
+        m_map[column-1][i]=WALL;
+    }
+    m_map.set(m_snake.m_body.front(),SNAKE);
     std::srand(std::time(nullptr));
     generate_food();
 }
@@ -57,16 +67,16 @@ bool snake_game::is_end() const {return m_end;}
 void snake_game::generate_food(){
     do{
         m_food=coordinate(rand()%m_map.row(),rand()%m_map.column());
-    } while(m_map.is_set(m_food));
-    m_map.set(m_food);
+    } while(m_map.value(m_food));
+    m_map.set(m_food,FOOD);
 }
 
 bool snake_game::invalid_move(const coordinate &crd,direction direct){
     switch(direct){
-        case LEFT:return crd.y==0;
-        case RIGHT:return crd.y==m_map.row()-1;
-        case UP:return crd.x==0;
-        case DOWN:return crd.x==m_map.column()-1;
+        case LEFT:return crd.y==1;
+        case RIGHT:return crd.y==m_map.row()-2;
+        case UP:return crd.x==1;
+        case DOWN:return crd.x==m_map.column()-2;
     }
 }
 
@@ -86,17 +96,18 @@ void snake_game::update(){
     auto &&new_head=forward(head,m_snake.m_direct);
     if(new_head==m_food){ // eat food
         m_snake.m_body.push_front(m_food);
+        m_map.set(m_food,SNAKE);
         generate_food();
     }
-    else if(m_map.is_set(new_head)){ // eat yourself, you lose
+    else if(m_map.value(new_head)){ // eat yourself, you lose
         m_end=true;
         return;
     } else { // just move forward
-        m_map.set(new_head);
+        m_map.set(new_head,SNAKE);
         m_snake.m_body.push_front(new_head);
         
         auto &&tail=m_snake.m_body.back();
-        m_map.unset(tail);
+        m_map.set(tail,EMPTY);
         m_snake.m_body.pop_back();
     }
 }
@@ -112,7 +123,7 @@ void snake_game::restart(){
 void snake_game::run(){
     while(!is_end()){
         std::system("clear");
-        m_map.draw('0','#');
+        m_map.draw(material);
         if(kbhit()){
             unsigned int tmp=0;
             switch(getchar()){
