@@ -74,6 +74,7 @@ template <class T,class Node> rubbish::forward_list_base<T,Node>::forward_list_b
     while(optr!=nullptr){
         (*ptr)->next=new node(*optr);
         ptr=&(*ptr)->next;
+        optr=optr->next;
     }
     m_end=*ptr;
 }

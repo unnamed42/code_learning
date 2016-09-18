@@ -18,8 +18,8 @@ namespace rubbish{
             constexpr forward_list_node():data(T()),next(nullptr) {}
             explicit forward_list_node(const T &elem):data(elem),next(nullptr) {}
             explicit forward_list_node(T &&elem):data(std::move(elem)),next(nullptr) {}
-            forward_list_node(const self_type &o):data(o.data),prev(nullptr),next(nullptr) {}
-            forward_list_node(self_type &&o):data(std::move(data)),prev(nullptr),next(nullptr) {}
+            forward_list_node(const self_type &o):data(o.data),next(nullptr) {}
+            forward_list_node(self_type &&o):data(std::move(data)),next(nullptr) {}
             
             self_type& operator=(const self_type &o) {data=o.data;next=o.next;return *this;}
             self_type& operator=(self_type &&o) {data=std::move(o.data);next=o.next;return *this;}
