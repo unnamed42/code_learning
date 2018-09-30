@@ -1,91 +1,86 @@
-typedef struct l{
+typedef struct Node {
     int data;
-    struct l *next;
-} list;
+    struct Node *next;
+} Node;
 
-/*list *create(int n){
-    list *h,**t;
-    srand(1);
-    h=(list*)malloc(sizeof(list));
-    h->data=rand()%30;
-    t=&h->next;
-    for(;n>1;n--){
-        *t=(list*)malloc(sizeof(list));
-        (*t)->data=rand()%30;
-        t=&(*t)->next;
-    }
-    *t=NULL;
-    return h;
-}*/
+// #include <stdlib.h>
+// #include <time.h>
+//
+// Node* create(int len) {
+//     Node dummy = {.next = NULL}, *h = &dummy;
 
-// Insertion sort method
-list *insert_sort(list *head){
-    if(head==NULL)
-        return NULL;
-    list *node=head->next;
-    head->next=NULL;
-    while(node!=NULL){
-        list *save=node->next;
-        if(node->data<head->data){
-            node->next=head;
-            head=node;
+//     while(len--) {
+//         Node *p = malloc(sizeof(*p));
+//         p->data = rand();
+//         h->next = p;
+//         h = p;
+//     }
+
+//     return dummy.next;
+// }
+
+#include <stddef.h>
+
+Node* insertionSort(Node *head) {
+    if(!head || !head->next) return head;
+
+    Node *p = head->next;
+    head->next = NULL;
+    while(p) {
+        Node *next = p->next;
+        if(p->data < head->data) {
+            p->next = head;
+            head = p;
+        } else {
+            Node *tmp = head;
+            while(tmp->next && tmp->next->data < p->data)
+                tmp = tmp->next;
+            p->next = tmp->next;
+            tmp->next = p;
         }
-        else{
-            list *temp=head;
-            while(temp->next!=NULL && temp->next->data<node->data)
-                temp=temp->next;
-            node->next=temp->next;
-            temp->next=node;
-        }
-        node=save;
+        p = next;
     }
     return head;
-} 
+}
 
-// Merge sort method
-
-// merge_sort helper
-void merge(list *h1,list *h2){
-    list dummy;list *ptr=&dummy;
-    while(h1!=NULL&&h2!=NULL){
-        if(h1->data<h2->data){
-            ptr->next=h1;
-            h1=h1->next;
+// merge sort helper
+Node* merge(Node *h1, Node *h2) {
+    Node dummy, *p = &dummy;
+    while(h1 && h2) {
+        if(h1->data < h2->data) {
+            p->next = h1;
+            h1 = h1->next;
         } else {
-            ptr->next=h2;
-            h2=h2->next;
+            p->next = h2;
+            h2 = h2->next;
         }
-        ptr=ptr->next;
+        p = p->next;
     }
-    if(h1!=NULL)
-        ptr->next=h1;
-    if(h2!=NULL)
-        ptr->next=h2;
+    p->next = h1 ? h1 : h2;
     return dummy.next;
 }
 
-void merge_sort(list *head){
-    if(head==NULL||head->next==NULL)
-        return head;
-    if(head->next->next==NULL){
-        list *node=head->next;
-        if(node->data<head->data){
-            node->next=head;
-            head->next=NULL;
-            head=node;
+Node* mergeSort(Node *head) {
+    if(!head || !head->next) return head;
+
+    if(!head->next->next) {
+        Node *p = head->next;
+        if(p->data < head->data) {
+            p->next = head;
+            head->next = NULL;
+            head = p;
         }
         return head;
     }
-    list *slow=head,*fast=head->next->next;
-    while(fast!=NULL){
-        slow=slow->next;
-        fast=fast->next;
-        if(fast!=NULL)
-            fast=fast->next;
-    }
-    // Reuse fast
-    fast=merge_sort(slow->next);
-    slow->next=NULL;
-    return merge(merge_sort(head),fast);
-}
 
+    Node *slow = head, *fast = head->next->next;
+    while(fast) {
+        slow = slow->next;
+        fast = fast->next;
+        if(fast) fast = fast->next;
+    }
+    // reuse fast
+    fast = mergeSort(slow->next);
+    slow->next = NULL;
+    return merge(mergeSort(head), fast);
+}

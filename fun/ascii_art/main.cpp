@@ -1,13 +1,28 @@
-#include "bmp.hpp"
+#include "bitmap.hpp"
 
+#include <fstream>
 #include <iostream>
-#include <exception>
+#include <stdexcept>
 
-int main() try {
-    image::bmp img("/home/h/toad.bmp");
-    img.to_grayscale();
-    img.to_ascii_art("/home/h/toad.txt");
-    img.save("/home/h/toad_gray.bmp");
-} catch(std::exception &e) {
-    std::cout << e.what() << '\n';
+using namespace std;
+
+int main(int argc, char* argv[]) {
+    ifstream imageFile(argv[1], ios::binary);
+    if(!imageFile.good())
+        throw invalid_argument{"cannot open bmp file"};
+
+    ofstream asciiFile(argv[2]);
+    if(!asciiFile.good())
+        throw invalid_argument{"cannot open ascii art output file"};
+
+    Bitmap img{imageFile};
+
+    img.toGrayscale();
+    img.toASCIIArt(asciiFile);
+
+    ofstream outputFile(argv[3], ios::binary);
+    if(!outputFile.good())
+        throw invalid_argument{"cannot open output file"};
+
+    img.save(outputFile);
 }
